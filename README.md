@@ -124,3 +124,8 @@ This package adds subtle scroll-triggered reveal animations to hourly forecast i
 4. Commit and push to the production branch connected to Cloudflare Pages.
 
 The AQI history remains a model-based CPCB-style estimate, not an official CPCB monitoring-station record.
+
+# Mausam India — Sun animation
+
+- Animated daylight arc that traces the day's progress, with a softly pulsing sun marker during daylight.
+- Preserves the in-card weather advice, 7-day AQI history modal, and scroll reveal effects.

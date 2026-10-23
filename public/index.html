@@ -407,6 +407,61 @@
         stroke-dashoffset: 1;
         animation: dr 1.8s 0.3s ease forwards;
       }
+      .sun-arc-progress {
+        stroke: var(--ac);
+        stroke-width: 3.2;
+        stroke-linecap: round;
+        fill: none;
+        animation: sunArcDraw 1.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        stroke-dashoffset: var(--sun-progress, 0);
+      }
+      .sun-orb-halo {
+        fill: #facc15;
+        opacity: 0.18;
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: sunHalo 2.8s ease-in-out infinite;
+      }
+      .sun-orb {
+        fill: #fde047;
+        stroke: #fb923c;
+        stroke-width: 1.5;
+        filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.75));
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: sunBreathe 2.8s ease-in-out infinite;
+      }
+      .sun-orbit-svg {
+        overflow: visible;
+      }
+      @keyframes sunArcDraw {
+        from {
+          stroke-dashoffset: var(--sun-progress, 0);
+        }
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @keyframes sunHalo {
+        0%,
+        100% {
+          transform: scale(0.82);
+          opacity: 0.12;
+        }
+        50% {
+          transform: scale(1.22);
+          opacity: 0.32;
+        }
+      }
+      @keyframes sunBreathe {
+        0%,
+        100% {
+          transform: scale(0.94);
+        }
+        50% {
+          transform: scale(1.08);
+        }
+      }
       .dot {
         fill: var(--ac);
         animation: fi 1s 1.1s backwards;
@@ -577,6 +632,18 @@
         font-size: 12px;
         color: var(--mu);
         padding: 0 16px calc(26px + env(safe-area-inset-bottom, 0px));
+      }
+      #ft a {
+        color: var(--ac);
+        font-weight: 600;
+        text-decoration: none;
+        text-underline-offset: 3px;
+      }
+      #ft a:hover {
+        text-decoration: underline;
+      }
+      #ft .footer-credit {
+        white-space: nowrap;
       }
       #toast {
         position: fixed;
@@ -1328,6 +1395,9 @@
         th: ls.g("th") || "auto",
         fav: JSON.parse(ls.g("fav") || "[]"),
       };
+      // Replace this placeholder with your actual public Mausam India GitHub repository URL.
+      const GITHUB_REPO_URL = "https://github.com/himanvic/Mausam-India";
+      const DEVELOPER_NAME = "himanvic";
       // Optional Supabase setup: paste your Project URL and publishable/anon key here.
       // Never put a service_role/secret key in this public HTML file.
       const SUPABASE_URL = "";
@@ -2244,7 +2314,7 @@
           mini(
             "🌅",
             "Sun",
-            `<svg viewBox="0 0 200 112" width="100%" style="max-height:110px"><path d="M10 100A90 90 0 0 1 190 100" fill="none" stroke="currentColor" stroke-opacity=".2" stroke-width="3" stroke-dasharray="3 7" stroke-linecap="round"/><path class="ln" pathLength="1" d="M10 100A90 90 0 0 1 190 100" style="stroke-dasharray:${sp} 1;stroke-dashoffset:0"/>${night ? "" : `<circle cx="${sx}" cy="${sy}" r="9" fill="#facc15"><animate attributeName="r" values="8;11;8" dur="3s" repeatCount="indefinite"/></circle>`}</svg><div class="row"><span>↑ ${hr(sr, 1)}</span><span class="mu">${Math.floor(dl / 60)}h ${Math.round(dl % 60)}m of daylight</span><span>↓ ${hr(ss, 1)}</span></div>`,
+            `<svg class="sun-orbit-svg" viewBox="0 0 200 112" width="100%" style="max-height:110px" role="img" aria-label="Sunrise-to-sunset daylight progress"><path class="sun-arc-track" d="M10 100A90 90 0 0 1 190 100" fill="none" stroke="currentColor" stroke-opacity=".22" stroke-width="3" stroke-dasharray="3 7" stroke-linecap="round"/><path class="sun-arc-progress" pathLength="100" d="M10 100A90 90 0 0 1 190 100" style="--sun-progress:${Math.max(0.01, sp * 100)};stroke-dasharray:${Math.max(0.01, sp * 100)} 100;stroke-dashoffset:${Math.max(0.01, sp * 100)}"/>${night ? "" : `<circle class="sun-orb-halo" cx="${sx}" cy="${sy}" r="14"/><circle class="sun-orb" cx="${sx}" cy="${sy}" r="8"/>`}</svg><div class="row"><span>↑ ${hr(sr, 1)}</span><span class="mu">${Math.floor(dl / 60)}h ${Math.round(dl % 60)}m of daylight</span><span>↓ ${hr(ss, 1)}</span></div>`,
             "w2",
             7,
           ) +
@@ -2265,10 +2335,14 @@
           90,
         );
         cities();
-        $("#ft").textContent =
+        $("#ft").innerHTML =
           "Updated " +
           hr(c.time, 1) +
-          " IST · Weather & location data: Open-Meteo · CC BY 4.0";
+          ' IST · Weather & location data: Open-Meteo · CC BY 4.0 · <a href="' +
+          GITHUB_REPO_URL +
+          '" target="_blank" rel="noopener noreferrer">GitHub source ↗</a> · <span class="footer-credit">Built by ' +
+          esc(DEVELOPER_NAME) +
+          "</span>";
         setupScrollReveal();
       }
 
