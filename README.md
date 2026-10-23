@@ -72,8 +72,6 @@ Mausam India adapts to phone and tablet screens, with both light and dark themes
 
 <p align="center">
   <img src="screenshots/mobile-iphone-17-pro-max-dark.png" alt="Mausam India on iPhone 17 Pro Max — dark theme" width="180">
-  <img src="screenshots/mobile-galaxy-s24-ultra.png" alt="Mausam India on Galaxy S24 Ultra" width="150">
-  <img src="screenshots/mobile-iphone-16-pro.png" alt="Mausam India on iPhone 16 Pro" width="150">
   <img src="screenshots/mobile-iphone-17-pro-max-light.png" alt="Mausam India on iPhone 17 Pro Max — light theme" width="180">
 </p>
 
