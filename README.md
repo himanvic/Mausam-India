@@ -65,3 +65,20 @@ The weather dashboard itself does **not** need Supabase. Enable it only if you w
 5. Redeploy the updated HTML to Cloudflare Pages. Click the cloud icon, enter your email, and follow the link.
 
 Row Level Security is enabled in the provided SQL, and policies restrict each signed-in user to their own saved locations. Keep the public anon/publishable key paired with those policies. Supabase Free may pause low-activity projects after 7 days; live weather remains independent, but cloud sync will be unavailable until the project resumes.
+
+## 📱 Mobile & Tablet Preview
+
+Mausam India adapts to phone and tablet screens, with both light and dark themes.
+
+<p align="center">
+  <img src="screenshots/mobile-iphone-17-pro-max-dark.png" alt="Mausam India on iPhone 17 Pro Max — dark theme" width="180">
+  <img src="screenshots/mobile-galaxy-s24-ultra.png" alt="Mausam India on Galaxy S24 Ultra" width="150">
+  <img src="screenshots/mobile-iphone-16-pro.png" alt="Mausam India on iPhone 16 Pro" width="150">
+  <img src="screenshots/mobile-iphone-17-pro-max-light.png" alt="Mausam India on iPhone 17 Pro Max — light theme" width="180">
+</p>
+
+### Tablet Preview
+
+<p align="center">
+  <img src="screenshots/mobile-ipad-mini.png" alt="Mausam India on iPad mini" width="520">
+</p>
