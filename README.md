@@ -1,4 +1,22 @@
-# Mausam India
+<p align="center">
+  <img src="assets/mausam-logo.svg" alt="Mausam logo" width="90">
+</p>
+
+<h1 align="center">Mausam India</h1>
+
+<p align="center">
+  Your weather, beautifully presented.
+  <br>
+  Live weather, forecasts and air quality across India.
+</p>
+
+<p align="center">
+  <a href="https://mausam-india.pages.dev">🌐 Live Website</a>
+  &nbsp; • &nbsp;
+  <a href="#-mobile--tablet-preview">📱 Mobile Preview</a>
+</p>
+
+---
 
 A responsive, animated India-focused weather dashboard built from the supplied `wherther index.html` and packaged for Cloudflare Pages.
 
@@ -72,6 +90,7 @@ Mausam India adapts to phone and tablet screens, with both light and dark themes
 
 <p align="center">
   <img src="screenshots/mobile-iphone-17-pro-max-dark.png" alt="Mausam India on iPhone 17 Pro Max — dark theme" width="180">
+  
   <img src="screenshots/mobile-iphone-17-pro-max-light.png" alt="Mausam India on iPhone 17 Pro Max — light theme" width="180">
 </p>
 
