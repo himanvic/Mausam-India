@@ -84,23 +84,33 @@ The weather dashboard itself does **not** need Supabase. Enable it only if you w
 
 Row Level Security is enabled in the provided SQL, and policies restrict each signed-in user to their own saved locations. Keep the public anon/publishable key paired with those policies. Supabase Free may pause low-activity projects after 7 days; live weather remains independent, but cloud sync will be unavailable until the project resumes.
 
-## 📱 Mobile & Tablet Preview
+## 📱 Screenshots
 
-Mausam India adapts to phone and tablet screens, with both light and dark themes.
+### iPad and tablet views
 
-<p align="center">
-  <img src="screenshots/mobile-iphone-17-pro-max-dark.png" alt="Mausam India on iPhone 17 Pro Max — dark theme" width="180">
-
-  <br>
-  
-  <img src="screenshots/mobile-iphone-17-pro-max-light.png" alt="Mausam India on iPhone 17 Pro Max — light theme" width="180">
-</p>
-
-### Tablet Preview
-
-<p align="center">
-  <img src="screenshots/mobile-ipad-mini.png" alt="Mausam India on iPad mini" width="520">
-</p>
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <img src="screenshots/mausam-ipad-dashboard.png" alt="Mausam India dashboard on iPad" width="100%">
+      <br><sub>Weather dashboard</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="screenshots/mausam-aqi-history.png" alt="Seven-day AQI history popup" width="100%">
+      <br><sub>Animated AQI history</sub>
+    </td>
+  </tr>
+  <tr><td colspan="2" height="18"></td></tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="screenshots/mausam-ipad-weather.png" alt="Weather and air quality overview" width="100%">
+      <br><sub>Weather and Indian AQI</sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="screenshots/mausam-iphone.png" alt="Mausam India on iPhone" width="65%">
+      <br><sub>iPhone responsive view</sub>
+    </td>
+  </tr>
+</table>
 
 # Mausam India — Scroll Animation Update
 
