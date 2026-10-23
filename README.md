@@ -90,6 +90,8 @@ Mausam India adapts to phone and tablet screens, with both light and dark themes
 
 <p align="center">
   <img src="screenshots/mobile-iphone-17-pro-max-dark.png" alt="Mausam India on iPhone 17 Pro Max — dark theme" width="180">
+
+  <br>
   
   <img src="screenshots/mobile-iphone-17-pro-max-light.png" alt="Mausam India on iPhone 17 Pro Max — light theme" width="180">
 </p>
@@ -99,3 +101,16 @@ Mausam India adapts to phone and tablet screens, with both light and dark themes
 <p align="center">
   <img src="screenshots/mobile-ipad-mini.png" alt="Mausam India on iPad mini" width="520">
 </p>
+
+# Mausam India — Scroll Animation Update
+
+This package adds subtle scroll-triggered reveal animations to hourly forecast items, 7-day forecast rows, pollutant cards, quick-city cards, inline weather recommendation pills, detail cards, and the AQI history chart. The animation runs once as each item enters view and respects `prefers-reduced-motion`.
+
+## Deploy
+
+1. Replace your existing `index.html` with this package's `index.html`.
+2. Keep `functions/[[path]].js` under the same `functions` directory in your Cloudflare Pages project.
+3. Preserve any newer footer GitHub link/developer credit you added after the source copy used for this update.
+4. Commit and push to the production branch connected to Cloudflare Pages.
+
+The AQI history remains a model-based CPCB-style estimate, not an official CPCB monitoring-station record.

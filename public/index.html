@@ -22,11 +22,6 @@
       rel="stylesheet"
     />
     <style>
-      #ft a {
-        color: inherit;
-        text-decoration: underline;
-        text-underline-offset: 3px;
-      }
       @property --bg1 {
         syntax: "<color>";
         inherits: true;
@@ -767,6 +762,196 @@
           gap: 12px;
         }
       }
+      /* Daily guide and seven-day estimated AQI history */
+      .guide-head,
+      .history-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .guide-lede,
+      .history-lede {
+        color: var(--mu);
+        font-size: 12px;
+        line-height: 1.6;
+        margin-top: 5px;
+      }
+      .guide-toggle {
+        flex: none;
+        border: 1px solid var(--bd);
+        border-radius: 11px;
+        padding: 8px 11px;
+        background: color-mix(in srgb, var(--tx) 5%, transparent);
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .guide-toggle:hover {
+        border-color: var(--ac);
+        background: color-mix(in srgb, var(--ac) 10%, transparent);
+      }
+      .guide-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+      }
+      .advice-item {
+        min-width: 0;
+        border: 1px solid var(--bd);
+        border-radius: 18px;
+        padding: 15px;
+        background: color-mix(in srgb, var(--tx) 3%, transparent);
+        animation: up 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+      }
+      .advice-top {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        margin-bottom: 9px;
+      }
+      .advice-icon {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        flex: none;
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--ac) 13%, transparent);
+        font-size: 20px;
+      }
+      .advice-label {
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .advice-title {
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.35;
+        margin-bottom: 6px;
+      }
+      .advice-copy {
+        font-size: 12px;
+        color: var(--mu);
+        line-height: 1.6;
+      }
+      .guide-disclaimer,
+      .history-footnote {
+        font-size: 11px;
+        line-height: 1.55;
+        color: var(--mu);
+        margin-top: 14px;
+      }
+      .guide-content[hidden] {
+        display: none !important;
+      }
+      .history-badge {
+        border: 1px solid var(--bd);
+        border-radius: 999px;
+        padding: 6px 9px;
+        font-size: 10px;
+        color: var(--mu);
+        white-space: nowrap;
+      }
+      .history-scroll {
+        overflow-x: auto;
+        padding: 12px 2px 4px;
+        scrollbar-width: thin;
+      }
+      .aqi-history-chart {
+        height: 190px;
+        min-width: 520px;
+        display: flex;
+        align-items: stretch;
+        gap: 12px;
+        padding: 10px 4px 0;
+        border-bottom: 1px solid var(--bd);
+      }
+      .aqi-history-day {
+        flex: 1;
+        min-width: 55px;
+        display: grid;
+        grid-template-rows: 20px 1fr 22px 24px;
+        justify-items: center;
+        align-items: end;
+        gap: 5px;
+      }
+      .aqi-history-number {
+        font-size: 12px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        align-self: center;
+      }
+      .aqi-history-bar-wrap {
+        height: 120px;
+        width: 100%;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      .aqi-history-bar {
+        width: min(34px, 65%);
+        min-height: 4px;
+        border-radius: 8px 8px 2px 2px;
+        transform-origin: bottom;
+        animation: aqBar 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      @keyframes aqBar {
+        from {
+          transform: scaleY(0.06);
+          opacity: 0.35;
+        }
+        to {
+          transform: scaleY(1);
+          opacity: 1;
+        }
+      }
+      .aqi-history-date {
+        font-size: 10px;
+        color: var(--mu);
+        white-space: nowrap;
+        align-self: center;
+      }
+      .aqi-history-category {
+        font-size: 9px;
+        color: var(--mu);
+        white-space: nowrap;
+        align-self: start;
+      }
+      @media (max-width: 900px) {
+        .guide-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 560px) {
+        .guide-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        .advice-item {
+          padding: 12px;
+        }
+        .advice-top {
+          align-items: flex-start;
+          gap: 7px;
+        }
+        .advice-icon {
+          width: 31px;
+          height: 31px;
+          font-size: 17px;
+        }
+        .advice-title {
+          font-size: 13px;
+        }
+        .advice-copy {
+          font-size: 11px;
+        }
+        .aqi-history-chart {
+          min-width: 490px;
+          gap: 8px;
+        }
+      }
       @media (prefers-reduced-motion: reduce) {
         * {
           animation: none !important;
@@ -774,6 +959,216 @@
         }
         .ln {
           stroke-dashoffset: 0;
+        }
+      }
+      /* Compact recommendations sit beside the current weather, not in a separate page section. */
+      .daily-advice-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 7px;
+        margin: 10px 0 3px;
+        min-width: 0;
+      }
+      .daily-advice-label {
+        width: 100%;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--mu);
+      }
+      .advice-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 34px;
+        max-width: 100%;
+        padding: 7px 10px;
+        border: 1px solid var(--bd);
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--tx) 4%, transparent);
+        font-size: 11px;
+        line-height: 1.25;
+        text-align: left;
+        transition:
+          transform 0.2s,
+          border-color 0.2s,
+          background 0.2s;
+      }
+      .advice-pill:hover {
+        transform: translateY(-2px);
+        border-color: var(--ac);
+        background: color-mix(in srgb, var(--ac) 9%, transparent);
+      }
+      .advice-pill .advice-emoji {
+        font-size: 16px;
+        flex: none;
+      }
+      .advice-pill .advice-pill-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .aqi-history-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
+        margin-top: 13px;
+        padding: 11px 13px;
+        border: 1px solid color-mix(in srgb, var(--ac) 35%, var(--bd));
+        border-radius: 14px;
+        background: color-mix(in srgb, var(--ac) 9%, transparent);
+        font-size: 12px;
+        font-weight: 700;
+        transition:
+          transform 0.2s,
+          background 0.2s,
+          border-color 0.2s;
+      }
+      .aqi-history-trigger:hover {
+        transform: translateY(-1px);
+        background: color-mix(in srgb, var(--ac) 16%, transparent);
+        border-color: var(--ac);
+      }
+      .history-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 100;
+        display: none;
+        place-items: center;
+        padding: 18px;
+        background: rgba(4, 9, 24, 0.42);
+        backdrop-filter: blur(13px) saturate(1.3);
+        -webkit-backdrop-filter: blur(13px) saturate(1.3);
+      }
+      .history-modal[hidden] {
+        display: none !important;
+      }
+      .history-modal.open {
+        display: grid;
+        animation: historyFade 0.22s ease both;
+      }
+      .history-modal-sheet {
+        width: min(780px, 100%);
+        max-height: min(86vh, 800px);
+        overflow: auto;
+        padding: clamp(18px, 3vw, 28px);
+        border: 1px solid color-mix(in srgb, var(--bd) 75%, white 25%);
+        border-radius: 26px;
+        background: color-mix(in srgb, var(--card) 78%, transparent);
+        color: var(--tx);
+        box-shadow: 0 30px 100px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(32px) saturate(1.45);
+        -webkit-backdrop-filter: blur(32px) saturate(1.45);
+        animation: historyPop 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+      }
+      .history-modal-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 12px;
+      }
+      .history-modal-head h2 {
+        font: 600 clamp(22px, 4vw, 30px)/1.15 var(--d);
+        letter-spacing: -0.03em;
+        color: var(--tx);
+        margin: 0;
+      }
+      .history-modal-head p {
+        color: var(--mu);
+        font-size: 12px;
+        margin-top: 6px;
+      }
+      .history-modal-close {
+        width: 38px;
+        height: 38px;
+        flex: none;
+        border: 1px solid var(--bd);
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--tx) 5%, transparent);
+        font-size: 20px;
+      }
+      .history-modal-close:hover {
+        border-color: var(--ac);
+        background: color-mix(in srgb, var(--ac) 12%, transparent);
+      }
+      @keyframes historyFade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes historyPop {
+        from {
+          opacity: 0;
+          transform: translateY(14px) scale(0.97);
+          filter: blur(4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          filter: blur(0);
+        }
+      }
+      @media (max-width: 560px) {
+        .daily-advice-row {
+          gap: 6px;
+        }
+        .advice-pill {
+          padding: 7px 8px;
+          font-size: 10px;
+        }
+        .history-modal {
+          padding: 10px;
+        }
+        .history-modal-sheet {
+          border-radius: 22px;
+          max-height: 90vh;
+        }
+        .aqi-history-chart {
+          min-width: 490px;
+          gap: 8px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .history-modal.open,
+        .history-modal-sheet {
+          animation: none !important;
+        }
+      }
+      /* Subtle scroll reveals for forecast rows, recommendation chips, detail cards and AQI history bars. */
+      .scroll-reveal-target {
+        opacity: 0;
+        transform: translate3d(0, 16px, 0);
+        filter: blur(1.5px);
+        transition:
+          opacity 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+          transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1),
+          filter 0.55s ease;
+        transition-delay: var(--scroll-delay, 0ms);
+      }
+      .scroll-reveal-target.is-visible {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+        filter: blur(0);
+      }
+      .ct.scroll-reveal-target.is-visible:hover,
+      .mini.scroll-reveal-target.is-visible:hover {
+        transform: translateY(-3px);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .scroll-reveal-target,
+        .scroll-reveal-target.is-visible {
+          opacity: 1 !important;
+          transform: none !important;
+          filter: none !important;
+          transition: none !important;
         }
       }
     </style>
@@ -828,7 +1223,7 @@
       <section class="card wide" id="hourly" style="--i: 2"></section>
       <section class="card wk" id="week" style="--i: 3"></section>
       <div class="dt" id="det"></div>
-      <section class="card wide" id="cities" style="--i: 5"></section>
+      <section class="card wide" id="cities" style="--i: 7"></section>
     </main>
     <footer id="ft"></footer>
     <div id="toast" role="status"></div>
@@ -878,6 +1273,32 @@
         >
           Cloud sync is optional and not configured yet.
         </p>
+      </section>
+    </div>
+    <div id="aqiHistoryModal" class="history-modal" hidden>
+      <section
+        class="history-modal-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="aqiHistoryTitle"
+      >
+        <div class="history-modal-head">
+          <div>
+            <h2 id="aqiHistoryTitle">7-day AQI history</h2>
+            <p id="aqiHistorySubtitle">
+              Recent estimated Indian air-quality trend
+            </p>
+          </div>
+          <button
+            type="button"
+            id="aqiHistoryClose"
+            class="history-modal-close"
+            aria-label="Close AQI history"
+          >
+            ×
+          </button>
+        </div>
+        <div id="aqiHistoryContent"></div>
       </section>
     </div>
     <script>
@@ -1358,6 +1779,122 @@
           worst: worst.map((s) => s.label),
         };
       }
+      function dateOffset(day, offset) {
+        const d = new Date(day + "T00:00:00Z");
+        d.setUTCDate(d.getUTCDate() + offset);
+        return d.toISOString().slice(0, 10);
+      }
+      function validPollutantValues(values) {
+        return Array.isArray(values)
+          ? values
+              .filter(
+                (v) =>
+                  v !== null &&
+                  v !== undefined &&
+                  v !== "" &&
+                  Number.isFinite(Number(v)),
+              )
+              .map(Number)
+          : [];
+      }
+      function calcIndiaAQIForDay(payload, day) {
+        const h = payload && payload.hourly;
+        if (!h || !Array.isArray(h.time)) return null;
+        const dayIndices = [];
+        for (let i = 0; i < h.time.length; i++)
+          if (String(h.time[i]).slice(0, 10) === day) dayIndices.push(i);
+        if (!dayIndices.length) return null;
+        const subs = [];
+        for (const [key, config] of Object.entries(CPCB_POLLUTANTS)) {
+          const series = h[key];
+          if (!Array.isArray(series)) continue;
+          let sub = null;
+          if (config.hours === 24) {
+            const values = validPollutantValues(
+              dayIndices.map((i) => series[i]),
+            );
+            if (values.length >= config.min) {
+              const mean =
+                values.reduce((sum, value) => sum + value, 0) / values.length;
+              sub = cpcbSubIndex(mean * (config.scale || 1), config.breaks);
+            }
+          } else {
+            // CPCB uses rolling 8-hour windows for CO and ozone. Use the highest
+            // available rolling sub-index whose endpoint falls on this date.
+            let best = null;
+            for (const end of dayIndices) {
+              const start = end - config.hours + 1;
+              if (start < 0) continue;
+              const values = validPollutantValues(series.slice(start, end + 1));
+              if (values.length < config.min) continue;
+              const mean =
+                values.reduce((sum, value) => sum + value, 0) / values.length;
+              const candidate = cpcbSubIndex(
+                mean * (config.scale || 1),
+                config.breaks,
+              );
+              if (candidate && (!best || candidate.value > best.value))
+                best = candidate;
+            }
+            sub = best;
+          }
+          if (sub) subs.push({ key, label: config.label, ...sub });
+        }
+        const hasParticulate = subs.some(
+          (s) => s.key === "pm2_5" || s.key === "pm10",
+        );
+        if (subs.length < 3 || !hasParticulate) return null;
+        const max = Math.max(...subs.map((s) => s.value));
+        const worst = subs.filter((s) => s.value === max);
+        return {
+          value: max,
+          openEnded: worst.some((s) => s.openEnded),
+          pollutants: subs.length,
+          worst: worst.map((s) => s.label),
+        };
+      }
+      function renderAQIHistory(payload, currentTime) {
+        const target = $("#aqiHistoryContent");
+        if (!target) return;
+        if (
+          !payload ||
+          !payload.hourly ||
+          !Array.isArray(payload.hourly.time)
+        ) {
+          target.innerHTML =
+            '<div class="history-head"><span class="history-badge">DATA UNAVAILABLE</span></div><p class="history-footnote">Air-quality history could not be loaded for this location. No values are fabricated.</p>';
+          return;
+        }
+        const today = String(
+          currentTime ||
+            payload.hourly.time[payload.hourly.time.length - 1] ||
+            "",
+        ).slice(0, 10);
+        const records = Array.from({ length: 7 }, (_, i) => {
+          const date = dateOffset(today, i - 7);
+          return { date, value: calcIndiaAQIForDay(payload, date) };
+        });
+        const any = records.some((record) => record.value);
+        const chart = records
+          .map((record, i) => {
+            const v = record.value;
+            const dateLabel = new Date(
+              record.date + "T12:00:00Z",
+            ).toLocaleDateString("en-IN", {
+              weekday: "short",
+              day: "numeric",
+              timeZone: "UTC",
+            });
+            if (!v)
+              return `<div class="aqi-history-day" title="Not enough modelled hourly readings for ${record.date}"><span class="aqi-history-number mu">—</span><div class="aqi-history-bar-wrap"></div><span class="aqi-history-date">${dateLabel}</span><span class="aqi-history-category">No data</span></div>`;
+            const [label, color] = aqC(v.value),
+              barHeight = Math.max(4, (Math.min(v.value, 500) / 500) * 120),
+              valueLabel = v.openEnded ? "401+" : String(v.value);
+            return `<div class="aqi-history-day" title="${record.date}: ${valueLabel} · ${label}"><span class="aqi-history-number" style="color:${color}">${valueLabel}</span><div class="aqi-history-bar-wrap"><div class="aqi-history-bar" style="height:${barHeight}px;background:${color};animation-delay:${i * 55}ms"></div></div><span class="aqi-history-date">${dateLabel}</span><span class="aqi-history-category">${label}</span></div>`;
+          })
+          .join("");
+        target.innerHTML = `<div class="history-head"><p class="history-lede">Last seven completed days for ${esc(S.loc.n)} · CPCB-style estimates</p><span class="history-badge">MODEL DATA · NOT CPCB STATIONS</span></div>${any ? `<div class="history-scroll"><div class="aqi-history-chart" role="img" aria-label="Seven-day estimated Indian AQI bar chart">${chart}</div></div>` : '<p class="history-footnote">There are not enough modelled hourly pollutant readings to calculate a CPCB-style estimate for these days. No values are fabricated.</p>'}<p class="history-footnote">These are estimates calculated from Open-Meteo archived model concentrations, not verified historical readings from CPCB monitoring stations. The CPCB index normally uses eight pollutants; ammonia and lead are not available in this feed, so estimates may differ from official AQI.</p>`;
+      }
       const uvL = (v) =>
         v < 3
           ? "Low"
@@ -1369,6 +1906,35 @@
                 ? "Very high"
                 : "Extreme";
 
+      /* ---------- scroll-triggered micro-animations ---------- */
+      const scrollRevealObserver =
+        !RM && "IntersectionObserver" in window
+          ? new IntersectionObserver(
+              (entries) => {
+                entries.forEach((entry) => {
+                  if (entry.isIntersecting) {
+                    entry.target.classList.add("is-visible");
+                    scrollRevealObserver.unobserve(entry.target);
+                  }
+                });
+              },
+              { threshold: 0.12, rootMargin: "0px 0px -24px 0px" },
+            )
+          : null;
+      function setupScrollReveal(root = document) {
+        const selector =
+          ".hc,.dy,.ct,.advice-pill,#det > .mini,.pg > div,.aqi-history-day";
+        if (!root || typeof root.querySelectorAll !== "function") return;
+        root.querySelectorAll(selector).forEach((el, index) => {
+          if (el.dataset.scrollRevealReady === "1") return;
+          el.dataset.scrollRevealReady = "1";
+          el.classList.add("scroll-reveal-target");
+          el.style.setProperty("--scroll-delay", `${(index % 5) * 42}ms`);
+          if (scrollRevealObserver) scrollRevealObserver.observe(el);
+          else el.classList.add("is-visible");
+        });
+      }
+
       /* ---------- data ---------- */
       async function load() {
         document.body.classList.add("ld");
@@ -1379,7 +1945,7 @@
               `${API}latitude=${la}&longitude=${lo}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,visibility&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max&timezone=Asia%2FKolkata&forecast_days=7`,
             ),
             j(
-              `${AQU}latitude=${la}&longitude=${lo}&current=pm2_5,pm10,nitrogen_dioxide,ozone,sulphur_dioxide,carbon_monoxide&hourly=pm2_5,pm10,nitrogen_dioxide,ozone,sulphur_dioxide,carbon_monoxide&past_days=1&forecast_days=2&timezone=Asia%2FKolkata`,
+              `${AQU}latitude=${la}&longitude=${lo}&current=pm2_5,pm10,nitrogen_dioxide,ozone,sulphur_dioxide,carbon_monoxide&hourly=pm2_5,pm10,nitrogen_dioxide,ozone,sulphur_dioxide,carbon_monoxide&past_days=7&forecast_days=2&timezone=Asia%2FKolkata`,
             ).catch(() => null),
             CT ||
               j(
@@ -1397,6 +1963,119 @@
         document.body.classList.remove("ld");
       }
 
+      function renderDailyGuide(c, d, H, hs, aq, pop, indiaAQI) {
+        const target = $("#dailyAdvice");
+        if (!target) return;
+        const feels = Number(c.apparent_temperature ?? c.temperature_2m),
+          uv = Number(c.uv_index ?? d.uv_index_max?.[0] ?? 0),
+          dayRain = Number(d.precipitation_probability_max?.[0] ?? 0),
+          rainChance = Math.max(Number(pop) || 0, dayRain),
+          wind = Number(c.wind_speed_10m) || 0;
+        let wearTitle,
+          wearCopy,
+          wearIcon = "👕";
+        if (feels <= 8) {
+          wearTitle = "Warm layers";
+          wearCopy =
+            "Wear a warm jacket and layers, especially early and late in the day.";
+          wearIcon = "🧥";
+        } else if (feels <= 16) {
+          wearTitle = "Light jacket";
+          wearCopy =
+            "A sweater or light jacket should help during cooler hours.";
+          wearIcon = "🧥";
+        } else if (feels <= 25) {
+          wearTitle = "Light layers";
+          wearCopy =
+            "Comfortable everyday layers should work well for these temperatures.";
+          wearIcon = "👕";
+        } else if (feels >= 34) {
+          wearTitle = "Breathable clothes";
+          wearCopy =
+            "Choose light, breathable clothing and carry water. Avoid overexertion in peak heat.";
+          wearIcon = "🥤";
+        } else {
+          wearTitle = "Light clothing";
+          wearCopy =
+            "Light cotton or other breathable clothing should feel comfortable.";
+          wearIcon = "👕";
+        }
+        let rainTitle = "Umbrella unlikely",
+          rainCopy = "Rain chance looks limited in the available forecast.",
+          rainIcon = "🌤️";
+        if (rainChance >= 60 || ["rain", "storm"].includes(mode)) {
+          rainTitle = "Carry an umbrella";
+          rainCopy = `Rain is possible (${Math.round(rainChance)}% forecast chance). An umbrella or rain jacket may help.`;
+          rainIcon = "☔";
+        } else if (rainChance >= 35) {
+          rainTitle = "Compact umbrella";
+          rainCopy = `There is a ${Math.round(rainChance)}% forecast chance of rain. Consider a compact umbrella.`;
+          rainIcon = "🌦️";
+        } else if (wind >= 30) {
+          rainTitle = "Windy conditions";
+          rainCopy =
+            "Expect breezy conditions; a light wind-resistant layer may be useful.";
+          rainIcon = "💨";
+        }
+        let sunTitle = "UV low–moderate",
+          sunCopy =
+            "UV is currently low to moderate; use normal sun-safety precautions.",
+          sunIcon = "🌤️";
+        if (uv >= 8) {
+          sunTitle = "High UV protection";
+          sunCopy =
+            "Use sunscreen, sunglasses and a hat; seek shade around midday.";
+          sunIcon = "🧴";
+        } else if (uv >= 6) {
+          sunTitle = "Protect from UV";
+          sunCopy = "Sunscreen, a cap and sunglasses are a good idea outdoors.";
+          sunIcon = "🧢";
+        } else if (uv >= 3) {
+          sunTitle = "Bring sunglasses";
+          sunCopy =
+            "Sunglasses or a cap can help during extended time outdoors.";
+          sunIcon = "🕶️";
+        }
+        let airTitle = "Air looks manageable",
+          airCopy =
+            "This is a modelled estimate, not an official CPCB reading. Sensitive people should follow local advisories.",
+          airIcon = "🍃";
+        if (aq == null) {
+          airTitle = "Check local AQI";
+          airCopy =
+            "Modelled CPCB-style AQI is unavailable. Check nearby official readings before strenuous outdoor activity.";
+          airIcon = "🌬️";
+        } else if (aq > 300) {
+          airTitle = "Limit outdoor exertion";
+          airCopy =
+            "Estimated AQI is very poor or severe. Reduce outdoor activity and follow local advisories; a well-fitting N95/FFP2 may reduce particle exposure if going outside is unavoidable.";
+          airIcon = "😷";
+        } else if (aq > 200) {
+          airTitle = "Consider a respirator";
+          airCopy =
+            "Estimated AQI is poor or worse. Reduce strenuous outdoor activity; a well-fitting N95/FFP2 may reduce particle exposure when outdoors.";
+          airIcon = "😷";
+        } else if (aq > 100) {
+          airTitle = "Sensitive groups take care";
+          airCopy =
+            "People sensitive to pollution may prefer shorter, less strenuous outdoor activity. Check local official readings.";
+          airIcon = "🌫️";
+        }
+        const items = [
+          ["WEAR", wearIcon, wearTitle, wearCopy],
+          ["RAIN & WIND", rainIcon, rainTitle, rainCopy],
+          ["SUN", sunIcon, sunTitle, sunCopy],
+          ["AIR", airIcon, airTitle, airCopy],
+        ];
+        target.innerHTML =
+          '<span class="daily-advice-label">Today’s quick guide · tap or hover for details</span>' +
+          items
+            .map(
+              ([label, icon, title, copy]) =>
+                `<span class="advice-pill" title="${esc(copy)}" aria-label="${esc(label + ": " + title + ". " + copy)}"><span class="advice-emoji" aria-hidden="true">${icon}</span><span class="advice-pill-text">${title}</span></span>`,
+            )
+            .join("");
+      }
       function render() {
         const c = D.current,
           d = D.daily,
@@ -1439,7 +2118,7 @@
         $("#hero").innerHTML =
           `<div class="row"><div><h1>${esc(S.loc.n)}</h1><p class="mu">${new Date(c.time).toLocaleString("en-IN", { weekday: "long", day: "numeric", month: "long", hour: "numeric", minute: "2-digit", hour12: true })}</p></div><button id="fav" aria-label="Save place" title="Save place">${fav ? "★" : "☆"}</button></div>
  <div class="big"><div class="ic">${wx.i}</div><div><div class="t"><span id="tv">0</span><sup>${U()}</sup></div><div class="cd">${wx.t}</div></div></div>
- <div class="chips"><span>Feels like ${T(c.apparent_temperature)}°</span><span>High ${T(d.temperature_2m_max[0])}° · Low ${T(d.temperature_2m_min[0])}°</span><span>💧 ${c.relative_humidity_2m}%</span><span>💨 ${Math.round(c.wind_speed_10m)} km/h ${dn(c.wind_direction_10m)}</span></div><div class="tip">${tip}</div>`;
+ <div class="chips"><span>Feels like ${T(c.apparent_temperature)}°</span><span>High ${T(d.temperature_2m_max[0])}° · Low ${T(d.temperature_2m_min[0])}°</span><span>💧 ${c.relative_humidity_2m}%</span><span>💨 ${Math.round(c.wind_speed_10m)} km/h ${dn(c.wind_direction_10m)}</span></div><div id="dailyAdvice" class="daily-advice-row" aria-label="Today's weather recommendations"></div><div class="tip">${tip}</div>`;
         cnt($("#tv"), T(c.temperature_2m));
 
         if (aq != null) {
@@ -1461,10 +2140,11 @@
               })
               .join(
                 "",
-              )}</div><p class="mu" style="font-size:12px">Concentrations: µg/m³; CO: mg/m³.</p><p class="mu" style="font-size:11px;line-height:1.5">Estimated from Open-Meteo model concentrations using CPCB breakpoints and rolling averages. This is not an official CPCB station reading; NH₃ and Pb are not available in this feed.</p>`;
+              )}</div><p class="mu" style="font-size:12px">Concentrations: µg/m³; CO: mg/m³.</p><p class="mu" style="font-size:11px;line-height:1.5">Estimated from Open-Meteo model concentrations using CPCB breakpoints and rolling averages. This is not an official CPCB station reading; NH₃ and Pb are not available in this feed.</p><button type="button" class="aqi-history-trigger" id="openAQIHistory"><span>📈 View last 7 days AQI history</span><span aria-hidden="true">↗</span></button>`;
         } else
           $("#aqi").innerHTML =
-            '<h2>Indian air quality</h2><p class="mu">A CPCB-style estimate is unavailable because this location does not have enough modelled pollutant history to meet the minimum averaging-window requirements. Pollutant forecasts may still be unavailable.</p>';
+            '<h2>Indian air quality</h2><p class="mu">A CPCB-style estimate is unavailable because this location does not have enough modelled pollutant history to meet the minimum averaging-window requirements. Pollutant forecasts may still be unavailable.</p><button type="button" class="aqi-history-trigger" id="openAQIHistory"><span>📈 View last 7 days AQI history</span><span aria-hidden="true">↗</span></button>';
+        renderDailyGuide(c, d, H, hs, aq, pop, indiaAQI);
 
         const ts = hs.map((i) => H.temperature_2m[i]),
           mn = Math.min(...ts),
@@ -1585,11 +2265,11 @@
           90,
         );
         cities();
-        cities();
-        $("#ft").innerHTML =
+        $("#ft").textContent =
           "Updated " +
           hr(c.time, 1) +
-          ' IST · Weather & location data: Open-Meteo · CC BY 4.0 · <a href="https://github.com/himanvic/Mausam-India" target="_blank" rel="noopener noreferrer">GitHub source ↗</a> · Built by himanvic';
+          " IST · Weather & location data: Open-Meteo · CC BY 4.0";
+        setupScrollReveal();
       }
 
       function cities() {
@@ -1734,7 +2414,10 @@
         if (e.target === $("#cloudModal")) $("#cloudModal").hidden = true;
       });
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") $("#cloudModal").hidden = true;
+        if (e.key === "Escape") {
+          $("#cloudModal").hidden = true;
+          closeAQIHistory();
+        }
       });
       $("#cloudSend").onclick = async () => {
         const email = $("#cloudEmail").value.trim();
@@ -1803,6 +2486,36 @@
           cloudStatus("Favorites synced successfully.");
       }
 
+      /* ---------- AQI history modal ---------- */
+      function openAQIHistory() {
+        const modal = $("#aqiHistoryModal");
+        if (!modal) return;
+        $("#aqiHistoryTitle").textContent = "7-day AQI history";
+        $("#aqiHistorySubtitle").textContent =
+          "Recent air-quality trend for " +
+          S.loc.n +
+          " · model-based estimates";
+        renderAQIHistory(A, D && D.current ? D.current.time : null);
+        modal.hidden = false;
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+        setupScrollReveal($("#aqiHistoryContent"));
+        setTimeout(() => $("#aqiHistoryClose")?.focus(), 40);
+      }
+      function closeAQIHistory() {
+        const modal = $("#aqiHistoryModal");
+        if (!modal || modal.hidden) return;
+        modal.classList.remove("open");
+        modal.hidden = true;
+        document.body.style.overflow = "";
+        const trigger = $("#openAQIHistory");
+        if (trigger) trigger.focus();
+      }
+      $("#aqiHistoryClose").addEventListener("click", closeAQIHistory);
+      $("#aqiHistoryModal").addEventListener("click", (e) => {
+        if (e.target === $("#aqiHistoryModal")) closeAQIHistory();
+      });
+
       /* ---------- interactions ---------- */
       function go(n, la, lo) {
         S.loc = { n, la, lo };
@@ -1815,6 +2528,10 @@
       document.addEventListener("click", (e) => {
         const t = e.target;
         let b;
+        if (t.closest("#openAQIHistory")) {
+          openAQIHistory();
+          return;
+        }
         if (!t.closest(".sw")) $("#sug").style.display = "none";
         if ((b = t.closest("[data-g]"))) {
           const [n, la, lo] = JSON.parse(b.dataset.g);
