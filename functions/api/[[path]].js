@@ -127,7 +127,7 @@ export async function onRequest(context) {
     const coordinateError = validateCoordinates(params);
     if (coordinateError) return coordinateError;
     return proxyJson(context, "https://air-quality-api.open-meteo.com/v1/air-quality", [
-      "latitude", "longitude", "current", "hourly", "timezone", "forecast_days",
+      "latitude", "longitude", "current", "hourly", "timezone", "forecast_days", "past_days",
       "domains", "start_date", "end_date",
     ], 900, { defaults: { timezone: "Asia/Kolkata" } });
   }
