@@ -7,7 +7,7 @@
 ██║╚██╔╝██║██╔══██║██║   ██║╚════██║██╔══██║██║╚██╔╝██║    ██║██║╚██╗██║██║  ██║██║██╔══██║
 ██║ ╚═╝ ██║██║  ██║╚██████╔╝███████║██║  ██║██║ ╚═╝ ██║    ██║██║ ╚████║██████╔╝██║██║  ██║
 ╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝    ╚═╝╚═╝  ╚═══╝╚═════╝ ╚═╝╚═╝  ╚═╝
-              Live Hyperlocal Weather, Official CPCB AQI & NASA Satellite Intelligence
+
 ```
 
 [![Deploy to Cloudflare Pages](https://img.shields.io/badge/Deploy-Cloudflare%20Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/)
