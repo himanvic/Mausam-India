@@ -1,7 +1,37 @@
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
   "x-content-type-options": "nosniff",
+  "x-frame-options": "DENY",
+  "referrer-policy": "strict-origin-when-cross-origin",
 };
+
+function isTrustedOrigin(request) {
+  const origin = request.headers.get("origin");
+  const referer = request.headers.get("referer");
+
+  // Direct address bar navigation or subrequests without origin/referer headers are allowed
+  if (!origin && !referer) return true;
+
+  const trustedHostPatterns = [
+    /^localhost(:\d+)?$/,
+    /^127\.0\.0\.1(:\d+)?$/,
+    /^([a-z0-9-]+\.)?pages\.dev$/,
+    /^mausam-india\.pages\.dev$/
+  ];
+
+  const checkHost = (str) => {
+    try {
+      const u = new URL(str);
+      return trustedHostPatterns.some((pattern) => pattern.test(u.host));
+    } catch {
+      return false;
+    }
+  };
+
+  if (origin && !checkHost(origin)) return false;
+  if (referer && !checkHost(referer)) return false;
+  return true;
+}
 
 function jsonError(message, status = 400) {
   return new Response(JSON.stringify({ error: message }), {
@@ -84,7 +114,7 @@ async function proxyJson(context, upstreamBase, allowedParams, ttlSeconds, optio
     status: 200,
     headers: {
       ...JSON_HEADERS,
-      "cache-control": `public, max-age=0, s-maxage=${ttlSeconds}`,
+      "cache-control": `public, max-age=${ttlSeconds}, s-maxage=${ttlSeconds}`,
       "x-mausam-cache": "MISS",
     },
   });
@@ -131,8 +161,11 @@ async function openAQGet(url, apiKey) {
   return payload;
 }
 
-function jsonResponse(data, status = 200, ttlSeconds = 600) {
-  const headers = { ...JSON_HEADERS, "cache-control": ttlSeconds ? `public, max-age=0, s-maxage=${ttlSeconds}` : "no-store" };
+function jsonResponse(data, status = 200, ttlSeconds = 900) {
+  const headers = {
+    ...JSON_HEADERS,
+    "cache-control": ttlSeconds ? `public, max-age=${ttlSeconds}, s-maxage=${ttlSeconds}` : "no-store",
+  };
   return new Response(JSON.stringify(data), { status, headers });
 }
 
@@ -140,10 +173,11 @@ async function openAQNearest(context, params) {
   const apiKey = context.env?.OPENAQ_API_KEY;
   if (!apiKey) return jsonResponse({ available: false, status: "not_configured", error: "OpenAQ is not configured on this deployment. Add the OPENAQ_API_KEY secret in Cloudflare Pages settings." }, 503, 0);
 
-  const latRaw = params.get("latitude"), lonRaw = params.get("longitude");
+  const latRaw = params.get("lat") || params.get("latitude");
+  const lonRaw = params.get("lon") || params.get("longitude");
   const lat = Number(latRaw), lon = Number(lonRaw);
   if (!latRaw || !lonRaw || !Number.isFinite(lat) || !Number.isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-    return jsonResponse({ available: false, status: "invalid_coordinates", error: "Valid latitude and longitude are required." }, 400, 0);
+    return jsonResponse({ available: false, status: "invalid_coordinates", error: "Valid latitude (-90 to 90) and longitude (-180 to 180) are required." }, 400, 0);
   }
   const radius = Number(params.get("radius") || 25000);
   if (!Number.isInteger(radius) || radius < 1000 || radius > 25000) {
@@ -295,11 +329,18 @@ export async function onRequest(context) {
     });
   }
 
+  if (!isTrustedOrigin(context.request)) {
+    return new Response(JSON.stringify({ error: "Access forbidden from untrusted origin." }), {
+      status: 403,
+      headers: { ...JSON_HEADERS, "cache-control": "no-store" },
+    });
+  }
+
   const incoming = new URL(context.request.url);
   const route = incoming.pathname.replace(/\/+$/, "");
   const params = incoming.searchParams;
 
-  if (route === "/api/openaq/nearest") {
+  if (route === "/api/openaq" || route === "/api/openaq/nearest") {
     return openAQNearest(context, params);
   }
 

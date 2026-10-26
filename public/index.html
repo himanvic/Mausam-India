@@ -300,8 +300,9 @@
         display: flex;
         align-items: center;
         gap: 20px;
-        margin: 14px 0 4px;
+        margin: 16px 0 6px;
         flex-wrap: wrap;
+        overflow: visible;
       }
       .ic {
         font-size: clamp(80px, 15vw, 116px);
@@ -310,9 +311,11 @@
         filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.22));
       }
       .t {
-        font: 300 clamp(76px, 14vw, 128px)/1 var(--d);
+        font: 300 clamp(76px, 14vw, 128px)/1.08 var(--d);
         letter-spacing: -0.04em;
         display: flex;
+        padding-top: 6px;
+        overflow: visible;
       }
       .t sup {
         font-size: 0.28em;
@@ -2231,9 +2234,9 @@
       }
 
     </style>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
       <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#0b1329" />
   </head>
@@ -2492,12 +2495,26 @@
       };
       const wi = (c, d = 1) => {
         const w = W[c] || W[3];
-        return { t: w[0], i: c < 2 && !d ? "🌙" : w[1], k: w[2] };
+        let icon = w[1];
+        if (!d) {
+          if (c === 0 || c === 1) icon = "🌙";
+          else if (c === 2) icon = "☁️";
+          else if (c === 51 || c === 53 || c === 80) icon = "🌧️";
+        }
+        return { t: w[0], i: icon, k: w[2] };
       };
       const esc = (s) =>
         String(s).replace(
-          /[&<>"]/g,
-          (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
+          /[&<>'"`]/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+              "`": "&#96;",
+            })[c],
         );
       const T = (c) => Math.round(S.u == "c" ? c : (c * 9) / 5 + 32),
         U = () => "°" + S.u.toUpperCase();
@@ -2512,11 +2529,16 @@
           .toUpperCase();
       const dn = (d) =>
         ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(d / 45) % 8];
-      const j = (u) =>
-        fetch(u).then((r) => {
+      const j = (u) => {
+        const signal =
+          typeof AbortSignal !== "undefined" && AbortSignal.timeout
+            ? AbortSignal.timeout(8000)
+            : undefined;
+        return fetch(u, { signal }).then((r) => {
           if (!r.ok) throw Error(r.status);
           return r.json();
         });
+      };
       // When opened locally, call Open-Meteo directly so previewing the HTML still works.
       // On a deployed HTTP(S) site, use Cloudflare Pages Functions for response caching.
       const LOCAL_PREVIEW =
@@ -2543,9 +2565,17 @@
               "OpenAQ station readings load through the deployed Cloudflare Pages Function. A local file preview cannot access the server-side API secret.",
           };
         try {
+          const signal =
+            typeof AbortSignal !== "undefined" && AbortSignal.timeout
+              ? AbortSignal.timeout(8000)
+              : undefined;
           const response = await fetch(
             `${OPENAQ_API}latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&radius=25000`,
-            { headers: { accept: "application/json" }, cache: "no-store" },
+            {
+              headers: { accept: "application/json" },
+              cache: "no-store",
+              signal,
+            },
           );
           const payload = await response.json().catch(() => ({}));
           if (!response.ok)
@@ -3612,7 +3642,14 @@
 
         async function fetchRainViewerFrames() {
           try {
-            const res = await fetch("https://api.rainviewer.com/public/weather-maps.json");
+            const signal =
+              typeof AbortSignal !== "undefined" && AbortSignal.timeout
+                ? AbortSignal.timeout(8000)
+                : undefined;
+            const res = await fetch(
+              "https://api.rainviewer.com/public/weather-maps.json",
+              { signal },
+            );
             const data = await res.json();
             if (!data || !data.radar) return;
 
@@ -4370,76 +4407,128 @@
       function renderDailyGuide(c, d, H, hs, aq, pop, indiaAQI) {
         const target = $("#dailyAdvice");
         if (!target) return;
-        const feels = Number(c.apparent_temperature ?? c.temperature_2m),
-          uv = Number(c.uv_index ?? d.uv_index_max?.[0] ?? 0),
-          dayRain = Number(d.precipitation_probability_max?.[0] ?? 0),
-          rainChance = Math.max(Number(pop) || 0, dayRain),
-          wind = Number(c.wind_speed_10m) || 0;
+
+        const currentHour = new Date(c.time).getHours();
+        // After 8:00 PM, switch to Tomorrow's quick guide for night-time utility
+        const isNightPlan = currentHour >= 20;
+        const targetDayIdx = isNightPlan ? 1 : 0;
+
+        const feels = Number(
+          isNightPlan
+            ? (d.temperature_2m_max?.[1] ?? c.apparent_temperature ?? c.temperature_2m)
+            : (c.apparent_temperature ?? c.temperature_2m)
+        );
+        const uv = Number(
+          isNightPlan
+            ? (d.uv_index_max?.[1] ?? 0)
+            : (c.is_day ? (c.uv_index ?? d.uv_index_max?.[0] ?? 0) : 0)
+        );
+        const dayRain = Number(d.precipitation_probability_max?.[targetDayIdx] ?? 0);
+        const rainChance = isNightPlan ? dayRain : Math.max(Number(pop) || 0, dayRain);
+        const wind = Number(c.wind_speed_10m) || 0;
+
         let wearTitle,
           wearCopy,
           wearIcon = "👕";
         if (feels <= 8) {
           wearTitle = "Warm layers";
-          wearCopy =
-            "Wear a warm jacket and layers, especially early and late in the day.";
+          wearCopy = isNightPlan
+            ? "Tomorrow will be chilly. Keep warm jackets and thermal layers ready."
+            : "Wear a warm jacket and layers, especially early and late in the day.";
           wearIcon = "🧥";
         } else if (feels <= 16) {
           wearTitle = "Light jacket";
-          wearCopy =
-            "A sweater or light jacket should help during cooler hours.";
+          wearCopy = isNightPlan
+            ? "Expect cool weather tomorrow. A sweater or light jacket will help."
+            : "A sweater or light jacket should help during cooler hours.";
           wearIcon = "🧥";
         } else if (feels <= 25) {
           wearTitle = "Light layers";
-          wearCopy =
-            "Comfortable everyday layers should work well for these temperatures.";
+          wearCopy = isNightPlan
+            ? "Comfortable temperatures expected tomorrow. Everyday light layers will work well."
+            : "Comfortable everyday layers should work well for these temperatures.";
           wearIcon = "👕";
         } else if (feels >= 34) {
           wearTitle = "Breathable clothes";
-          wearCopy =
-            "Choose light, breathable clothing and carry water. Avoid overexertion in peak heat.";
+          wearCopy = isNightPlan
+            ? "High heat forecast tomorrow. Plan for light cotton clothes and carry drinking water."
+            : "Choose light, breathable clothing and carry water. Avoid overexertion in peak heat.";
           wearIcon = "🥤";
         } else {
           wearTitle = "Light clothing";
-          wearCopy =
-            "Light cotton or other breathable clothing should feel comfortable.";
+          wearCopy = isNightPlan
+            ? "Mild weather expected tomorrow. Light cotton or casual wear is ideal."
+            : "Light cotton or other breathable clothing should feel comfortable.";
           wearIcon = "👕";
         }
+
         let rainTitle = "Umbrella unlikely",
-          rainCopy = "Rain chance looks limited in the available forecast.",
+          rainCopy = isNightPlan
+            ? "Dry conditions forecast tomorrow with low chance of rain."
+            : "Rain chance looks limited in the available forecast.",
           rainIcon = "🌤️";
-        if (rainChance >= 60 || ["rain", "storm"].includes(mode)) {
+        if (rainChance >= 60 || (!isNightPlan && ["rain", "storm"].includes(mode))) {
           rainTitle = "Carry an umbrella";
-          rainCopy = `Rain is possible (${Math.round(rainChance)}% forecast chance). An umbrella or rain jacket may help.`;
+          rainCopy = isNightPlan
+            ? `High chance of rain tomorrow (${Math.round(rainChance)}%). Keep an umbrella handy.`
+            : `Rain is possible (${Math.round(rainChance)}% forecast chance). An umbrella or rain jacket may help.`;
           rainIcon = "☔";
         } else if (rainChance >= 35) {
           rainTitle = "Compact umbrella";
-          rainCopy = `There is a ${Math.round(rainChance)}% forecast chance of rain. Consider a compact umbrella.`;
+          rainCopy = isNightPlan
+            ? `Moderate rain chance tomorrow (${Math.round(rainChance)}%). Consider carrying an umbrella.`
+            : `There is a ${Math.round(rainChance)}% forecast chance of rain. Consider a compact umbrella.`;
           rainIcon = "🌦️";
         } else if (wind >= 30) {
           rainTitle = "Windy conditions";
-          rainCopy =
-            "Expect breezy conditions; a light wind-resistant layer may be useful.";
+          rainCopy = isNightPlan
+            ? "Breezy conditions forecast tomorrow; a light wind-resistant layer may be useful."
+            : "Expect breezy conditions; a light wind-resistant layer may be useful.";
           rainIcon = "💨";
         }
-        let sunTitle = "UV low–moderate",
-          sunCopy =
-            "UV is currently low to moderate; use normal sun-safety precautions.",
+
+        let sunTitle, sunCopy, sunIcon;
+        if (isNightPlan) {
+          if (uv >= 8) {
+            sunTitle = "High UV tomorrow";
+            sunCopy = `Tomorrow's peak UV index reaches high levels (~${Math.round(uv)}). Prepare sunscreen & a cap around midday.`;
+            sunIcon = "🧴";
+          } else if (uv >= 6) {
+            sunTitle = "Moderate UV tomorrow";
+            sunCopy = `Tomorrow's UV peaks near index ${Math.round(uv)}. Sunglasses and sunscreen recommended outdoors.`;
+            sunIcon = "🧢";
+          } else if (uv >= 3) {
+            sunTitle = "Bring sunglasses";
+            sunCopy = "Tomorrow will see moderate sunlight; sunglasses or a cap will be useful outdoors.";
+            sunIcon = "🕶️";
+          } else {
+            sunTitle = "Low UV tomorrow";
+            sunCopy = "Tomorrow's UV index will stay low throughout the day.";
+            sunIcon = "🌤️";
+          }
+        } else if (!c.is_day) {
+          sunTitle = "No UV at night";
+          sunCopy = "The sun has set for today; no UV protection is needed tonight.";
+          sunIcon = "🌙";
+        } else {
+          sunTitle = "UV low–moderate";
+          sunCopy = "UV is currently low to moderate; use normal sun-safety precautions.";
           sunIcon = "🌤️";
-        if (uv >= 8) {
-          sunTitle = "High UV protection";
-          sunCopy =
-            "Use sunscreen, sunglasses and a hat; seek shade around midday.";
-          sunIcon = "🧴";
-        } else if (uv >= 6) {
-          sunTitle = "Protect from UV";
-          sunCopy = "Sunscreen, a cap and sunglasses are a good idea outdoors.";
-          sunIcon = "🧢";
-        } else if (uv >= 3) {
-          sunTitle = "Bring sunglasses";
-          sunCopy =
-            "Sunglasses or a cap can help during extended time outdoors.";
-          sunIcon = "🕶️";
+          if (uv >= 8) {
+            sunTitle = "High UV protection";
+            sunCopy = "Use sunscreen, sunglasses and a hat; seek shade around midday.";
+            sunIcon = "🧴";
+          } else if (uv >= 6) {
+            sunTitle = "Protect from UV";
+            sunCopy = "Sunscreen, a cap and sunglasses are a good idea outdoors.";
+            sunIcon = "🧢";
+          } else if (uv >= 3) {
+            sunTitle = "Bring sunglasses";
+            sunCopy = "Sunglasses or a cap can help during extended time outdoors.";
+            sunIcon = "🕶️";
+          }
         }
+
         let airTitle = "Air looks manageable",
           airCopy =
             "This is a modelled estimate, not an official CPCB reading. Sensitive people should follow local advisories.",
@@ -4468,11 +4557,16 @@
         const items = [
           ["WEAR", wearIcon, wearTitle, wearCopy],
           ["RAIN & WIND", rainIcon, rainTitle, rainCopy],
-          ["SUN", sunIcon, sunTitle, sunCopy],
+          [isNightPlan || c.is_day ? "SUN" : "NIGHT", sunIcon, sunTitle, sunCopy],
           ["AIR", airIcon, airTitle, airCopy],
         ];
+
+        const guideLabel = isNightPlan
+          ? "Tomorrow’s quick guide · plan ahead"
+          : "Today’s quick guide · tap or hover for details";
+
         target.innerHTML =
-          '<span class="daily-advice-label">Today’s quick guide · tap or hover for details</span>' +
+          `<span class="daily-advice-label">${guideLabel}</span>` +
           items
             .map(
               ([label, icon, title, copy]) =>
@@ -4586,7 +4680,20 @@
         $("#aqi").insertAdjacentHTML("beforeend", renderOpenAQStationPanel(O));
         renderDailyGuide(c, d, H, hs, aq, pop, indiaAQI);
 
-        const ts = hs.map((i) => H.temperature_2m[i]),
+        function getHourlyIsDay(hourTimeStr, rawIsDay) {
+          if (!d || !d.time || !d.sunrise || !d.sunset) return rawIsDay;
+          const dateStr = hourTimeStr.slice(0, 10);
+          const dayIdx = d.time.findIndex((dt) => dt === dateStr);
+          if (dayIdx !== -1 && d.sunrise[dayIdx] && d.sunset[dayIdx]) {
+            const sr = d.sunrise[dayIdx];
+            const ss = d.sunset[dayIdx];
+            return hourTimeStr >= sr && hourTimeStr < ss ? 1 : 0;
+          }
+          return rawIsDay;
+        }
+
+        // Overwrite Now slot with live current.temperature_2m to prevent 1°C hourly mismatch
+        const ts = hs.map((i, k) => (k === 0 ? c.temperature_2m : H.temperature_2m[i])),
           mn = Math.min(...ts),
           mx = Math.max(...ts),
           n = hs.length,
@@ -4607,7 +4714,9 @@
  <div class="hcs">${hs
    .map((i, k) => {
      const p = H.precipitation_probability[i] || 0;
-     return `<div class="hc"><span>${k ? hr(H.time[i]) : "Now"}</span><i>${wi(H.weather_code[i], H.is_day[i]).i}</i><small>${p >= 10 ? p + "%" : " "}</small></div>`;
+     const hCode = k === 0 ? c.weather_code : H.weather_code[i];
+     const hDay = k === 0 ? c.is_day : getHourlyIsDay(H.time[i], H.is_day[i]);
+     return `<div class="hc"><span>${k ? hr(H.time[i]) : "Now"}</span><i>${wi(hCode, hDay).i}</i><small>${p >= 10 ? p + "%" : " "}</small></div>`;
    })
    .join("")}</div></div></div>`;
 
@@ -5061,9 +5170,12 @@
       let tm;
       $("#q").addEventListener("input", (e) => {
         clearTimeout(tm);
-        const q = e.target.value.trim();
+        // Trim, cap at 80 characters, and strip control characters to eliminate injection
+        let q = (e.target.value || "").trim().slice(0, 80);
+        q = q.replace(/[<>"{}|\\^~[\]]/g, "");
         if (q.length < 2) {
           $("#sug").style.display = "none";
+          $("#sug").innerHTML = "";
           return;
         }
         tm = setTimeout(async () => {
@@ -5074,14 +5186,30 @@
               L = (r.results || [])
                 .filter((x) => x.country_code == "IN")
                 .slice(0, 6);
-            $("#sug").innerHTML = L.length
-              ? L.map(
-                  (x) =>
-                    `<button data-g="${esc(JSON.stringify([x.name, x.latitude, x.longitude]))}">📍 ${esc(x.name)} <small>${esc([x.admin2, x.admin1].filter(Boolean).join(", "))}</small></button>`,
-                ).join("")
-              : "<button disabled>No place found in India</button>";
+            $("#sug").innerHTML = "";
+            if (!L.length) {
+              const btn = document.createElement("button");
+              btn.disabled = true;
+              btn.textContent = "No place found in India";
+              $("#sug").appendChild(btn);
+            } else {
+              L.forEach((x) => {
+                const btn = document.createElement("button");
+                btn.dataset.g = JSON.stringify([x.name, x.latitude, x.longitude]);
+                btn.textContent = `📍 ${x.name} `;
+                const label = [x.admin2, x.admin1].filter(Boolean).join(", ");
+                if (label) {
+                  const sm = document.createElement("small");
+                  sm.textContent = label;
+                  btn.appendChild(sm);
+                }
+                $("#sug").appendChild(btn);
+              });
+            }
             $("#sug").style.display = "block";
-          } catch {}
+          } catch {
+            $("#sug").style.display = "none";
+          }
         }, 250);
       });
       $("#q").addEventListener("keydown", (e) => {

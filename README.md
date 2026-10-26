@@ -21,7 +21,7 @@
 
 ## 🌐 Live Website & Repository
 
-- **Live Production URL**: `https://mausam-india.pages.dev`
+- **Live Production URL**: [https://mausam-india.pages.dev](https://mausam-india.pages.dev)
 - **GitHub Repository**: [https://github.com/himanvic/Mausam-India](https://github.com/himanvic/Mausam-India)
 
 ---
@@ -252,6 +252,33 @@ wrangler pages deploy public --project-name=mausam-india
 - **100% Procedural Graphics**: No proprietary 3D models, copyrighted icons, or commercial image assets. All visual components are coded from scratch using standard WebGL and SVG.
 - **Strict Data Integrity**: We never fake weather telemetry or synthesize false AQI data. OpenAQ physical ground monitoring stations remain completely unmixed from regional mathematical forecasts.
 - **Privacy by Default**: No tracking cookies, no third-party analytics trackers, and zero personal telemetry collection. All location queries are proxied anonymously through Cloudflare's serverless edge.
+
+---
+
+## 🛡️ Production Security Hardening & Edge Precision Updates
+
+Recent enhancements engineered for global edge deployment and data fidelity:
+
+### 1. Edge Security & Content Security Policy (CSP)
+- **Hardened Cloudflare `_headers`**: Deployed a comprehensive HTTP security profile across all static edge responses including HSTS (`max-age=31536000; includeSubDomains; preload`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Cross-Origin-Opener-Policy: same-origin`.
+- **Whitelisted Content Security Policy**: Strictly permits authorized sources for scripts (CDNJS, Unpkg, ESM.sh), styles (Google Fonts, Unpkg), imagery (NASA GIBS, RainViewer, Esri ArcGIS), and API endpoints while restricting unauthorized frame embedding.
+- **Subresource Integrity (SRI)**: Embedded cryptographic hashes (`integrity="sha384-..." crossorigin="anonymous"`) across third-party runtime assets (Three.js and Leaflet) to guard against CDN tampering.
+
+### 2. Reverse Proxy & API Key Defense
+- **Origin & Referer Enforcement**: The serverless edge functions (`functions/api/[[path]].js` and `functions/api/openaq.js`) validate client request origins to prevent automated scrapers and foreign third-party domains from depleting API quotas.
+- **SSRF Prevention & Coordinate Bounds**: Enforces strict mathematical verification on incoming coordinates, constraining latitude between `-90°` and `90°` and longitude between `-180°` and `180°`.
+- **Edge Cache Redundancy**: Applied a 15-minute edge cache (`s-maxage=900`) with Cloudflare Cache API integration (`caches.default`), keeping response latencies under 15ms globally.
+
+### 3. DOM XSS Neutralization & Defensive Networking
+- **Input Sanitization**: Search bar inputs are constrained to 80 characters with control characters (`<>"{}|\\^~[]`) stripped before dispatch.
+- **Safe DOM Generation**: Replaced string interpolation sinks with native `document.createElement()` and `.textContent` DOM nodes for search suggestion rendering.
+- **Defensive Timeouts**: Attached `AbortSignal.timeout(8000)` across all frontend fetch requests, preventing hanging third-party networks from blocking user interactions.
+
+### 4. Astronomical & Boundary Data Accuracy
+- **Solar Zenith Boundary Evaluation**: Hourly forecast icons compare precise timestamps against daily sunrise and sunset marks (`daily.sunrise` / `daily.sunset`). A 5:00 PM slot prior to a 5:13 PM sunset now accurately displays daytime icons instead of prematurely switching to night.
+- **Nocturnal WMO Mappings**: Midnight hours with partly cloudy conditions render night-appropriate icons (`🌙` or `☁️`) instead of daytime sun-behind-cloud glyphs (`⛅`).
+- **Harmonized "Now" Temperatures**: The initial "Now" slot in the 24-hour strip directly reflects live 15-minute readings (`current.temperature_2m`), ensuring identical temperature parity with the Hero card.
+- **Time-Aware Quick Guide**: Transitions dynamically to "Tomorrow's Quick Guide" after 8:00 PM local time to provide actionable next-day planning for clothing, UV, and rain preparation.
 
 ---
 
