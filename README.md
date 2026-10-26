@@ -1,7 +1,7 @@
 # 🇮🇳 Mausam India (मौसम इंडिया)
 
 ```text
-███╗   ███╗ █████╗ ██╗   ██╗███████╗ █████╗ ███╗   ███╗    ██╗███╗   ██╗██████╗ ██╗ █████╗ 
+███╗   ███╗ █████╗ ██╗   ██╗███████╗ █████╗ ███╗   ███╗    ██╗███╗   ██╗██████╗ ██╗ █████╗
 ████╗ ████║██╔══██╗██║   ██║██╔════╝██╔══██╗████╗ ████║    ██║████╗  ██║██╔══██╗██║██╔══██╗
 ██╔████╔██║███████║██║   ██║███████╗███████║██╔████╔██║    ██║██╔██╗ ██║██║  ██║██║███████║
 ██║╚██╔╝██║██╔══██║██║   ██║╚════██║██╔══██║██║╚██╔╝██║    ██║██║╚██╗██║██║  ██║██║██╔══██║
@@ -21,7 +21,7 @@
 
 ## 🌐 Live Website & Repository
 
-- **Live Production URL**: `https://YOUR-SITE-DOMAIN-HERE.pages.dev` *(Edit this in VS Code with your live Cloudflare Pages URL)*
+- **Live Production URL**: `https://mausam-india.pages.dev`
 - **GitHub Repository**: [https://github.com/himanvic/Mausam-India](https://github.com/himanvic/Mausam-India)
 
 ---
@@ -37,11 +37,13 @@ Built to run with zero server overhead at the edge on **Cloudflare Pages**, the 
 ## 🌟 Key Features
 
 ### 1. 🌦️ Procedural 3D WebGL Living Sky (Three.js)
+
 - **Living Atmosphere**: Real-time celestial rendering featuring a procedural Sun with corona bloom, 1,200 scintillation stars, multi-altitude drifting 3D clouds, vertical rain streaks, dynamic lightning flashes, and low-altitude fog layers.
 - **Mouse Parallax**: Smooth cursor tilt interactions on widescreen displays.
 - **Resource Conscious**: Animation cycles automatically pause when the browser tab loses focus or when `prefers-reduced-motion` is detected, ensuring zero battery drain on laptops and mobile devices.
 
 ### 2. 🤖 "Mausam Mitra" Dynamic Weather Companion
+
 - **Adaptive Vector Mascot**: Built entirely from clean procedural SVG vectors (zero third-party 3D assets or copyright risks).
 - **Context-Aware States**:
   - **Pollution Alert (AQI $\ge 200$)**: Automatically equips a fitted N95 respirator mask with particulate valves and displays air health cautions.
@@ -53,18 +55,21 @@ Built to run with zero server overhead at the edge on **Cloudflare Pages**, the 
 - **Fully Responsive**: Fills widescreen hero space on desktop and automatically reorganizes into a compact horizontal 2-row companion on mobile phones ($\le 900\text{px}$) with zero screen overflow.
 
 ### 3. 🛰️ Integrated NASA Satellite & Atmospheric Map
+
 - **NASA GIBS Satellite Clouds**: Daily TrueColor composite imagery captured by NASA's Terra satellite orbit (`MODIS_Terra_CorrectedReflectance_TrueColor`), showing genuine physical cloud formations, storm eyes, and snow cover across the Himalayas and subcontinent.
 - **Windy-Style Wind Streamlines**: Real-time canvas particle streams that visualize wind velocity, gusts, and directional airflow dynamically.
 - **RainViewer Doppler Radar**: 13-frame animated Doppler precipitation radar loop with interactive playback controls (Play, Pause, Step).
 - **Esri Dark Gray Basemap**: Crisp, high-contrast, royalty-free basemap tiles requiring zero third-party API keys and displaying zero watermarks.
 
 ### 4. 🇮🇳 Official Indian CPCB Air Quality Index Engine
+
 - **Accurate Mathematical Standard**: Computes the official 6-category Indian CPCB AQI using piecewise linear interpolation across standard concentration breakpoints ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2, \text{SO}_2, \text{CO}, \text{O}_3$).
 - **Strict CPCB Mandate**: Requires at least 3 pollutants with either $\text{PM}_{2.5}$ or $\text{PM}_{10}$ present to formulate an authentic overall index.
 - **Inline 7-Day Trend Chart**: Color-coded micro-bar chart embedded directly inside the AQI card for immediate weekly air quality trajectory.
 - **Interactive 7-Day History Modal**: Expanded 180px gradient bar visualization with official CPCB guideline thresholds (50 Good, 100 Satisfactory, 200 Moderate, 300 Poor, 400 Very Poor).
 
 ### 5. 🔬 Physical OpenAQ Ground Stations
+
 - **Absolute Data Separation**: Modeled regional estimates are kept strictly isolated from physical ground monitors to eliminate cross-contamination.
 - **Hyperlocal Ground Station Finder**: Locates the nearest registered CAAQMS physical monitoring station using spherical Haversine distance.
 - **Freshness Health Badges**:
@@ -73,6 +78,7 @@ Built to run with zero server overhead at the edge on **Cloudflare Pages**, the 
   - `OFFLINE`: Station has not transmitted telemetry within 24 hours.
 
 ### 6. 📱 Progressive Web App (PWA)
+
 - Installable on Android, iOS, Windows, and macOS directly from the browser.
 - Offline app shell caching via `sw.js` for instant subsequent loads.
 - Widescreen grid architecture that balances content on 4K monitors while remaining lean on handheld devices.
@@ -83,15 +89,15 @@ Built to run with zero server overhead at the edge on **Cloudflare Pages**, the 
 
 Every external API utilized by Mausam India is official, legal, open, and proxied at the edge via Cloudflare Pages Functions to guarantee client privacy and avoid CORS roadblocks:
 
-| Provider | Purpose | Upstream Endpoint | Edge Proxy Route | Cache Strategy (TTL) | Official Documentation |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Open-Meteo Weather** | Hyperlocal hourly, daily, UV, wind, and rain forecasts | `https://api.open-meteo.com/v1/forecast` | `/api/forecast` | 10 Minutes (`s-maxage=600`) | [Open-Meteo Weather API](https://open-meteo.com/en/docs) |
-| **Open-Meteo Air Quality** | Hourly modeled atmospheric pollutants ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2$, etc.) | `https://air-quality-api.open-meteo.com/v1/air-quality` | `/api/air-quality` | 15 Minutes (`s-maxage=900`) | [Open-Meteo Air Quality API](https://open-meteo.com/en/docs/air-quality-api) |
-| **Open-Meteo Geocoding** | Indian city, town, village, and PIN code search | `https://geocoding-api.open-meteo.com/v1/search` | `/api/geocoding` | 24 Hours (`s-maxage=86400`) | [Open-Meteo Geocoding API](https://open-meteo.com/en/docs/geocoding-api) |
-| **OpenAQ v3 Platform** | Registered physical CPCB/CAAQMS ground sensor telemetry | `https://api.openaq.org/v3/locations` | `/api/openaq/nearest` | 15 Minutes (`s-maxage=900`) | [OpenAQ API v3 Docs](https://docs.openaq.org/) |
-| **NASA GIBS** | Orbital satellite TrueColor cloud imagery (Terra/MODIS) | `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/...` | Client WMTS Layer | Direct Browser Cache | [NASA Earthdata GIBS](https://earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs) |
-| **RainViewer Radar** | Real-time Doppler precipitation radar tile loop | `https://api.rainviewer.com/public/weather-maps.json` | Client Radar Stream | 5 Minutes (Dynamic) | [RainViewer API](https://www.rainviewer.com/api.html) |
-| **Esri ArcGIS Canvas** | Dark Gray minimalist geographic basemap & boundaries | `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/...` | Direct Tile Layer | Browser Cache | [Esri ArcGIS Basemaps](https://www.esri.com/en-us/arcgis/products/arcgis-platform/services/basemaps) |
+| Provider                   | Purpose                                                                                      | Upstream Endpoint                                                 | Edge Proxy Route      | Cache Strategy (TTL)        | Official Documentation                                                                                     |
+| :------------------------- | :------------------------------------------------------------------------------------------- | :---------------------------------------------------------------- | :-------------------- | :-------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| **Open-Meteo Weather**     | Hyperlocal hourly, daily, UV, wind, and rain forecasts                                       | `https://api.open-meteo.com/v1/forecast`                          | `/api/forecast`       | 10 Minutes (`s-maxage=600`) | [Open-Meteo Weather API](https://open-meteo.com/en/docs)                                                   |
+| **Open-Meteo Air Quality** | Hourly modeled atmospheric pollutants ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2$, etc.) | `https://air-quality-api.open-meteo.com/v1/air-quality`           | `/api/air-quality`    | 15 Minutes (`s-maxage=900`) | [Open-Meteo Air Quality API](https://open-meteo.com/en/docs/air-quality-api)                               |
+| **Open-Meteo Geocoding**   | Indian city, town, village, and PIN code search                                              | `https://geocoding-api.open-meteo.com/v1/search`                  | `/api/geocoding`      | 24 Hours (`s-maxage=86400`) | [Open-Meteo Geocoding API](https://open-meteo.com/en/docs/geocoding-api)                                   |
+| **OpenAQ v3 Platform**     | Registered physical CPCB/CAAQMS ground sensor telemetry                                      | `https://api.openaq.org/v3/locations`                             | `/api/openaq/nearest` | 15 Minutes (`s-maxage=900`) | [OpenAQ API v3 Docs](https://docs.openaq.org/)                                                             |
+| **NASA GIBS**              | Orbital satellite TrueColor cloud imagery (Terra/MODIS)                                      | `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/...`          | Client WMTS Layer     | Direct Browser Cache        | [NASA Earthdata GIBS](https://earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs) |
+| **RainViewer Radar**       | Real-time Doppler precipitation radar tile loop                                              | `https://api.rainviewer.com/public/weather-maps.json`             | Client Radar Stream   | 5 Minutes (Dynamic)         | [RainViewer API](https://www.rainviewer.com/api.html)                                                      |
+| **Esri ArcGIS Canvas**     | Dark Gray minimalist geographic basemap & boundaries                                         | `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/...` | Direct Tile Layer     | Browser Cache               | [Esri ArcGIS Basemaps](https://www.esri.com/en-us/arcgis/products/arcgis-platform/services/basemaps)       |
 
 ### 🏛️ India Meteorological Department (IMD / MoES) Integration Note
 
@@ -187,6 +193,7 @@ Deploying Mausam India takes less than 2 minutes using Cloudflare Pages.
 ### Method 1: Push to GitHub & Connect Cloudflare Pages (Recommended)
 
 1. **Push your code to GitHub**:
+
    ```bash
    git add .
    git commit -m "feat: launch Mausam India production release"
@@ -204,7 +211,7 @@ Deploying Mausam India takes less than 2 minutes using Cloudflare Pages.
    - **Project Name**: `mausam-india` (or your preferred name)
    - **Production Branch**: `main`
    - **Framework Preset**: `None`
-   - **Build Command**: *(leave completely blank)*
+   - **Build Command**: _(leave completely blank)_
    - **Build Output Directory**: `public`
 
 5. **Deploy**:
@@ -230,13 +237,13 @@ wrangler pages deploy public --project-name=mausam-india
 
 ## ⌨️ Desktop Keyboard Shortcuts
 
-| Shortcut Key | Action |
-| :--- | :--- |
-| <kbd>S</kbd> or <kbd>/</kbd> | Focus Indian city / PIN code search input |
-| <kbd>R</kbd> | Smooth scroll directly to Live Satellite Clouds & Radar Map |
-| <kbd>T</kbd> | Toggle Dark / Light / Atmospheric Theme |
-| <kbd>U</kbd> | Toggle Temperature Units (°C / °F) |
-| <kbd>Esc</kbd> | Close any open modal or search dropdown |
+| Shortcut Key                 | Action                                                      |
+| :--------------------------- | :---------------------------------------------------------- |
+| <kbd>S</kbd> or <kbd>/</kbd> | Focus Indian city / PIN code search input                   |
+| <kbd>R</kbd>                 | Smooth scroll directly to Live Satellite Clouds & Radar Map |
+| <kbd>T</kbd>                 | Toggle Dark / Light / Atmospheric Theme                     |
+| <kbd>U</kbd>                 | Toggle Temperature Units (°C / °F)                          |
+| <kbd>Esc</kbd>               | Close any open modal or search dropdown                     |
 
 ---
 
