@@ -590,6 +590,18 @@
       .pg b {
         font: 600 18px var(--d);
       }
+      .pg b span {
+        font: 400 9px var(--f);
+        color: var(--mu);
+        white-space: nowrap;
+      }
+      .pg em {
+        display: block;
+        margin-top: 4px;
+        font: 400 9px/1.35 var(--f);
+        font-style: normal;
+        color: var(--mu);
+      }
       .cg {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -633,17 +645,52 @@
         color: var(--mu);
         padding: 0 16px calc(26px + env(safe-area-inset-bottom, 0px));
       }
-      #ft a {
+      #ft .footer-attribution {
+        font-size: 11px;
+        line-height: 1.55;
+        color: var(--mu);
+        text-align: center;
+      }
+      #ft a.github-source-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin: 9px auto 0;
+        padding: 8px 12px;
+        border: 1px solid color-mix(in srgb, var(--ac) 34%, var(--bd));
+        border-radius: 12px;
+        background: color-mix(in srgb, var(--ac) 8%, transparent);
         color: var(--ac);
-        font-weight: 600;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.2;
         text-decoration: none;
-        text-underline-offset: 3px;
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease,
+          border-color 0.2s ease;
       }
-      #ft a:hover {
-        text-decoration: underline;
+      #ft a.github-source-link:hover {
+        transform: translateY(-1px);
+        background: color-mix(in srgb, var(--ac) 15%, transparent);
+        border-color: var(--ac);
       }
-      #ft .footer-credit {
-        white-space: nowrap;
+      #ft a.github-source-link:focus-visible {
+        outline: 2px solid var(--ac);
+        outline-offset: 3px;
+      }
+      #ft a.github-source-link svg {
+        width: 17px;
+        height: 17px;
+        display: block;
+        flex: none;
+        fill: currentColor;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #ft a.github-source-link {
+          transition: none !important;
+        }
       }
       #toast {
         position: fixed;
@@ -924,26 +971,25 @@
       .history-scroll {
         overflow-x: auto;
         overflow-y: hidden;
-        padding: 12px 2px 24px;
+        padding: 12px 2px 16px;
         scrollbar-width: thin;
       }
-
       .aqi-history-chart {
         height: auto;
-        min-height: 250px;
+        min-height: 230px;
         min-width: 520px;
         display: flex;
         align-items: stretch;
         gap: 12px;
-        padding: 10px 4px 18px;
+        padding: 10px 4px 12px;
         border-bottom: 1px solid var(--bd);
-        overflow: visible;
+        overflow-y: visible;
       }
       .aqi-history-day {
         flex: 1;
         min-width: 55px;
         display: grid;
-        grid-template-rows: 20px 120px 22px minmax(36px, auto);
+        grid-template-rows: 20px 120px 22px 30px;
         justify-items: center;
         align-items: stretch;
         gap: 5px;
@@ -986,7 +1032,7 @@
       }
       .aqi-history-category {
         font-size: 9px;
-        line-height: 1.35;
+        line-height: 1.25;
         color: var(--mu);
         white-space: normal;
         text-align: center;
@@ -1217,6 +1263,165 @@
           animation: none !important;
         }
       }
+
+      /* Explain the Indian CPCB scale without cluttering the main AQI panel. */
+      .aqi-method-details {
+        margin-top: 10px;
+        border: 1px solid var(--bd);
+        border-radius: 14px;
+        background: color-mix(in srgb, var(--tx) 3%, transparent);
+        overflow: hidden;
+      }
+      .aqi-method-details > summary {
+        cursor: pointer;
+        list-style: none;
+        padding: 10px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--tx);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .aqi-method-details > summary::-webkit-details-marker {
+        display: none;
+      }
+      .aqi-method-details > summary:after {
+        content: "＋";
+        color: var(--mu);
+        font-size: 15px;
+      }
+      .aqi-method-details[open] > summary:after {
+        content: "−";
+      }
+      .aqi-method-body {
+        padding: 0 12px 12px;
+        color: var(--mu);
+        font-size: 11px;
+        line-height: 1.6;
+      }
+      .aqi-method-body p {
+        margin: 8px 0 0;
+      }
+      .aqi-method-body strong {
+        color: var(--tx);
+      }
+      .aqi-method-links {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        align-items: center;
+        padding-top: 4px;
+      }
+      .aqi-method-links a {
+        color: var(--ac);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      /* OpenAQ nearby station observations — kept separate from the model AQI estimate. */
+      .openaq-panel {
+        margin-top: 12px;
+        border: 1px solid var(--bd);
+        border-radius: 15px;
+        background: color-mix(in srgb, var(--tx) 3%, transparent);
+        overflow: hidden;
+      }
+      .openaq-panel summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 11px 12px;
+        cursor: pointer;
+        list-style: none;
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .openaq-panel summary::-webkit-details-marker {
+        display: none;
+      }
+      .openaq-panel summary:after {
+        content: "＋";
+        color: var(--mu);
+        font-size: 15px;
+        margin-left: auto;
+      }
+      .openaq-panel[open] summary:after {
+        content: "−";
+      }
+      .openaq-panel .openaq-state {
+        flex: none;
+        border: 1px solid var(--bd);
+        border-radius: 99px;
+        padding: 4px 7px;
+        color: var(--mu);
+        font-size: 9px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .openaq-panel .openaq-body {
+        padding: 0 12px 12px;
+      }
+      .openaq-station-meta {
+        font-size: 11px;
+        line-height: 1.55;
+        color: var(--mu);
+        margin: 0 0 9px;
+      }
+      .openaq-reading-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+      }
+      .openaq-reading {
+        min-width: 0;
+        padding: 9px;
+        border-radius: 11px;
+        background: color-mix(in srgb, var(--tx) 5%, transparent);
+      }
+      .openaq-reading small {
+        display: block;
+        font-size: 10px;
+        color: var(--mu);
+      }
+      .openaq-reading strong {
+        display: block;
+        margin-top: 3px;
+        font-size: 15px;
+        overflow-wrap: anywhere;
+        font-variant-numeric: tabular-nums;
+      }
+      .openaq-reading span {
+        display: block;
+        margin-top: 3px;
+        font-size: 9px;
+        line-height: 1.35;
+        color: var(--mu);
+      }
+      .openaq-note {
+        font-size: 10px;
+        line-height: 1.5;
+        color: var(--mu);
+        margin-top: 10px;
+      }
+      .openaq-fresh {
+        color: #16a34a !important;
+      }
+      .openaq-stale {
+        color: #d97706 !important;
+      }
+      @media (max-width: 560px) {
+        .openaq-reading-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .openaq-panel summary {
+          align-items: flex-start;
+          flex-wrap: wrap;
+        }
+      }
+
       /* Subtle scroll reveals for forecast rows, recommendation chips, detail cards and AQI history bars. */
       .scroll-reveal-target {
         opacity: 0;
@@ -1360,9 +1565,7 @@
         <div class="history-modal-head">
           <div>
             <h2 id="aqiHistoryTitle">7-day AQI history</h2>
-            <p id="aqiHistorySubtitle">
-              Recent estimated Indian air-quality trend
-            </p>
+            <p id="aqiHistorySubtitle">Estimated Indian air-quality trend</p>
           </div>
           <button
             type="button"
@@ -1405,7 +1608,6 @@
       };
       // Replace this placeholder with your actual public Mausam India GitHub repository URL.
       const GITHUB_REPO_URL = "https://github.com/himanvic/Mausam-India";
-      const DEVELOPER_NAME = "himanvic";
       // Optional Supabase setup: paste your Project URL and publishable/anon key here.
       // Never put a service_role/secret key in this public HTML file.
       const SUPABASE_URL = "";
@@ -1416,6 +1618,7 @@
       let D,
         A,
         CT,
+        O = null,
         night = 0,
         mode = "clear",
         dark = 0,
@@ -1514,6 +1717,80 @@
       const GEO = LOCAL_PREVIEW
         ? "https://geocoding-api.open-meteo.com/v1/search?"
         : "/api/geocoding?";
+      const OPENAQ_API = LOCAL_PREVIEW ? null : "/api/openaq/nearest?";
+
+      async function loadOpenAQStation(lat, lon) {
+        if (!OPENAQ_API)
+          return {
+            available: false,
+            status: "local_preview",
+            reason:
+              "OpenAQ station readings load through the deployed Cloudflare Pages Function. A local file preview cannot access the server-side API secret.",
+          };
+        try {
+          const response = await fetch(
+            `${OPENAQ_API}latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&radius=25000`,
+            { headers: { accept: "application/json" }, cache: "no-store" },
+          );
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok)
+            return {
+              available: false,
+              status: payload.status || "error",
+              reason:
+                payload.error ||
+                `OpenAQ station request failed (HTTP ${response.status}).`,
+            };
+          return payload;
+        } catch (_) {
+          return {
+            available: false,
+            status: "error",
+            reason:
+              "Could not reach the OpenAQ station service. Weather forecasts continue to work.",
+          };
+        }
+      }
+      function renderOpenAQStationPanel(data) {
+        const status = data?.status || "unavailable";
+        if (!data?.available) {
+          const labels = {
+            local_preview: "DEPLOYED SITE ONLY",
+            not_configured: "API KEY NEEDED",
+            no_station: "NO NEARBY STATION",
+            stale: "NO RECENT READINGS",
+            error: "TEMPORARILY UNAVAILABLE",
+          };
+          const label = labels[status] || "NOT AVAILABLE";
+          const reason =
+            data?.reason ||
+            "No suitable OpenAQ station readings are available within 25 km of this location.";
+          return `<details class="openaq-panel"><summary><span>📡 OpenAQ station readings · not an AQI</span><span class="openaq-state">${label}</span></summary><div class="openaq-body"><p class="openaq-station-meta">${esc(reason)}</p><p class="openaq-note">The AQI card above is a model-based estimate using Indian CPCB breakpoints. These independent station readings are not used in that number. When a suitable station has readings, they will appear here as measured pollutant concentrations—not as a composite AQI.</p></div></details>`;
+        }
+        const station = data.station || {},
+          readings = Array.isArray(data.measurements) ? data.measurements : [];
+        const stale = Number(station.age_hours) > 24;
+        const freshness = station.freshness_status || "Latest available";
+        const stamp =
+          station.latest_at_local ||
+          station.latest_at ||
+          "Timestamp unavailable";
+        const distance = Number.isFinite(Number(station.distance_km))
+          ? `${Number(station.distance_km).toFixed(1)} km away`
+          : "distance unavailable";
+        const owner = [station.owner_name, station.provider_name]
+          .filter(Boolean)
+          .join(" · ");
+        const tiles = readings.length
+          ? readings
+              .map(
+                (p) =>
+                  `<div class="openaq-reading"><small>${esc(p.label || p.key || "Pollutant")}</small><strong>${Number.isFinite(Number(p.value)) ? Number(p.value).toLocaleString("en-IN", { maximumFractionDigits: 3 }) : "—"}</strong><span>${esc(p.unit || "unit not supplied")} · ${esc(p.age_label || "time unavailable")}</span></div>`,
+              )
+              .join("")
+          : '<p class="openaq-station-meta">The station was found, but it returned no supported pollutant measurements.</p>';
+        return `<details class="openaq-panel"><summary><span>📡 OpenAQ station readings · not an AQI</span><span class="openaq-state ${stale ? "openaq-stale" : "openaq-fresh"}">${esc(freshness.toUpperCase())}</span></summary><div class="openaq-body"><p class="openaq-station-meta"><strong>${esc(station.name || "OpenAQ station")}</strong> · ${esc(distance)}<br>Latest reported reading: ${esc(stamp)}${owner ? `<br>${esc(owner)}` : ""}${station.is_monitor ? " · Monitor" : ""}</p><div class="openaq-reading-grid">${tiles}</div><p class="openaq-note">Source: OpenAQ v3 · measured pollutant concentrations from this named station, shown in each sensor’s reported units. These readings are not a composite AQI and are not used to calculate the model estimate above. Pollutant readings can have different timestamps, and a station can differ from the model grid or your exact location—so the numbers are not a like-for-like comparison. <a href="https://explore.openaq.org/" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">Explore OpenAQ</a>.</p></div></details>`;
+      }
 
       /* ---------- animated sky ---------- */
       const cv = $("#fx"),
@@ -1749,118 +2026,131 @@
           : v <= 100
             ? ["Satisfactory", "#84cc16"]
             : v <= 200
-              ? ["Moderately polluted", "#eab308"]
+              ? ["Moderate", "#eab308"]
               : v <= 300
                 ? ["Poor", "#f97316"]
                 : v <= 400
                   ? ["Very Poor", "#ef4444"]
                   : ["Severe", "#7f1d1d"];
-      const CPCB_AQI_POINTS = [0, 50, 100, 200, 300, 400];
+      function renderAQIMethodDetails() {
+        return `<details class="aqi-method-details"><summary>How to read this India AQI</summary><div class="aqi-method-body"><p><strong>India CPCB category bands:</strong> Good 0–50 · Satisfactory 51–100 · Moderate 101–200 · Poor 201–300 · Very Poor 301–400 · Severe 401–500.</p><p><strong>What this number means:</strong> this is a model-based estimate calculated from Open-Meteo pollutant concentrations using Indian CPCB breakpoint bands. It is <strong>not an official CPCB monitoring-station AQI</strong>.</p><p><strong>Why another app may show a different number:</strong> it may use a different scale (for example, US EPA AQI), a different monitoring station or model grid, another update time, different pollutants, or different averaging windows. Compare numbers only when scale, location, source and time match.</p><p><strong>Averaging windows:</strong> PM2.5, PM10, NO₂ and SO₂ use 24-hour rolling averages; O₃ and CO use 8-hour rolling averages. The pollutant cards show the same rounded concentrations used by their sub-index.</p><p><strong>Coverage limits:</strong> NH₃ (ammonia) and Pb (lead) are not available in this model feed, so this estimate can differ from an official station calculation. OpenAQ readings below are independent station measurements and are <strong>not used to calculate the estimate above</strong>.</p><p class="aqi-method-links"><a href="https://app.cpcbccr.com/ccr_docs/FINAL-REPORT_AQI_.pdf" target="_blank" rel="noopener noreferrer">CPCB methodology ↗</a><span>·</span><a href="https://open-meteo.com/en/docs/air-quality-api" target="_blank" rel="noopener noreferrer">Open-Meteo data ↗</a></p></div></details>`;
+      }
       const CPCB_POLLUTANTS = {
         pm2_5: {
           label: "PM2.5",
+          unit: "µg/m³",
           hours: 24,
           min: 16,
-          breaks: [0, 30, 60, 90, 120, 250],
+          decimals: 0,
+          ranges: [
+            [0, 30, 0, 50],
+            [31, 60, 51, 100],
+            [61, 90, 101, 200],
+            [91, 120, 201, 300],
+            [121, 250, 301, 400],
+          ],
+          openAfter: 250,
         },
         pm10: {
           label: "PM10",
+          unit: "µg/m³",
           hours: 24,
           min: 16,
-          breaks: [0, 50, 100, 250, 350, 430],
+          decimals: 0,
+          ranges: [
+            [0, 50, 0, 50],
+            [51, 100, 51, 100],
+            [101, 250, 101, 200],
+            [251, 350, 201, 300],
+            [351, 430, 301, 400],
+          ],
+          openAfter: 430,
         },
         nitrogen_dioxide: {
           label: "NO₂",
+          unit: "µg/m³",
           hours: 24,
           min: 16,
-          breaks: [0, 40, 80, 180, 280, 400],
+          decimals: 0,
+          ranges: [
+            [0, 40, 0, 50],
+            [41, 80, 51, 100],
+            [81, 180, 101, 200],
+            [181, 280, 201, 300],
+            [281, 400, 301, 400],
+          ],
+          openAfter: 400,
         },
         sulphur_dioxide: {
           label: "SO₂",
+          unit: "µg/m³",
           hours: 24,
           min: 16,
-          breaks: [0, 40, 80, 380, 800, 1600],
+          decimals: 0,
+          ranges: [
+            [0, 40, 0, 50],
+            [41, 80, 51, 100],
+            [81, 380, 101, 200],
+            [381, 800, 201, 300],
+            [801, 1600, 301, 400],
+          ],
+          openAfter: 1600,
         },
         ozone: {
           label: "O₃",
+          unit: "µg/m³",
           hours: 8,
           min: 6,
-          breaks: [0, 50, 100, 168, 208, 748],
+          decimals: 0,
+          ranges: [
+            [0, 50, 0, 50],
+            [51, 100, 51, 100],
+            [101, 168, 101, 200],
+            [169, 208, 201, 300],
+            [209, 748, 301, 400],
+          ],
+          openAfter: 748,
         },
         carbon_monoxide: {
           label: "CO",
+          unit: "mg/m³",
           hours: 8,
           min: 6,
           scale: 0.001,
-          breaks: [0, 1, 2, 10, 17, 34],
+          decimals: 1,
+          ranges: [
+            [0, 1.0, 0, 50],
+            [1.1, 2.0, 51, 100],
+            [2.1, 10.0, 101, 200],
+            [10.1, 17.0, 201, 300],
+            [17.1, 34.0, 301, 400],
+          ],
+          openAfter: 34.0,
         },
       };
-      function cpcbSubIndex(concentration, breaks) {
+      function roundCpcbConcentration(value, decimals = 0) {
+        const factor = 10 ** decimals;
+        return Math.round((Number(value) + Number.EPSILON) * factor) / factor;
+      }
+      function cpcbSubIndex(concentration, config) {
         if (!Number.isFinite(concentration) || concentration < 0) return null;
-        for (let i = 0; i < breaks.length - 1; i++) {
-          if (concentration <= breaks[i + 1]) {
-            const fraction =
-              (concentration - breaks[i]) / (breaks[i + 1] - breaks[i]);
+        const rounded = roundCpcbConcentration(concentration, config.decimals);
+        for (const [cLow, cHigh, iLow, iHigh] of config.ranges) {
+          if (rounded >= cLow && rounded <= cHigh) {
+            const fraction = (rounded - cLow) / (cHigh - cLow || 1);
             return {
-              value: Math.round(
-                CPCB_AQI_POINTS[i] +
-                  fraction * (CPCB_AQI_POINTS[i + 1] - CPCB_AQI_POINTS[i]),
+              value: Math.max(
+                iLow,
+                Math.min(iHigh, Math.round(iLow + fraction * (iHigh - iLow))),
               ),
               openEnded: false,
+              concentration: rounded,
             };
           }
         }
-        // CPCB publishes an open-ended final concentration band. Report it as a lower bound, not a fabricated exact value.
-        return { value: 401, openEnded: true };
-      }
-      function calcIndiaAQI(payload, currentTime) {
-        const h = payload && payload.hourly;
-        if (!h || !Array.isArray(h.time)) return null;
-        let end = -1;
-        for (let i = 0; i < h.time.length; i++) {
-          if (h.time[i] <= currentTime) end = i;
-          else break;
-        }
-        if (end < 0) return null;
-        const subs = [];
-        for (const [key, config] of Object.entries(CPCB_POLLUTANTS)) {
-          const series = h[key];
-          if (!Array.isArray(series)) continue;
-          const start = Math.max(0, end - config.hours + 1);
-          const values = series
-            .slice(start, end + 1)
-            .filter(
-              (value) =>
-                value !== null &&
-                value !== undefined &&
-                value !== "" &&
-                Number.isFinite(Number(value)),
-            )
-            .map(Number);
-          if (values.length < config.min) continue;
-          const mean =
-            values.reduce((sum, value) => sum + value, 0) / values.length;
-          const sub = cpcbSubIndex(mean * (config.scale || 1), config.breaks);
-          if (sub) subs.push({ key, label: config.label, ...sub });
-        }
-        const hasParticulate = subs.some(
-          (s) => s.key === "pm2_5" || s.key === "pm10",
-        );
-        // CPCB methodology requires at least three pollutant sub-indices, including PM2.5 or PM10.
-        if (subs.length < 3 || !hasParticulate) return null;
-        const max = Math.max(...subs.map((s) => s.value));
-        const worst = subs.filter((s) => s.value === max);
-        return {
-          value: max,
-          openEnded: worst.some((s) => s.openEnded),
-          pollutants: subs.length,
-          worst: worst.map((s) => s.label),
-        };
-      }
-      function dateOffset(day, offset) {
-        const d = new Date(day + "T00:00:00Z");
-        d.setUTCDate(d.getUTCDate() + offset);
-        return d.toISOString().slice(0, 10);
+        if (rounded > config.openAfter)
+          return { value: 401, openEnded: true, concentration: rounded };
+        return null;
       }
       function validPollutantValues(values) {
         return Array.isArray(values)
@@ -1875,6 +2165,94 @@
               .map(Number)
           : [];
       }
+      function calculateCpcbAtEnd(payload, end) {
+        const h = payload && payload.hourly;
+        if (!h || !Array.isArray(h.time) || end < 0 || end >= h.time.length)
+          return null;
+        const pollutants = {};
+        for (const [key, config] of Object.entries(CPCB_POLLUTANTS)) {
+          const series = h[key];
+          if (!Array.isArray(series)) continue;
+          const start = Math.max(0, end - config.hours + 1);
+          const values = validPollutantValues(series.slice(start, end + 1));
+          if (values.length < config.min) continue;
+          // The displayed concentration is the same rolling mean used by the CPCB sub-index.
+          // Open-Meteo CO arrives in µg/m³; convert to mg/m³ before CPCB rounding and interpolation.
+          const mean =
+            values.reduce((sum, value) => sum + value, 0) / values.length;
+          const concentration = mean * (config.scale || 1);
+          const sub = cpcbSubIndex(concentration, config);
+          if (!sub) continue;
+          const [status] = aqC(sub.value);
+          pollutants[key] = {
+            value: sub.concentration,
+            unit: config.unit,
+            sub_index: sub.value,
+            status,
+            averaging_hours: config.hours,
+            samples: values.length,
+            open_ended: sub.openEnded,
+          };
+        }
+        const pollutantEntries = Object.entries(pollutants);
+        const hasParticulate = Boolean(pollutants.pm2_5 || pollutants.pm10);
+        // CPCB minimum-data rule: >=3 valid pollutant sub-indices, including PM2.5 or PM10.
+        const indexAvailable = pollutantEntries.length >= 3 && hasParticulate;
+        const max = indexAvailable
+          ? Math.max(...pollutantEntries.map(([, p]) => p.sub_index))
+          : null;
+        const worst = indexAvailable
+          ? pollutantEntries
+              .filter(([, p]) => p.sub_index === max)
+              .map(([key]) => CPCB_POLLUTANTS[key].label)
+          : [];
+        const [category] = indexAvailable ? aqC(max) : ["Insufficient data"];
+        return {
+          value: max,
+          aqi: max,
+          category,
+          index_available: indexAvailable,
+          openEnded:
+            indexAvailable &&
+            worst.some(
+              (key) =>
+                pollutants[
+                  Object.keys(CPCB_POLLUTANTS).find(
+                    (k) => CPCB_POLLUTANTS[k].label === key,
+                  )
+                ]?.open_ended,
+            ),
+          prominent_pollutant: worst.join(", ") || null,
+          pollutant_count: pollutantEntries.length,
+          pollutants,
+          missing_requirements: indexAvailable
+            ? []
+            : [
+                ...(pollutantEntries.length < 3
+                  ? ["At least three valid pollutant sub-indices are required."]
+                  : []),
+                ...(!hasParticulate
+                  ? ["At least one of PM2.5 or PM10 is required."]
+                  : []),
+              ],
+        };
+      }
+      function calcIndiaAQI(payload, currentTime) {
+        const h = payload && payload.hourly;
+        if (!h || !Array.isArray(h.time)) return null;
+        let end = -1;
+        for (let i = 0; i < h.time.length; i++) {
+          if (h.time[i] <= currentTime) end = i;
+          else break;
+        }
+        if (end < 0) return null;
+        return calculateCpcbAtEnd(payload, end);
+      }
+      function dateOffset(day, offset) {
+        const d = new Date(day + "T00:00:00Z");
+        d.setUTCDate(d.getUTCDate() + offset);
+        return d.toISOString().slice(0, 10);
+      }
       function calcIndiaAQIForDay(payload, day) {
         const h = payload && payload.hourly;
         if (!h || !Array.isArray(h.time)) return null;
@@ -1882,54 +2260,25 @@
         for (let i = 0; i < h.time.length; i++)
           if (String(h.time[i]).slice(0, 10) === day) dayIndices.push(i);
         if (!dayIndices.length) return null;
-        const subs = [];
-        for (const [key, config] of Object.entries(CPCB_POLLUTANTS)) {
-          const series = h[key];
-          if (!Array.isArray(series)) continue;
-          let sub = null;
-          if (config.hours === 24) {
-            const values = validPollutantValues(
-              dayIndices.map((i) => series[i]),
-            );
-            if (values.length >= config.min) {
-              const mean =
-                values.reduce((sum, value) => sum + value, 0) / values.length;
-              sub = cpcbSubIndex(mean * (config.scale || 1), config.breaks);
-            }
-          } else {
-            // CPCB uses rolling 8-hour windows for CO and ozone. Use the highest
-            // available rolling sub-index whose endpoint falls on this date.
-            let best = null;
-            for (const end of dayIndices) {
-              const start = end - config.hours + 1;
-              if (start < 0) continue;
-              const values = validPollutantValues(series.slice(start, end + 1));
-              if (values.length < config.min) continue;
-              const mean =
-                values.reduce((sum, value) => sum + value, 0) / values.length;
-              const candidate = cpcbSubIndex(
-                mean * (config.scale || 1),
-                config.breaks,
-              );
-              if (candidate && (!best || candidate.value > best.value))
-                best = candidate;
-            }
-            sub = best;
-          }
-          if (sub) subs.push({ key, label: config.label, ...sub });
+        // Daily chart shows the highest valid rolling CPCB-style estimate whose window ends on that date.
+        let best = null;
+        for (const end of dayIndices) {
+          const candidate = calculateCpcbAtEnd(payload, end);
+          if (
+            candidate &&
+            candidate.index_available &&
+            (!best || candidate.value > best.value)
+          )
+            best = candidate;
         }
-        const hasParticulate = subs.some(
-          (s) => s.key === "pm2_5" || s.key === "pm10",
-        );
-        if (subs.length < 3 || !hasParticulate) return null;
-        const max = Math.max(...subs.map((s) => s.value));
-        const worst = subs.filter((s) => s.value === max);
-        return {
-          value: max,
-          openEnded: worst.some((s) => s.openEnded),
-          pollutants: subs.length,
-          worst: worst.map((s) => s.label),
-        };
+        return best
+          ? {
+              value: best.value,
+              openEnded: best.openEnded,
+              category: best.category,
+              prominent_pollutant: best.prominent_pollutant,
+            }
+          : null;
       }
       function renderAQIHistory(payload, currentTime) {
         const target = $("#aqiHistoryContent");
@@ -1971,7 +2320,7 @@
             return `<div class="aqi-history-day" title="${record.date}: ${valueLabel} · ${label}"><span class="aqi-history-number" style="color:${color}">${valueLabel}</span><div class="aqi-history-bar-wrap"><div class="aqi-history-bar" style="height:${barHeight}px;background:${color};animation-delay:${i * 55}ms"></div></div><span class="aqi-history-date">${dateLabel}</span><span class="aqi-history-category">${label}</span></div>`;
           })
           .join("");
-        target.innerHTML = `<div class="history-head"><p class="history-lede">Last seven completed days for ${esc(S.loc.n)} · CPCB-style estimates</p><span class="history-badge">MODEL DATA · NOT CPCB STATIONS</span></div>${any ? `<div class="history-scroll"><div class="aqi-history-chart" role="img" aria-label="Seven-day estimated Indian AQI bar chart">${chart}</div></div>` : '<p class="history-footnote">There are not enough modelled hourly pollutant readings to calculate a CPCB-style estimate for these days. No values are fabricated.</p>'}<p class="history-footnote">These are estimates calculated from Open-Meteo archived model concentrations, not verified historical readings from CPCB monitoring stations. The CPCB index normally uses eight pollutants; ammonia and lead are not available in this feed, so estimates may differ from official AQI.</p>`;
+        target.innerHTML = `<div class="history-head"><p class="history-lede">Daily peak estimates from modelled pollutant concentrations for the last seven completed days in ${esc(S.loc.n)}</p><span class="history-badge">MODEL DATA · NOT CPCB STATIONS</span></div>${any ? `<div class="history-scroll"><div class="aqi-history-chart" role="img" aria-label="Seven-day estimated Indian AQI bar chart">${chart}</div></div>` : '<p class="history-footnote">There are not enough modelled hourly pollutant readings to calculate a CPCB-style estimate for these days. No values are fabricated.</p>'}<p class="history-footnote">These are estimates calculated from Open-Meteo archived model concentrations, not verified historical readings from CPCB monitoring stations. The CPCB index normally uses eight pollutants; ammonia and lead are not available in this feed, so estimates may differ from official AQI.</p>`;
       }
       const uvL = (v) =>
         v < 3
@@ -2018,7 +2367,7 @@
         document.body.classList.add("ld");
         const { la, lo } = S.loc;
         try {
-          const [f, a, c] = await Promise.all([
+          const [f, a, c, o] = await Promise.all([
             j(
               `${API}latitude=${la}&longitude=${lo}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,visibility&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max&timezone=Asia%2FKolkata&forecast_days=7`,
             ),
@@ -2029,10 +2378,12 @@
               j(
                 `${API}latitude=${CITIES.map((c) => c[1])}&longitude=${CITIES.map((c) => c[2])}&current=temperature_2m,weather_code,is_day&timezone=Asia%2FKolkata`,
               ).catch(() => null),
+            loadOpenAQStation(la, lo),
           ]);
           D = f;
           A = a;
           CT = c;
+          O = o;
           last = Date.now();
           render();
         } catch (e) {
@@ -2199,12 +2550,19 @@
  <div class="chips"><span>Feels like ${T(c.apparent_temperature)}°</span><span>High ${T(d.temperature_2m_max[0])}° · Low ${T(d.temperature_2m_min[0])}°</span><span>💧 ${c.relative_humidity_2m}%</span><span>💨 ${Math.round(c.wind_speed_10m)} km/h ${dn(c.wind_direction_10m)}</span></div><div id="dailyAdvice" class="daily-advice-row" aria-label="Today's weather recommendations"></div><div class="tip">${tip}</div>`;
         cnt($("#tv"), T(c.temperature_2m));
 
-        if (aq != null) {
-          const [l, col] = aqC(aq),
-            a = A.current,
-            aqLabel = indiaAQI.openEnded ? "401+" : String(aq);
+        if (indiaAQI && Object.keys(indiaAQI.pollutants || {}).length) {
+          const indexAvailable = indiaAQI.index_available && aq != null,
+            [l, col] = indexAvailable
+              ? aqC(aq)
+              : ["Insufficient data", "#64748b"],
+            aqLabel = !indexAvailable
+              ? "—"
+              : indiaAQI.openEnded
+                ? "401+"
+                : String(aq),
+            a = indiaAQI.pollutants;
           $("#aqi").innerHTML =
-            `<h2>Indian air quality</h2><div class="aqt"><div class="aqn" style="color:${col}"><span id="av">${aqLabel}</span></div><div><b style="color:${col}">${l}</b><p class="mu">CPCB scale · model estimate</p></div></div><div class="gb" style="background:linear-gradient(90deg,#22c55e 0 10%,#84cc16 10% 20%,#eab308 20% 40%,#f97316 40% 60%,#ef4444 60% 80%,#7f1d1d 80% 100%)"><i style="left:${Math.min(aq / 500, 1) * 100}%"></i></div><div class="pg">${[
+            `<h2>India AQI estimate</h2><div class="aqt"><div class="aqn" style="color:${col}"><span id="av">${aqLabel}</span></div><div><b style="color:${col}">${l}</b><p class="mu">India CPCB bands · modelled data</p>${indexAvailable ? `<p class="mu" style="font-size:11px;margin-top:3px">Prominent pollutant: ${esc(indiaAQI.prominent_pollutant || "—")}</p>` : ""}</div></div><div class="gb" style="background:linear-gradient(90deg,#22c55e 0 10%,#84cc16 10% 20%,#eab308 20% 40%,#f97316 40% 60%,#ef4444 60% 80%,#7f1d1d 80% 100%)"><i style="left:${indexAvailable ? Math.min(aq / 500, 1) * 100 : 0}%"></i></div><div class="pg">${[
               ["PM2.5", "pm2_5"],
               ["PM10", "pm10"],
               ["NO₂", "nitrogen_dioxide"],
@@ -2213,15 +2571,18 @@
               ["CO", "carbon_monoxide"],
             ]
               .map(([n, k]) => {
-                const value = a[k];
-                return `<div><small>${n}</small><b>${value == null ? "–" : k === "carbon_monoxide" ? (Number(value) / 1000).toFixed(2) : Math.round(value)}</b></div>`;
+                const p = a[k];
+                return `<div><small>${n}</small><b>${p ? `${p.value.toFixed(CPCB_POLLUTANTS[k].decimals)} <span>${p.unit}</span>` : "–"}</b>${p ? `<em>Sub-index ${p.open_ended ? "401+" : p.sub_index} · ${esc(p.status)}</em>` : "<em>Insufficient readings</em>"}</div>`;
               })
               .join(
                 "",
-              )}</div><p class="mu" style="font-size:12px">Concentrations: µg/m³; CO: mg/m³.</p><p class="mu" style="font-size:11px;line-height:1.5">Estimated from Open-Meteo model concentrations using CPCB breakpoints and rolling averages. This is not an official CPCB station reading; NH₃ and Pb are not available in this feed.</p><button type="button" class="aqi-history-trigger" id="openAQIHistory"><span>📈 View last 7 days AQI history</span><span aria-hidden="true">↗</span></button>`;
+              )}</div><p class="mu" style="font-size:11px;line-height:1.5;margin-top:8px">Displayed concentrations are the rounded rolling averages used for each pollutant sub-index (24 h for PM/NO₂/SO₂; 8 h for O₃/CO). CO is converted to mg/m³ before calculation.</p><p class="mu" style="font-size:11px;line-height:1.5">${indexAvailable ? "Estimate from Open-Meteo modelled concentrations using Indian CPCB breakpoints—not an official CPCB station reading. NH₃ and Pb are unavailable in this feed." : "Overall AQI withheld because CPCB minimum-data rules are not met: " + esc(indiaAQI.missing_requirements.join(" ")) + " Individual sub-indices are shown where enough readings exist."}</p>${renderAQIMethodDetails()}<button type="button" class="aqi-history-trigger" id="openAQIHistory"><span>📈 View 7-day AQI estimate</span><span aria-hidden="true">↗</span></button>`;
         } else
           $("#aqi").innerHTML =
-            '<h2>Indian air quality</h2><p class="mu">A CPCB-style estimate is unavailable because this location does not have enough modelled pollutant history to meet the minimum averaging-window requirements. Pollutant forecasts may still be unavailable.</p><button type="button" class="aqi-history-trigger" id="openAQIHistory"><span>📈 View last 7 days AQI history</span><span aria-hidden="true">↗</span></button>';
+            '<h2>India AQI estimate</h2><p class="mu">A model-based Indian CPCB-scale estimate is unavailable because this location does not have enough modelled pollutant history to calculate valid rolling averages. No AQI value is fabricated.</p>' +
+            renderAQIMethodDetails() +
+            '<button type="button" class="aqi-history-trigger" id="openAQIHistory"><span>📈 View 7-day AQI estimate</span><span aria-hidden="true">↗</span></button>';
+        $("#aqi").insertAdjacentHTML("beforeend", renderOpenAQStationPanel(O));
         renderDailyGuide(c, d, H, hs, aq, pop, indiaAQI);
 
         const ts = hs.map((i) => H.temperature_2m[i]),
@@ -2344,13 +2705,11 @@
         );
         cities();
         $("#ft").innerHTML =
-          "Updated " +
+          '<div class="footer-attribution">Updated ' +
           hr(c.time, 1) +
-          ' IST · Weather & location data: Open-Meteo · CC BY 4.0 · <a href="' +
+          ' IST · Weather & location data: Open-Meteo · CC BY 4.0</div><a class="github-source-link" href="' +
           GITHUB_REPO_URL +
-          '" target="_blank" rel="noopener noreferrer">GitHub source ↗</a> · <span class="footer-credit">Built by ' +
-          esc(DEVELOPER_NAME) +
-          "</span>";
+          '" target="_blank" rel="noopener noreferrer" aria-label="View Mausam India source code on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.75-.24.75-.53v-2.04c-3.08.67-3.73-1.3-3.73-1.3-.5-1.28-1.23-1.62-1.23-1.62-1-.69.08-.67.08-.67 1.12.08 1.7 1.14 1.7 1.14.99 1.69 2.59 1.2 3.22.92.1-.71.39-1.2.7-1.48-2.46-.28-5.05-1.23-5.05-5.48 0-1.21.43-2.2 1.14-2.97-.11-.28-.49-1.4.11-2.93 0 0 .93-.3 3.05 1.13a10.6 10.6 0 0 1 5.55 0c2.12-1.43 3.05-1.13 3.05-1.13.61 1.53.23 2.65.12 2.93.71.77 1.14 1.76 1.14 2.97 0 4.26-2.59 5.2-5.06 5.47.4.34.75 1.02.75 2.06V22c0 .29.2.63.76.52A11.1 11.1 0 0 0 12 .9Z"/></svg><span>View source on GitHub</span><span aria-hidden="true">↗</span></a>';
         setupScrollReveal();
       }
 
@@ -2572,11 +2931,9 @@
       function openAQIHistory() {
         const modal = $("#aqiHistoryModal");
         if (!modal) return;
-        $("#aqiHistoryTitle").textContent = "7-day AQI history";
+        $("#aqiHistoryTitle").textContent = "7-day India AQI estimate";
         $("#aqiHistorySubtitle").textContent =
-          "Recent air-quality trend for " +
-          S.loc.n +
-          " · model-based estimates";
+          "Modelled trend for " + S.loc.n + " · not official station history";
         renderAQIHistory(A, D && D.current ? D.current.time : null);
         modal.hidden = false;
         modal.classList.add("open");
