@@ -13,7 +13,12 @@
     />
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌤️%3C/text%3E%3C/svg%3E"
+      type="image/svg+xml"
+      href="./assets/mausam-logo.svg"
+    />
+    <link
+      rel="alternate icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='46' cy='42' r='28' fill='%23f59e0b'/%3E%3Cpath d='M34 80h38a18 18 0 0 0 4-35 22 22 0 0 0-42-6A16 16 0 0 0 34 80z' fill='%23ffffff'/%3E%3C/svg%3E"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -117,19 +122,59 @@
         border-bottom: 1px solid var(--bd);
       }
       .logo {
-        font: 600 24px var(--d);
+        font: 600 22px var(--d);
         letter-spacing: -0.02em;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--tx);
+        user-select: none;
+        flex-shrink: 0;
+        transition: transform 0.2s ease, opacity 0.2s ease;
+      }
+      .logo:hover {
+        transform: translateY(-1px);
+        opacity: 0.95;
+      }
+      .logo-mark {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
         display: flex;
         align-items: center;
-        gap: 9px;
+        justify-content: center;
+        filter: drop-shadow(0 2px 8px color-mix(in srgb, var(--ac) 40%, transparent));
       }
-      .logo b {
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 35% 35%, #fde68a, var(--ac));
-        box-shadow: 0 0 20px var(--ac);
-        animation: pulse 3s ease-in-out infinite;
+      .logo-mark svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      .logo-text {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        line-height: 1;
+      }
+      .logo-name {
+        font-weight: 700;
+        color: var(--tx);
+      }
+      .logo-suffix {
+        font-weight: 600;
+        color: var(--ac);
+      }
+      .logo-badge {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--ac) 14%, transparent);
+        color: var(--ac);
+        border: 1px solid color-mix(in srgb, var(--ac) 30%, transparent);
       }
       .sw {
         position: relative;
@@ -645,32 +690,93 @@
       footer {
         position: relative;
         z-index: 1;
+        padding: 0 16px calc(34px + env(safe-area-inset-bottom, 0px));
+        margin-top: 20px;
+      }
+      .ft-card {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 22px 20px;
+        border-radius: 24px;
+        background: color-mix(in srgb, var(--card) 75%, transparent);
+        border: 1px solid var(--bd);
+        box-shadow: var(--sh);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
         text-align: center;
+        align-items: center;
+      }
+      .ft-top-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        font-size: 11.5px;
+        color: var(--mu);
+      }
+      .ft-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--tx) 5%, transparent);
+        border: 1px solid var(--bd);
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--tx);
+      }
+      .ft-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 8px #10b981;
+      }
+      .footer-attribution {
+        font-size: 11.5px;
+        line-height: 1.55;
+        color: var(--mu);
+      }
+      .footer-attribution a {
+        color: var(--tx);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+      .footer-rights {
         font-size: 12px;
-        color: var(--mu);
-        padding: 0 16px calc(26px + env(safe-area-inset-bottom, 0px));
+        line-height: 1.55;
+        color: var(--tx);
+        font-weight: 500;
       }
-      #ft .footer-attribution {
+      .footer-rights a {
+        color: var(--ac);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        font-weight: 600;
+      }
+      .footer-disclaimer-box {
+        max-width: 760px;
+        padding: 10px 14px;
+        border-radius: 14px;
+        background: color-mix(in srgb, var(--tx) 3%, transparent);
+        border: 1px solid var(--bd);
         font-size: 11px;
         line-height: 1.55;
         color: var(--mu);
         text-align: center;
       }
-      #ft .footer-rights {
-        font-size: 11px;
-        line-height: 1.55;
-        color: var(--mu);
-        text-align: center;
-        margin-top: 4px;
-      }
-      #ft .footer-rights a {
+      .footer-disclaimer-box a {
         color: var(--tx);
         text-decoration: underline;
         text-underline-offset: 2px;
         font-weight: 600;
-        transition: color 0.2s ease;
       }
-      #ft .footer-rights a:hover {
+      .footer-disclaimer-box a:hover {
         color: var(--ac);
       }
       #ft a.github-source-link {
@@ -678,13 +784,13 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        margin: 9px auto 0;
-        padding: 8px 12px;
+        margin-top: 4px;
+        padding: 8px 14px;
         border: 1px solid color-mix(in srgb, var(--ac) 34%, var(--bd));
         border-radius: 12px;
         background: color-mix(in srgb, var(--ac) 8%, transparent);
         color: var(--ac);
-        font-size: 11px;
+        font-size: 11.5px;
         font-weight: 700;
         line-height: 1.2;
         text-decoration: none;
@@ -809,7 +915,18 @@
         }
       }
       @media (max-width: 560px) {
-        .logo span {
+        .logo {
+          gap: 7px;
+        }
+        .logo-mark {
+          width: 28px;
+          height: 28px;
+        }
+        .logo-name,
+        .logo-suffix {
+          font-size: 17px;
+        }
+        .logo-badge {
           display: none;
         }
         main {
@@ -2216,7 +2333,32 @@
     <div id="bar"></div>
     <canvas id="fx"></canvas>
     <header>
-      <div class="logo"><b></b><span>Mausam</span></div>
+      <a class="logo" href="./" aria-label="Mausam India Home">
+        <div class="logo-mark">
+          <svg viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <radialGradient id="hLogoSun" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#fffbeb"/>
+                <stop offset="25%" stop-color="#fde047"/>
+                <stop offset="65%" stop-color="#f59e0b"/>
+                <stop offset="100%" stop-color="#ea580c"/>
+              </radialGradient>
+              <linearGradient id="hLogoCloud" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffffff"/>
+                <stop offset="100%" stop-color="#cbd5e1"/>
+              </linearGradient>
+            </defs>
+            <circle cx="56" cy="50" r="34" fill="url(#hLogoSun)"/>
+            <path d="M42 98h50a22 22 0 0 0 4.8-43.5 26 26 0 0 0-49.6-7.4A20 20 0 0 0 42 98z" fill="url(#hLogoCloud)"/>
+            <path d="M26 98h10" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-name">Mausam</span>
+          <span class="logo-suffix">India</span>
+          <span class="logo-badge">Live</span>
+        </div>
+      </a>
       <div class="sw">
         <input
           id="q"
@@ -4738,15 +4880,24 @@
         const yr = new Date().getFullYear();
         const yrDisplay = yr > 2026 ? "2026–" + yr : "2026";
         $("#ft").innerHTML =
-          '<div class="footer-attribution">Updated ' +
-          hr(c.time, 1) +
-          ' IST · Weather & location data: Open-Meteo · CC BY 4.0</div>' +
-          '<div class="footer-rights">© ' +
-          yrDisplay +
-          ' Mausam India · Developed by <a href="https://github.com/himanvic" target="_blank" rel="noopener noreferrer">himanvic</a> · All rights reserved.</div>' +
-          '<a class="github-source-link" href="' +
-          GITHUB_REPO_URL +
-          '" target="_blank" rel="noopener noreferrer" aria-label="View Mausam India source code on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.75-.24.75-.53v-2.04c-3.08.67-3.73-1.3-3.73-1.3-.5-1.28-1.23-1.62-1.23-1.62-1-.69.08-.67.08-.67 1.12.08 1.7 1.14 1.7 1.14.99 1.69 2.59 1.2 3.22.92.1-.71.39-1.2.7-1.48-2.46-.28-5.05-1.23-5.05-5.48 0-1.21.43-2.2 1.14-2.97-.11-.28-.49-1.4.11-2.93 0 0 .93-.3 3.05 1.13a10.6 10.6 0 0 1 5.55 0c2.12-1.43 3.05-1.13 3.05-1.13.61 1.53.23 2.65.12 2.93.71.77 1.14 1.76 1.14 2.97 0 4.26-2.59 5.2-5.06 5.47.4.34.75 1.02.75 2.06V22c0 .29.2.63.76.52A11.1 11.1 0 0 0 12 .9Z"/></svg><span>View source on GitHub</span><span aria-hidden="true">↗</span></a>';
+          '<div class="ft-card">' +
+            '<div class="ft-top-row">' +
+              '<span class="ft-pill"><span class="ft-dot"></span>Live Atmospheric Telemetry</span>' +
+              '<div class="footer-attribution">Updated ' +
+              hr(c.time, 1) +
+              ' IST · Weather & forecasts: <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Sensors: <a href="https://openaq.org" target="_blank" rel="noopener noreferrer">OpenAQ</a> · Orbit: NASA GIBS</div>' +
+            '</div>' +
+            '<div class="footer-rights">© ' +
+            yrDisplay +
+            ' Mausam India · Developed with precision by <a href="https://github.com/himanvic" target="_blank" rel="noopener noreferrer">himanvic</a> · Open source under MIT License</div>' +
+            '<div class="footer-disclaimer-box"><strong>Independent Project Notice:</strong> Mausam India is an independent open-source weather platform and is not affiliated with, authorized, or endorsed by the India Meteorological Department (IMD) or the Government of India. Official government advisories: <a href="https://mausam.imd.gov.in" target="_blank" rel="noopener noreferrer">mausam.imd.gov.in</a></div>' +
+            '<a class="github-source-link" href="' +
+            GITHUB_REPO_URL +
+            '" target="_blank" rel="noopener noreferrer" aria-label="View Mausam India source code on GitHub">' +
+              '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.75-.24.75-.53v-2.04c-3.08.67-3.73-1.3-3.73-1.3-.5-1.28-1.23-1.62-1.23-1.62-1-.69.08-.67.08-.67 1.12.08 1.7 1.14 1.7 1.14.99 1.69 2.59 1.2 3.22.92.1-.71.39-1.2.7-1.48-2.46-.28-5.05-1.23-5.05-5.48 0-1.21.43-2.2 1.14-2.97-.11-.28-.49-1.4.11-2.93 0 0 .93-.3 3.05 1.13a10.6 10.6 0 0 1 5.55 0c2.12-1.43 3.05-1.13 3.05-1.13.61 1.53.23 2.65.12 2.93.71.77 1.14 1.76 1.14 2.97 0 4.26-2.59 5.2-5.06 5.47.4.34.75 1.02.75 2.06V22c0 .29.2.63.76.52A11.1 11.1 0 0 0 12 .9Z"/></svg>' +
+              '<span>View source on GitHub</span><span aria-hidden="true">↗</span>' +
+            '</a>' +
+          '</div>';
         setupScrollReveal();
       }
 

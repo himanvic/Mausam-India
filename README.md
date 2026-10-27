@@ -32,6 +32,9 @@
 
 Built to run with zero server overhead at the edge on **Cloudflare Pages**, the application delivers near-instant cold starts, strict data integrity, and zero proprietary copyright liabilities.
 
+> [!NOTE]
+> **Independent Project Notice**: Mausam India is an independent open-source weather platform and is not affiliated with, authorized, sponsored, or endorsed by the India Meteorological Department (IMD), the Ministry of Earth Sciences (MoES), or the Government of India. For official governmental advisories and storm warnings, please visit [mausam.imd.gov.in](https://mausam.imd.gov.in).
+
 ---
 
 ## 🌟 Key Features

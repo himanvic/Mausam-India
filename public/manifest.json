@@ -1,6 +1,6 @@
 {
   "name": "Mausam India",
-  "short_name": "Mausam",
+  "short_name": "Mausam India",
   "description": "Live weather, Indian CPCB AQI, NASA satellite clouds & forecasts across India",
   "start_url": "./index.html",
   "scope": "./",
@@ -10,8 +10,8 @@
   "theme_color": "#0b1329",
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌤️%3C/text%3E%3C/svg%3E",
-      "sizes": "192x192 512x512",
+      "src": "./assets/mausam-logo.svg",
+      "sizes": "128x128 192x192 512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
     }
