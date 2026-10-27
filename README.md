@@ -275,10 +275,12 @@ Recent enhancements engineered for global edge deployment and data fidelity:
 - **Defensive Timeouts**: Attached `AbortSignal.timeout(8000)` across all frontend fetch requests, preventing hanging third-party networks from blocking user interactions.
 
 ### 4. Astronomical & Boundary Data Accuracy
-- **Solar Zenith Boundary Evaluation**: Hourly forecast icons compare precise timestamps against daily sunrise and sunset marks (`daily.sunrise` / `daily.sunset`). A 5:00 PM slot prior to a 5:13 PM sunset now accurately displays daytime icons instead of prematurely switching to night.
-- **Nocturnal WMO Mappings**: Midnight hours with partly cloudy conditions render night-appropriate icons (`🌙` or `☁️`) instead of daytime sun-behind-cloud glyphs (`⛅`).
+- **Midnight IST Date Alignment**: The 7-day weather forecast aligns directly with today's local IST `YYYY-MM-DD` calendar date (`c.time.slice(0, 10)`). Between 12:00 AM and 5:30 AM IST (when UTC is still on the previous day), row 0 strictly anchors to today's Indian date as "Today", eliminating UTC date offsets.
+- **Solar Zenith Boundary Evaluation**: Hourly forecast icons compare precise timestamps against daily sunrise and sunset marks (`daily.sunrise` / `daily.sunset`). A 5:00 PM slot prior to a 5:13 PM sunset accurately displays daytime icons instead of prematurely switching to night.
+- **Nocturnal WMO Mappings & Quick Cities**: Whenever `isDay` is falsy (such as at 1:00 AM, 5:00 AM before sunrise, or in Quick Cities at night), WMO code 2 accurately returns night clouds (`☁️`) instead of sun-behind-cloud (`⛅`).
 - **Harmonized "Now" Temperatures**: The initial "Now" slot in the 24-hour strip directly reflects live 15-minute readings (`current.temperature_2m`), ensuring identical temperature parity with the Hero card.
-- **Time-Aware Quick Guide**: Transitions dynamically to "Tomorrow's Quick Guide" after 8:00 PM local time to provide actionable next-day planning for clothing, UV, and rain preparation.
+- **Scroll Container Polish**: The 24-hour strip wrapper enforces `overflow-x: auto; overflow-y: hidden;`, completely eliminating unwanted vertical scrollbars across desktop and mobile viewports.
+- **Nighttime UV Guidance**: Whenever the sun is down (`current.is_day === 0`), the Quick Guide replaces daytime UV advice with `🌙 No UV tonight (Peak tomorrow: ...)` to provide actionable next-day planning.
 
 ---
 

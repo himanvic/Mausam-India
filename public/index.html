@@ -354,8 +354,10 @@
       }
       .sc {
         overflow-x: auto;
+        overflow-y: hidden;
         padding-bottom: 10px;
         scrollbar-width: thin;
+        -webkit-overflow-scrolling: touch;
       }
       .hcs {
         display: flex;
@@ -2495,8 +2497,9 @@
       };
       const wi = (c, d = 1) => {
         const w = W[c] || W[3];
+        const isNight = d === 0 || d === false || d === "0";
         let icon = w[1];
-        if (!d) {
+        if (isNight) {
           if (c === 0 || c === 1) icon = "🌙";
           else if (c === 2) icon = "☁️";
           else if (c === 51 || c === 53 || c === 80) icon = "🌧️";
@@ -4254,7 +4257,7 @@
         try {
           const [f, a, c, o] = await Promise.all([
             j(
-              `${API}latitude=${la}&longitude=${lo}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,visibility&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max&timezone=Asia%2FKolkata&forecast_days=7`,
+              `${API}latitude=${la}&longitude=${lo}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,visibility&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max&timezone=Asia%2FKolkata&forecast_days=10`,
             ),
             j(
               `${AQU}latitude=${la}&longitude=${lo}&current=pm2_5,pm10,nitrogen_dioxide,ozone,sulphur_dioxide,carbon_monoxide&hourly=pm2_5,pm10,nitrogen_dioxide,ozone,sulphur_dioxide,carbon_monoxide&past_days=7&forecast_days=2&timezone=Asia%2FKolkata`,
@@ -4409,19 +4412,25 @@
         if (!target) return;
 
         const currentHour = new Date(c.time).getHours();
+        const todayIST = c.time ? c.time.slice(0, 10) : "";
+        let todayIdx = d && d.time ? d.time.findIndex((t) => t === todayIST) : 0;
+        if (todayIdx === -1) todayIdx = 0;
+        const tomorrowUV = Number(d.uv_index_max?.[todayIdx + 1] ?? d.uv_index_max?.[1] ?? 0);
+        const isNightTime = c.is_day === 0 || (Number(c.uv_index || 0) === 0 && (currentHour >= 18 || currentHour < 6));
+
         // After 8:00 PM, switch to Tomorrow's quick guide for night-time utility
         const isNightPlan = currentHour >= 20;
-        const targetDayIdx = isNightPlan ? 1 : 0;
+        const targetDayIdx = isNightPlan ? (todayIdx + 1 < d.time.length ? todayIdx + 1 : todayIdx) : todayIdx;
 
         const feels = Number(
           isNightPlan
-            ? (d.temperature_2m_max?.[1] ?? c.apparent_temperature ?? c.temperature_2m)
+            ? (d.temperature_2m_max?.[targetDayIdx] ?? c.apparent_temperature ?? c.temperature_2m)
             : (c.apparent_temperature ?? c.temperature_2m)
         );
         const uv = Number(
           isNightPlan
-            ? (d.uv_index_max?.[1] ?? 0)
-            : (c.is_day ? (c.uv_index ?? d.uv_index_max?.[0] ?? 0) : 0)
+            ? (d.uv_index_max?.[targetDayIdx] ?? 0)
+            : (c.is_day ? (c.uv_index ?? d.uv_index_max?.[todayIdx] ?? 0) : 0)
         );
         const dayRain = Number(d.precipitation_probability_max?.[targetDayIdx] ?? 0);
         const rainChance = isNightPlan ? dayRain : Math.max(Number(pop) || 0, dayRain);
@@ -4488,45 +4497,32 @@
         }
 
         let sunTitle, sunCopy, sunIcon;
-        if (isNightPlan) {
-          if (uv >= 8) {
-            sunTitle = "High UV tomorrow";
-            sunCopy = `Tomorrow's peak UV index reaches high levels (~${Math.round(uv)}). Prepare sunscreen & a cap around midday.`;
-            sunIcon = "🧴";
-          } else if (uv >= 6) {
-            sunTitle = "Moderate UV tomorrow";
-            sunCopy = `Tomorrow's UV peaks near index ${Math.round(uv)}. Sunglasses and sunscreen recommended outdoors.`;
-            sunIcon = "🧢";
-          } else if (uv >= 3) {
-            sunTitle = "Bring sunglasses";
-            sunCopy = "Tomorrow will see moderate sunlight; sunglasses or a cap will be useful outdoors.";
-            sunIcon = "🕶️";
-          } else {
-            sunTitle = "Low UV tomorrow";
-            sunCopy = "Tomorrow's UV index will stay low throughout the day.";
-            sunIcon = "🌤️";
-          }
-        } else if (!c.is_day) {
-          sunTitle = "No UV at night";
-          sunCopy = "The sun has set for today; no UV protection is needed tonight.";
+        if (isNightTime || isNightPlan) {
           sunIcon = "🌙";
+          sunTitle =
+            tomorrowUV > 0
+              ? `No UV tonight (Peak tomorrow: ${Math.round(tomorrowUV)})`
+              : "No UV tonight";
+          sunCopy = `The sun has set; UV index is 0 right now. Tomorrow's peak UV index is forecast around ${Math.round(tomorrowUV)}. No sun protection is needed tonight.`;
+        } else if (uv >= 8) {
+          sunTitle = "High UV protection";
+          sunCopy =
+            "Use sunscreen, sunglasses and a hat; seek shade around midday.";
+          sunIcon = "🧴";
+        } else if (uv >= 6) {
+          sunTitle = "Protect from UV";
+          sunCopy = "Sunscreen, a cap and sunglasses are a good idea outdoors.";
+          sunIcon = "🧢";
+        } else if (uv >= 3) {
+          sunTitle = "Bring sunglasses";
+          sunCopy =
+            "Sunglasses or a cap can help during extended time outdoors.";
+          sunIcon = "🕶️";
         } else {
           sunTitle = "UV low–moderate";
-          sunCopy = "UV is currently low to moderate; use normal sun-safety precautions.";
+          sunCopy =
+            "UV is currently low to moderate; use normal sun-safety precautions.";
           sunIcon = "🌤️";
-          if (uv >= 8) {
-            sunTitle = "High UV protection";
-            sunCopy = "Use sunscreen, sunglasses and a hat; seek shade around midday.";
-            sunIcon = "🧴";
-          } else if (uv >= 6) {
-            sunTitle = "Protect from UV";
-            sunCopy = "Sunscreen, a cap and sunglasses are a good idea outdoors.";
-            sunIcon = "🧢";
-          } else if (uv >= 3) {
-            sunTitle = "Bring sunglasses";
-            sunCopy = "Sunglasses or a cap can help during extended time outdoors.";
-            sunIcon = "🕶️";
-          }
         }
 
         let airTitle = "Air looks manageable",
@@ -4557,7 +4553,7 @@
         const items = [
           ["WEAR", wearIcon, wearTitle, wearCopy],
           ["RAIN & WIND", rainIcon, rainTitle, rainCopy],
-          [isNightPlan || c.is_day ? "SUN" : "NIGHT", sunIcon, sunTitle, sunCopy],
+          [isNightTime || isNightPlan ? "NIGHT" : "SUN", sunIcon, sunTitle, sunCopy],
           ["AIR", airIcon, airTitle, airCopy],
         ];
 
@@ -4710,7 +4706,7 @@
           path += `C${m},${p[1]} ${m},${q[1]} ${q[0]},${q[1]}`;
         }
         $("#hourly").innerHTML =
-          `<h2>Next 24 hours</h2><div class="sc"><div style="width:${W2}px"><svg width="${W2}" height="100" viewBox="0 0 ${W2} 100"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="s1" stop-opacity=".4"/><stop offset="1" class="s1" stop-opacity="0"/></linearGradient></defs><path d="${path}L${W2 - 32},100L32,100Z" fill="url(#ag)"/><path class="ln" pathLength="1" d="${path}"/>${pts.map((p, k) => `<circle class="dot" cx="${p[0]}" cy="${p[1]}" r="${k ? 3.5 : 6}"/><text x="${p[0]}" y="${p[1] - 12}">${T(ts[k])}°</text>`).join("")}</svg>
+          `<h2>Next 24 hours</h2><div class="sc"><div style="width:${W2}px;overflow:hidden"><svg width="${W2}" height="100" viewBox="0 0 ${W2} 100"><defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="s1" stop-opacity=".4"/><stop offset="1" class="s1" stop-opacity="0"/></linearGradient></defs><path d="${path}L${W2 - 32},100L32,100Z" fill="url(#ag)"/><path class="ln" pathLength="1" d="${path}"/>${pts.map((p, k) => `<circle class="dot" cx="${p[0]}" cy="${p[1]}" r="${k ? 3.5 : 6}"/><text x="${p[0]}" y="${p[1] - 12}">${T(ts[k])}°</text>`).join("")}</svg>
  <div class="hcs">${hs
    .map((i, k) => {
      const p = H.precipitation_probability[i] || 0;
@@ -4720,21 +4716,39 @@
    })
    .join("")}</div></div></div>`;
 
-        const gn = Math.min(...d.temperature_2m_min),
-          gx = Math.max(...d.temperature_2m_max);
+        const todayIST = c.time ? c.time.slice(0, 10) : "";
+        let todayIdx = d.time.findIndex((t) => t === todayIST);
+        if (todayIdx === -1) todayIdx = 0;
+
+        const dayIndices = [];
+        for (let i = 0; i < 7 && todayIdx + i < d.time.length; i++) {
+          dayIndices.push(todayIdx + i);
+        }
+
+        const gn = Math.min(...dayIndices.map((k) => d.temperature_2m_min[k])),
+          gx = Math.max(...dayIndices.map((k) => d.temperature_2m_max[k]));
+
         $("#week").innerHTML =
           `<h2>7-day forecast</h2>` +
-          d.time
-            .map((t, k) => {
-              const lo = d.temperature_2m_min[k],
+          dayIndices
+            .map((k, relIdx) => {
+              const t = d.time[k],
+                lo = d.temperature_2m_min[k],
                 hi = d.temperature_2m_max[k],
                 p = d.precipitation_probability_max[k] || 0;
-              return `<div class="dy"><b style="text-align:left">${k ? new Date(t + "T00:00").toLocaleDateString("en-IN", { weekday: "short" }) : "Today"}</b><span style="font-size:22px">${wi(d.weather_code[k]).i}</span><small>${p >= 10 ? "💧" + p + "%" : ""}</small><span>${T(lo)}°</span><div class="tr"><i style="left:${((lo - gn) / (gx - gn || 1)) * 100}%;width:${Math.max(6, ((hi - lo) / (gx - gn || 1)) * 100)}%"></i></div><b>${T(hi)}°</b></div>`;
+              const isToday = relIdx === 0;
+              const dayLabel = isToday
+                ? "Today"
+                : new Date(t + "T12:00:00Z").toLocaleDateString("en-IN", {
+                    weekday: "short",
+                    timeZone: "UTC",
+                  });
+              return `<div class="dy"><b style="text-align:left">${dayLabel}</b><span style="font-size:22px">${wi(d.weather_code[k]).i}</span><small>${p >= 10 ? "💧" + p + "%" : ""}</small><span>${T(lo)}°</span><div class="tr"><i style="left:${((lo - gn) / (gx - gn || 1)) * 100}%;width:${Math.max(6, ((hi - lo) / (gx - gn || 1)) * 100)}%"></i></div><b>${T(hi)}°</b></div>`;
             })
             .join("");
 
-        const sr = d.sunrise[0],
-          ss = d.sunset[0],
+        const sr = d.sunrise[todayIdx] || d.sunrise[0],
+          ss = d.sunset[todayIdx] || d.sunset[0],
           sp = Math.min(
             1,
             Math.max(
@@ -4745,7 +4759,7 @@
           sx = 100 - 90 * Math.cos(Math.PI * sp),
           sy = 100 - 90 * Math.sin(Math.PI * sp),
           dl = (new Date(ss) - new Date(sr)) / 6e4,
-          uv = c.uv_index ?? d.uv_index_max[0],
+          uv = c.uv_index ?? d.uv_index_max[todayIdx] ?? d.uv_index_max[0],
           vis = c.visibility;
         $("#det").innerHTML =
           mini(
@@ -4824,11 +4838,18 @@
       }
 
       function cities() {
+        const fallbackDay =
+          D && D.current && D.current.is_day != null
+            ? D.current.is_day
+            : night
+              ? 0
+              : 1;
         $("#cities").innerHTML =
           `<h2>Quick cities · search above for more places</h2>${S.fav.length ? `<div class="chips">${S.fav.map((f, i) => `<button class="chip" data-f="${i}">★ ${esc(f.n)}</button>`).join("")}</div>` : ""}<div class="cg">${CITIES.map(
             (c, i) => {
               const x = CT && CT[i] && CT[i].current;
-              return `<button class="ct${c[0] == S.loc.n ? " on" : ""}" data-c="${i}"><span>${c[0]}</span><em>${x ? wi(x.weather_code, x.is_day).i : "·"}</em><b>${x ? T(x.temperature_2m) + "°" : "–"}</b></button>`;
+              const isDay = x && x.is_day != null ? x.is_day : fallbackDay;
+              return `<button class="ct${c[0] == S.loc.n ? " on" : ""}" data-c="${i}"><span>${c[0]}</span><em>${x ? wi(x.weather_code, isDay).i : "·"}</em><b>${x ? T(x.temperature_2m) + "°" : "–"}</b></button>`;
             },
           ).join("")}</div>`;
       }
