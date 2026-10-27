@@ -656,6 +656,23 @@
         color: var(--mu);
         text-align: center;
       }
+      #ft .footer-rights {
+        font-size: 11px;
+        line-height: 1.55;
+        color: var(--mu);
+        text-align: center;
+        margin-top: 4px;
+      }
+      #ft .footer-rights a {
+        color: var(--tx);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        font-weight: 600;
+        transition: color 0.2s ease;
+      }
+      #ft .footer-rights a:hover {
+        color: var(--ac);
+      }
       #ft a.github-source-link {
         display: inline-flex;
         align-items: center;
@@ -721,67 +738,6 @@
         color: #fdba74;
         font-weight: 600;
         margin-left: 8px;
-      }
-      .cloud-modal {
-        position: fixed;
-        inset: 0;
-        z-index: 80;
-        display: grid;
-        place-items: center;
-        padding: 18px;
-        background: rgba(2, 6, 23, 0.48);
-        backdrop-filter: blur(8px);
-      }
-      .cloud-modal[hidden] {
-        display: none;
-      }
-      .cloud-sheet {
-        width: min(100%, 430px);
-        padding: 24px;
-        border-radius: 24px;
-        background: var(--card);
-        color: var(--tx);
-        border: 1px solid var(--bd);
-        box-shadow: var(--sh);
-        backdrop-filter: blur(28px);
-      }
-      .cloud-sheet h2 {
-        font: 600 22px var(--d);
-        color: var(--tx);
-        margin: 0;
-      }
-      .cloud-email {
-        width: 100%;
-        margin: 12px 0;
-        padding: 12px 14px;
-        border-radius: 12px;
-        border: 1px solid var(--bd);
-        background: var(--card);
-        color: var(--tx);
-        font: inherit;
-      }
-      .cloud-action {
-        padding: 10px 14px;
-        border-radius: 12px;
-        background: var(--ac);
-        color: #fff;
-        font-weight: 600;
-      }
-      .cloud-action:disabled {
-        opacity: 0.45;
-        cursor: not-allowed;
-      }
-      .cloud-plain {
-        padding: 9px 12px;
-        border-radius: 12px;
-        border: 1px solid var(--bd);
-        background: var(--card);
-      }
-      .cloud-status {
-        min-height: 42px;
-        margin-top: 12px;
-        color: var(--mu);
-        font-size: 13px;
       }
       @keyframes up {
         from {
@@ -879,6 +835,20 @@
         }
         .dt {
           gap: 12px;
+        }
+        .radar-header {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
+        }
+        .radar-layer-tabs {
+          overflow-x: auto;
+          padding-bottom: 4px;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: none;
+        }
+        .radar-layer-tabs::-webkit-scrollbar {
+          display: none;
         }
       }
       /* Daily guide and seven-day estimated AQI history */
@@ -2277,14 +2247,6 @@
         title="Theme: auto / light / dark"
         aria-label="Switch theme"
       ></button>
-      <button
-        class="ib"
-        id="cloud"
-        title="Optional cloud-sync favorites"
-        aria-label="Cloud-sync favorites"
-      >
-        ☁️
-      </button>
     </header>
     <main>
       <section class="card hero" id="hero" style="--i: 0"></section>
@@ -2327,54 +2289,6 @@
     </main>
     <footer id="ft"></footer>
     <div id="toast" role="status"></div>
-    <div id="cloudModal" class="cloud-modal" hidden>
-      <section
-        class="cloud-sheet"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cloudTitle"
-      >
-        <div class="row" style="align-items: center; margin-bottom: 12px">
-          <h2 id="cloudTitle">Cloud-sync favorites</h2>
-          <button id="cloudClose" class="ib" aria-label="Close cloud sync">
-            ✕
-          </button>
-        </div>
-        <p class="mu" style="font-size: 13px">
-          Optional: sign in with an email magic link to sync your saved
-          locations across devices. Weather works without an account.
-        </p>
-        <label
-          for="cloudEmail"
-          style="
-            display: block;
-            margin-top: 16px;
-            font-size: 13px;
-            color: var(--mu);
-          "
-          >Email address</label
-        >
-        <input
-          id="cloudEmail"
-          class="cloud-email"
-          type="email"
-          autocomplete="email"
-          placeholder="you@example.com"
-        />
-        <div class="row" style="align-items: center; flex-wrap: wrap">
-          <button id="cloudSend" class="cloud-action">Send sign-in link</button>
-          <button id="cloudSignOut" class="cloud-plain" hidden>Sign out</button>
-        </div>
-        <p
-          id="cloudStatus"
-          class="cloud-status"
-          role="status"
-          aria-live="polite"
-        >
-          Multi-device sync is coming soon! In the meantime, your favorites are safely stored on this device.
-        </p>
-      </section>
-    </div>
     <div id="aqiHistoryModal" class="history-modal" hidden>
       <section
         class="history-modal-sheet"
@@ -2423,18 +2337,11 @@
           lo: 77.21,
         },
         u: ls.g("u") || "c",
-        th: ls.g("th") || "auto",
+        th: ["auto", "light", "dark"].includes(ls.g("th")) ? ls.g("th") : "auto",
         fav: JSON.parse(ls.g("fav") || "[]"),
       };
       // Replace this placeholder with your actual public Mausam India GitHub repository URL.
       const GITHUB_REPO_URL = "https://github.com/himanvic/Mausam-India";
-      // Optional Supabase setup: paste your Project URL and publishable/anon key here.
-      // Never put a service_role/secret key in this public HTML file.
-      const SUPABASE_URL = "";
-      const SUPABASE_ANON_KEY = "";
-      let sb = null,
-        cloudSession = null,
-        cloudBootPromise = null;
       let D,
         A,
         CT,
@@ -4828,10 +4735,16 @@
           90,
         );
         cities();
+        const yr = new Date().getFullYear();
+        const yrDisplay = yr > 2026 ? "2026–" + yr : "2026";
         $("#ft").innerHTML =
           '<div class="footer-attribution">Updated ' +
           hr(c.time, 1) +
-          ' IST · Weather & location data: Open-Meteo · CC BY 4.0</div><a class="github-source-link" href="' +
+          ' IST · Weather & location data: Open-Meteo · CC BY 4.0</div>' +
+          '<div class="footer-rights">© ' +
+          yrDisplay +
+          ' Mausam India · Developed by <a href="https://github.com/himanvic" target="_blank" rel="noopener noreferrer">himanvic</a> · All rights reserved.</div>' +
+          '<a class="github-source-link" href="' +
           GITHUB_REPO_URL +
           '" target="_blank" rel="noopener noreferrer" aria-label="View Mausam India source code on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.75-.24.75-.53v-2.04c-3.08.67-3.73-1.3-3.73-1.3-.5-1.28-1.23-1.62-1.23-1.62-1-.69.08-.67.08-.67 1.12.08 1.7 1.14 1.7 1.14.99 1.69 2.59 1.2 3.22.92.1-.71.39-1.2.7-1.48-2.46-.28-5.05-1.23-5.05-5.48 0-1.21.43-2.2 1.14-2.97-.11-.28-.49-1.4.11-2.93 0 0 .93-.3 3.05 1.13a10.6 10.6 0 0 1 5.55 0c2.12-1.43 3.05-1.13 3.05-1.13.61 1.53.23 2.65.12 2.93.71.77 1.14 1.76 1.14 2.97 0 4.26-2.59 5.2-5.06 5.47.4.34.75 1.02.75 2.06V22c0 .29.2.63.76.52A11.1 11.1 0 0 0 12 .9Z"/></svg><span>View source on GitHub</span><span aria-hidden="true">↗</span></a>';
         setupScrollReveal();
@@ -4854,213 +4767,12 @@
           ).join("")}</div>`;
       }
 
-      /* ---------- optional Supabase cloud favorites ---------- */
-      const cloudConfigured = () =>
-        Boolean(SUPABASE_URL.trim() && SUPABASE_ANON_KEY.trim());
-      async function getSupabase() {
-        if (!cloudConfigured()) return null;
-        if (sb) return sb;
-        const { createClient } =
-          await import("https://esm.sh/@supabase/supabase-js@2");
-        sb = createClient(SUPABASE_URL.trim(), SUPABASE_ANON_KEY.trim());
-        return sb;
-      }
-      function cloudStatus(message) {
-        const el = $("#cloudStatus");
-        if (el) el.textContent = message;
-      }
-      function cloudUi() {
-        const configured = cloudConfigured(),
-          signed = Boolean(cloudSession);
-        $("#cloudSend").disabled = !configured || signed;
-        $("#cloudEmail").disabled = !configured || signed;
-        $("#cloudSignOut").hidden = !signed;
-        $("#cloudSend").hidden = signed;
-        if (!configured) {
-          cloudStatus(
-            "✨ Multi-device cloud sync is coming soon! In the meantime, your favorite locations remain securely saved on this device.",
-          );
-          $("#cloudSend").textContent = "Coming Soon";
-        } else if (signed) {
-          $("#cloudSend").textContent = "Send sign-in link";
-          cloudStatus(
-            "Signed in as " +
-              (cloudSession.user.email || "your account") +
-              ". Favorites sync to your account.",
-          );
-        } else {
-          $("#cloudSend").textContent = "Send sign-in link";
-          cloudStatus(
-            "Enter your email and we will send a sign-in link. No password is needed.",
-          );
-        }
-      }
-      async function syncCloudFromLogin() {
-        if (!sb || !cloudSession) return;
-        cloudStatus("Syncing saved locations…");
-        const { data, error } = await sb
-          .from("saved_locations")
-          .select("name,latitude,longitude")
-          .order("created_at", { ascending: true });
-        if (error) {
-          cloudStatus(
-            "Could not load synced favorites. Please check your connection and try again.",
-          );
-          return;
-        }
-        if (data && data.length) {
-          S.fav = data.map((f) => ({
-            n: f.name,
-            la: Number(f.latitude),
-            lo: Number(f.longitude),
-          }));
-          ls.s("fav", JSON.stringify(S.fav));
-          cities();
-        } else if (S.fav.length) {
-          const rows = S.fav.map((f) => ({
-            user_id: cloudSession.user.id,
-            name: f.n,
-            latitude: f.la,
-            longitude: f.lo,
-          }));
-          const result = await sb
-            .from("saved_locations")
-            .upsert(rows, { onConflict: "user_id,latitude,longitude" });
-          if (result.error) {
-            cloudStatus(
-              "Could not sync favorites. Please check your connection and try again.",
-            );
-            return;
-          }
-        }
-        cloudStatus("Favorites synced successfully.");
-      }
-      async function bootCloud() {
-        if (!cloudConfigured()) return null;
-        if (cloudBootPromise) return cloudBootPromise;
-        cloudBootPromise = (async () => {
-          const client = await getSupabase();
-          const { data, error } = await client.auth.getSession();
-          if (error) throw error;
-          cloudSession = data.session;
-          client.auth.onAuthStateChange((event, session) => {
-            cloudSession = session;
-            if (event === "SIGNED_IN" && session)
-              setTimeout(
-                () =>
-                  syncCloudFromLogin().catch(() =>
-                    cloudStatus(
-                      "Cloud sync encountered a network issue. Please check your connection and try again.",
-                    ),
-                  ),
-                0,
-              );
-            if (event === "SIGNED_OUT") {
-              cloudSession = null;
-              cloudStatus(
-                "Signed out. Your local favorites stay on this device.",
-              );
-            }
-            if ($("#cloudModal") && !$("#cloudModal").hidden) cloudUi();
-          });
-          if (cloudSession) await syncCloudFromLogin();
-          return client;
-        })().catch((error) => {
-          cloudBootPromise = null;
-          throw error;
-        });
-        return cloudBootPromise;
-      }
-      async function openCloud() {
-        $("#cloudModal").hidden = false;
-        cloudUi();
-        if (!cloudConfigured()) return;
-        try {
-          await bootCloud();
-          cloudUi();
-        } catch {
-          cloudStatus(
-            "Could not connect to Supabase. Check the project URL, public key, and internet connection.",
-          );
-        }
-      }
-      $("#cloud").onclick = openCloud;
-      $("#cloudClose").onclick = () => ($("#cloudModal").hidden = true);
-      $("#cloudModal").addEventListener("click", (e) => {
-        if (e.target === $("#cloudModal")) $("#cloudModal").hidden = true;
-      });
+
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
-          $("#cloudModal").hidden = true;
           closeAQIHistory();
         }
       });
-      $("#cloudSend").onclick = async () => {
-        const email = $("#cloudEmail").value.trim();
-        if (!email || !email.includes("@")) {
-          cloudStatus("Enter a valid email address.");
-          return;
-        }
-        $("#cloudSend").disabled = true;
-        cloudStatus("Sending sign-in link…");
-        try {
-          const client = await bootCloud();
-          const { error } = await client.auth.signInWithOtp({
-            email,
-            options: { emailRedirectTo: location.origin },
-          });
-          if (error) throw error;
-          cloudStatus(
-            "Check your inbox for the sign-in link. You may need to allow your Cloudflare Pages URL in Supabase Auth URL settings.",
-          );
-        } catch {
-          cloudStatus(
-            "Could not send the link. Check your Supabase URL/key, email provider settings, and allowed redirect URLs.",
-          );
-        } finally {
-          if (cloudConfigured() && !cloudSession)
-            $("#cloudSend").disabled = false;
-        }
-      };
-      $("#cloudSignOut").onclick = async () => {
-        try {
-          const client = await getSupabase();
-          const { error } = await client.auth.signOut();
-          if (error) throw error;
-          cloudSession = null;
-          cloudUi();
-        } catch {
-          cloudStatus("Sign out failed. Please retry.");
-        }
-      };
-      async function syncFavoriteChange(added, location) {
-        if (!sb || !cloudSession) return;
-        const row = {
-          user_id: cloudSession.user.id,
-          name: location.n,
-          latitude: location.la,
-          longitude: location.lo,
-        };
-        const result = added
-          ? await sb
-              .from("saved_locations")
-              .upsert(row, { onConflict: "user_id,latitude,longitude" })
-          : await sb
-              .from("saved_locations")
-              .delete()
-              .eq("user_id", cloudSession.user.id)
-              .eq("latitude", location.la)
-              .eq("longitude", location.lo);
-        if (result.error) {
-          if (!$("#cloudModal").hidden)
-            cloudStatus(
-              "Cloud sync failed. Your local favorite was saved on this device.",
-            );
-          return;
-        }
-        if (!$("#cloudModal").hidden)
-          cloudStatus("Favorites synced successfully.");
-      }
 
       /* ---------- AQI history modal ---------- */
       function openAQIHistory() {
@@ -5185,7 +4897,6 @@
           ls.s("fav", JSON.stringify(S.fav));
           $("#fav").textContent = added ? "★" : "☆";
           cities();
-          syncFavoriteChange(added, S.loc).catch(() => {});
         }
       });
       let tm;
@@ -5276,8 +4987,38 @@
       if (typeof RadarEngine !== "undefined") {
         RadarEngine.init();
       }
+      function initAutoLocation() {
+        if (!navigator.geolocation) return;
+        if (!ls.g("loc")) {
+          navigator.geolocation.getCurrentPosition(
+            (p) => {
+              go(
+                "My location",
+                +p.coords.latitude.toFixed(3),
+                +p.coords.longitude.toFixed(3),
+              );
+            },
+            () => {
+              // Denied or dismissed: graceful fallback, remains on Delhi default
+            },
+            { timeout: 8000, maximumAge: 600000 },
+          );
+        } else if (S.loc && S.loc.n === "My location") {
+          navigator.geolocation.getCurrentPosition(
+            (p) => {
+              const la = +p.coords.latitude.toFixed(3);
+              const lo = +p.coords.longitude.toFixed(3);
+              if (la !== S.loc.la || lo !== S.loc.lo) {
+                go("My location", la, lo);
+              }
+            },
+            () => {},
+            { timeout: 8000, maximumAge: 600000 },
+          );
+        }
+      }
       load();
-      if (cloudConfigured()) bootCloud().catch(() => {});
+      initAutoLocation();
       if ("serviceWorker" in navigator && location.protocol !== "file:") {
         navigator.serviceWorker.register("./sw.js").catch(() => {});
       }

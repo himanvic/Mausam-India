@@ -173,12 +173,11 @@ mausam-india/
 │   └── api/
 │       └── [[path]].js          # Cloudflare Pages Edge Proxy (API routing, caching, validation)
 ├── public/
+│   ├── _headers                 # Cloudflare security headers, strict CSP, and HSTS profile
 │   ├── _routes.json             # Edge rule configuration (routes /api/* to functions, serves static assets)
 │   ├── index.html               # Main single-page application (UI, Three.js Sky, Leaflet Radar, CPCB Math)
 │   ├── manifest.json            # Progressive Web App (PWA) manifest configuration
 │   └── sw.js                    # Service Worker (offline shell caching & network fallback)
-├── supabase/
-│   └── schema.sql               # Optional PostgreSQL schema for multi-device cloud sync
 ├── LICENSE                      # Open-source MIT License
 └── README.md                    # Comprehensive technical documentation & deployment guide
 ```
@@ -257,7 +256,7 @@ Recent enhancements engineered for global edge deployment and data fidelity:
 ### 1. Edge Security & Content Security Policy (CSP)
 
 - **Hardened Cloudflare `_headers`**: Deployed a comprehensive HTTP security profile across all static edge responses including HSTS (`max-age=31536000; includeSubDomains; preload`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Cross-Origin-Opener-Policy: same-origin`.
-- **Whitelisted Content Security Policy**: Strictly permits authorized sources for scripts (CDNJS, Unpkg, ESM.sh), styles (Google Fonts, Unpkg), imagery (NASA GIBS, RainViewer, Esri ArcGIS), and API endpoints while restricting unauthorized frame embedding.
+- **Whitelisted Content Security Policy**: Strictly permits authorized sources for scripts (CDNJS, Unpkg), styles (Google Fonts, Unpkg), imagery (NASA GIBS, RainViewer, Esri ArcGIS), and API endpoints while restricting unauthorized frame embedding.
 - **Subresource Integrity (SRI)**: Embedded cryptographic hashes (`integrity="sha384-..." crossorigin="anonymous"`) across third-party runtime assets (Three.js and Leaflet) to guard against CDN tampering.
 
 ### 2. Reverse Proxy & API Key Defense
@@ -280,6 +279,14 @@ Recent enhancements engineered for global edge deployment and data fidelity:
 - **Harmonized "Now" Temperatures**: The initial "Now" slot in the 24-hour strip directly reflects live 15-minute readings (`current.temperature_2m`), ensuring identical temperature parity with the Hero card.
 - **Scroll Container Polish**: The 24-hour strip wrapper enforces `overflow-x: auto; overflow-y: hidden;`, completely eliminating unwanted vertical scrollbars across desktop and mobile viewports.
 - **Nighttime UV Guidance**: Whenever the sun is down (`current.is_day === 0`), the Quick Guide replaces daytime UV advice with `🌙 No UV tonight (Peak tomorrow: ...)` to provide actionable next-day planning.
+
+### 5. Client Ergonomics, Geolocation & Dynamic Attribution
+
+- **Autonomous Geolocation Discovery**: On initial application launch, Mausam India automatically prompts for browser geolocation permission. If granted, local weather and CPCB AQI data load seamlessly for the detected coordinates. If dismissed or denied, the application gracefully defaults to New Delhi while maintaining instant manual search and coordinate selection across all device form factors.
+- **System-Aware Theme Engine**: Default application theme initializes to `"auto"`, natively synchronizing with the user's system dark/light mode preference (`prefers-color-scheme`) with cyclic on-demand switching (`auto` → `light` → `dark` → `auto`).
+- **Complete Decoupling of External Database Dependencies**: Eliminated all third-party cloud database and auth dependencies, establishing 100% private, zero-latency bookmarking backed entirely by client-side `localStorage`. Favorite locations persist reliably without transmitting personal data.
+- **Dynamic Perpetual Year & Developer Attribution**: The application footer dynamically computes the copyright year (`new Date().getFullYear()`) at runtime (`© 2026–<year>`), ensuring perpetual year accuracy without manual code maintenance, alongside developer rights attribution (`himanvic`) and direct repository source linking.
+- **Mobile Adaptive Viewport Refinements**: Atmospheric radar layer tabs and hourly forecast strips feature native touch-scrolling containers with suppressed vertical scrollbars and responsive column stacking, ensuring an uninterrupted mobile experience across small screens (≤ 560px).
 
 ---
 
