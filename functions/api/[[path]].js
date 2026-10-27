@@ -33,6 +33,50 @@ function isTrustedOrigin(request) {
   return true;
 }
 
+// Lightweight in-memory edge rate limiter: 60 requests per 60s window per client IP
+const RATE_LIMIT_CACHE = new Map();
+const RATE_LIMIT_WINDOW_MS = 60000;
+const RATE_LIMIT_MAX_REQUESTS = 60;
+
+function checkRateLimit(request) {
+  const ip = request.headers.get("cf-connecting-ip") || "unknown";
+  if (ip === "unknown") return null;
+
+  const now = Date.now();
+  if (RATE_LIMIT_CACHE.size > 2000) {
+    for (const [key, data] of RATE_LIMIT_CACHE.entries()) {
+      if (now > data.resetAt) RATE_LIMIT_CACHE.delete(key);
+    }
+  }
+
+  let record = RATE_LIMIT_CACHE.get(ip);
+  if (!record || now > record.resetAt) {
+    record = { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS };
+    RATE_LIMIT_CACHE.set(ip, record);
+    return null;
+  }
+
+  record.count++;
+  if (record.count > RATE_LIMIT_MAX_REQUESTS) {
+    const retryAfter = Math.max(1, Math.ceil((record.resetAt - now) / 1000));
+    return new Response(
+      JSON.stringify({
+        error: "Rate limit exceeded. Please wait before retrying.",
+        retry_after: retryAfter,
+      }),
+      {
+        status: 429,
+        headers: {
+          ...JSON_HEADERS,
+          "cache-control": "no-store",
+          "retry-after": String(retryAfter),
+        },
+      }
+    );
+  }
+  return null;
+}
+
 function jsonError(message, status = 400) {
   return new Response(JSON.stringify({ error: message }), {
     status,
@@ -328,6 +372,9 @@ export async function onRequest(context) {
       headers: { ...JSON_HEADERS, allow: "GET", "cache-control": "no-store" },
     });
   }
+
+  const rateLimit = checkRateLimit(context.request);
+  if (rateLimit) return rateLimit;
 
   if (!isTrustedOrigin(context.request)) {
     return new Response(JSON.stringify({ error: "Access forbidden from untrusted origin." }), {

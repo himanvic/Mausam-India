@@ -15,7 +15,7 @@
 [![WebGL: Three.js](https://img.shields.io/badge/3D%20Engine-Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
 [![Maps: Leaflet](https://img.shields.io/badge/Interactive%20Maps-Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)](https://leafletjs.com/)
 [![PWA Ready](https://img.shields.io/badge/PWA-Installable%20App-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
-[![Data Integrity](https://img.shields.io/badge/Data%20Integrity-CPCB%20%2B%20NASA%20Verified-059669?style=for-the-badge)](#-data-transparency--strict-separation)
+[![Data Transparency](https://img.shields.io/badge/Data%20Transparency-Open--Meteo%20%2B%20NASA-059669?style=for-the-badge)](#-data-transparency--open-source-licensing)
 
 ---
 
@@ -28,9 +28,9 @@
 
 ## 📖 Overview
 
-**Mausam India** is a modern, high-performance weather web application engineered specifically for the Indian subcontinent. It combines real-time atmospheric modeling, official Indian Central Pollution Control Board (CPCB) Air Quality Index mathematics, physical ground-level sensor feeds, real daily satellite cloud imagery from NASA, and interactive Doppler radar into a unified, responsive interface.
+**Mausam India** is a modern, high-performance weather web application engineered specifically for the Indian subcontinent. It combines real-time atmospheric modeling, CPCB-aligned Air Quality Index calculations, physical ground-level sensor telemetry via OpenAQ, real daily satellite cloud imagery from NASA, and interactive Doppler radar into a unified, responsive interface.
 
-Built to run with zero server overhead at the edge on **Cloudflare Pages**, the application delivers near-instant cold starts, strict data integrity, and zero proprietary copyright liabilities.
+Built to run at the edge on **Cloudflare Pages**, the application leverages global edge caching, transparent data sourcing, and open-source licensing under MIT.
 
 > [!NOTE]
 > **Independent Project Notice**: Mausam India is an independent open-source weather platform and is not affiliated with, authorized, sponsored, or endorsed by the India Meteorological Department (IMD), the Ministry of Earth Sciences (MoES), or the Government of India. For official governmental advisories and storm warnings, please visit [mausam.imd.gov.in](https://mausam.imd.gov.in).
@@ -64,12 +64,12 @@ Built to run with zero server overhead at the edge on **Cloudflare Pages**, the 
 - **RainViewer Doppler Radar**: 13-frame animated Doppler precipitation radar loop with interactive playback controls (Play, Pause, Step).
 - **Esri Dark Gray Basemap**: Crisp, high-contrast, royalty-free basemap tiles requiring zero third-party API keys and displaying zero watermarks.
 
-### 4. 🇮🇳 Official Indian CPCB Air Quality Index Engine
+### 4. 🇮🇳 CPCB-Aligned Air Quality Index Calculation
 
-- **Accurate Mathematical Standard**: Computes the official 6-category Indian CPCB AQI using piecewise linear interpolation across standard concentration breakpoints ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2, \text{SO}_2, \text{CO}, \text{O}_3$).
-- **Strict CPCB Mandate**: Requires at least 3 pollutants with either $\text{PM}_{2.5}$ or $\text{PM}_{10}$ present to formulate an authentic overall index.
+- **CPCB-Standard Mathematical Formula**: Computes a CPCB-style Air Quality Index estimate using the official Indian CPCB piecewise linear interpolation formula across 6 model-derived pollutant breakpoints ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2, \text{SO}_2, \text{CO}, \text{O}_3$).
+- **Model Estimates vs. Physical Stations**: Modeled regional air quality is an atmospheric estimate calculated from European Copernicus/Open-Meteo forecasts. To prevent user confusion with official physical ground monitoring, physical CAAQMS station telemetry is surfaced independently in the OpenAQ section below.
 - **Inline 7-Day Trend Chart**: Color-coded micro-bar chart embedded directly inside the AQI card for immediate weekly air quality trajectory.
-- **Interactive 7-Day History Modal**: Expanded 180px gradient bar visualization with official CPCB guideline thresholds (50 Good, 100 Satisfactory, 200 Moderate, 300 Poor, 400 Very Poor).
+- **Interactive 7-Day History Modal**: Expanded 180px gradient bar visualization mapping values against standard CPCB category thresholds (50 Good, 100 Satisfactory, 200 Moderate, 300 Poor, 400 Very Poor).
 
 ### 5. 🔬 Physical OpenAQ Ground Stations
 
@@ -111,7 +111,7 @@ The **India Meteorological Department (IMD)**, functioning under the Ministry of
 While an official IMD data integration is fully architected for Mausam India, it is intentionally reserved for an upcoming enterprise phase rather than this initial public release for the following technical and operational reasons:
 
 1. **Institutional Verification & Access Provisioning**: Direct access to production-grade IMD APIs and high-frequency governmental telemetry (via `data.gov.in` / National Data Sharing and Accessibility Policy — NDSAP) requires institutional credential vetting, agency clearance, and multi-day bureaucratic onboarding workflows.
-2. **Edge SLA & High-Availability Guarantees**: Public governmental API gateways frequently enforce strict concurrency caps and variable uptime windows during extreme weather events. To guarantee 99.99% global edge availability and sub-100ms response times, our primary ingestion pipeline leverages redundant, high-throughput Open-Meteo and OpenAQ edge arrays.
+2. **Edge Caching & Concurrency Safeguards**: Public governmental API gateways frequently enforce strict concurrency caps and variable uptime windows during extreme weather events. To maintain low latency and minimize upstream load, our primary ingestion pipeline leverages Cloudflare edge caching (`s-maxage=900`) and client-side offline service worker caching.
 3. **Turnkey Adapter Readiness**: The Cloudflare edge runtime (`functions/api/[[path]].js`) is modularly architected. Once formalized institutional clearance and dedicated developer keys are finalized, an IMD upstream adapter (`/api/imd/*`) can be connected directly into the existing edge-caching layer without altering the client-side UI or breaking backwards compatibility.
 
 ---
@@ -244,29 +244,29 @@ wrangler pages deploy public --project-name=mausam-india
 
 ---
 
-## 🔒 Data Transparency & Zero Copyright Guarantee
+## 🔒 Data Transparency & Open-Source Licensing
 
-- **100% Procedural Graphics**: No proprietary 3D models, copyrighted icons, or commercial image assets. All visual components are coded from scratch using standard WebGL and SVG.
-- **Strict Data Integrity**: We never fake weather telemetry or synthesize false AQI data. OpenAQ physical ground monitoring stations remain completely unmixed from regional mathematical forecasts.
+- **Original Procedural Graphics**: Built with custom WebGL and SVG vector assets created specifically for this project, distributed under the MIT License.
+- **Data Source Separation**: Modeled atmospheric estimates are displayed transparently and kept distinct from physical CAAQMS ground monitoring stations (sourced via OpenAQ).
 - **Privacy by Default**: No tracking cookies, no third-party analytics trackers, and zero personal telemetry collection. All location queries are proxied anonymously through Cloudflare's serverless edge.
 
 ---
 
 ## 🛡️ Production Security Hardening & Edge Precision Updates
 
-Recent enhancements engineered for global edge deployment and data fidelity:
+Recent enhancements engineered for edge deployment, accuracy, and client fidelity:
 
 ### 1. Edge Security & Content Security Policy (CSP)
 
-- **Hardened Cloudflare `_headers`**: Deployed a comprehensive HTTP security profile across all static edge responses including HSTS (`max-age=31536000; includeSubDomains; preload`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Cross-Origin-Opener-Policy: same-origin`.
-- **Whitelisted Content Security Policy**: Strictly permits authorized sources for scripts (CDNJS, Unpkg), styles (Google Fonts, Unpkg), imagery (NASA GIBS, RainViewer, Esri ArcGIS), and API endpoints while restricting unauthorized frame embedding.
+- **Hardened Cloudflare `_headers`**: Deployed an HTTP security profile across all static edge responses including HSTS (`max-age=31536000; includeSubDomains; preload`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Cross-Origin-Opener-Policy: same-origin`.
+- **Scoped Content Security Policy**: Enforces an explicit Content Security Policy restricting external scripts to authorized CDNs (CDNJS for Three.js, Unpkg for Leaflet), Google Fonts, and authorized tile providers (NASA GIBS, RainViewer, Esri ArcGIS). Inline script and style execution (`'unsafe-inline'`) is currently scoped to the single-page application bundle while isolating untrusted third-party origins.
 - **Subresource Integrity (SRI)**: Embedded cryptographic hashes (`integrity="sha384-..." crossorigin="anonymous"`) across third-party runtime assets (Three.js and Leaflet) to guard against CDN tampering.
 
-### 2. Reverse Proxy & API Key Defense
+### 2. Reverse Proxy & Upstream Defense
 
-- **Origin & Referer Enforcement**: The serverless edge functions (`functions/api/[[path]].js` and `functions/api/openaq.js`) validate client request origins to prevent automated scrapers and foreign third-party domains from depleting API quotas.
+- **Origin & Referer Checks + Edge Rate Limiting**: The serverless edge functions (`functions/api/[[path]].js` and `functions/api/openaq.js`) validate client request headers to mitigate cross-origin web abuse. In addition, an IP-based edge rate limit (60 requests/minute per client IP via `cf-connecting-ip`) caps incoming request volume to protect upstream API quotas against non-browser traffic.
 - **SSRF Prevention & Coordinate Bounds**: Enforces strict mathematical verification on incoming coordinates, constraining latitude between `-90°` and `90°` and longitude between `-180°` and `180°`.
-- **Edge Cache Redundancy**: Applied a 15-minute edge cache (`s-maxage=900`) with Cloudflare Cache API integration (`caches.default`), keeping response latencies under 15ms globally.
+- **Edge Cache Redundancy**: Applied a 15-minute edge cache (`s-maxage=900`) with Cloudflare Cache API integration (`caches.default`) to minimize redundant upstream requests.
 
 ### 3. DOM XSS Neutralization & Defensive Networking
 
@@ -288,7 +288,7 @@ Recent enhancements engineered for global edge deployment and data fidelity:
 - **Autonomous Geolocation Discovery**: On initial application launch, Mausam India automatically prompts for browser geolocation permission. If granted, local weather and CPCB AQI data load seamlessly for the detected coordinates. If dismissed or denied, the application gracefully defaults to New Delhi while maintaining instant manual search and coordinate selection across all device form factors.
 - **System-Aware Theme Engine**: Default application theme initializes to `"auto"`, natively synchronizing with the user's system dark/light mode preference (`prefers-color-scheme`) with cyclic on-demand switching (`auto` → `light` → `dark` → `auto`).
 - **Complete Decoupling of External Database Dependencies**: Eliminated all third-party cloud database and auth dependencies, establishing 100% private, zero-latency bookmarking backed entirely by client-side `localStorage`. Favorite locations persist reliably without transmitting personal data.
-- **Dynamic Perpetual Year & Developer Attribution**: The application footer dynamically computes the copyright year (`new Date().getFullYear()`) at runtime (`© 2026–<year>`), ensuring perpetual year accuracy without manual code maintenance, alongside developer rights attribution (`himanvic`) and direct repository source linking.
+- **Dynamic Perpetual Year**: The application footer dynamically computes the copyright year (`new Date().getFullYear()`) at runtime (`© 2026–<year>`), ensuring perpetual year accuracy without manual code maintenance, alongside direct repository source linking.
 - **Mobile Adaptive Viewport Refinements**: Atmospheric radar layer tabs and hourly forecast strips feature native touch-scrolling containers with suppressed vertical scrollbars and responsive column stacking, ensuring an uninterrupted mobile experience across small screens (≤ 560px).
 
 ---
