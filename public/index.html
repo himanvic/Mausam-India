@@ -2495,9 +2495,9 @@
         storm: ["#64748b", "#a5b4fc", "#05070f", "#2b1b4a"],
         fog: ["#d1d5db", "#f3f4f6", "#1f2937", "#4b5563"],
       };
-      const wi = (c, d = 1) => {
+      const wi = (c, isDay = 1) => {
         const w = W[c] || W[3];
-        const isNight = d === 0 || d === false || d === "0";
+        const isNight = isDay === 0 || isDay === false || isDay === "0";
         let icon = w[1];
         if (isNight) {
           if (c === 0 || c === 1) icon = "🌙";
@@ -4743,7 +4743,7 @@
                     weekday: "short",
                     timeZone: "UTC",
                   });
-              return `<div class="dy"><b style="text-align:left">${dayLabel}</b><span style="font-size:22px">${wi(d.weather_code[k]).i}</span><small>${p >= 10 ? "💧" + p + "%" : ""}</small><span>${T(lo)}°</span><div class="tr"><i style="left:${((lo - gn) / (gx - gn || 1)) * 100}%;width:${Math.max(6, ((hi - lo) / (gx - gn || 1)) * 100)}%"></i></div><b>${T(hi)}°</b></div>`;
+              return `<div class="dy"><b style="text-align:left">${dayLabel}</b><span style="font-size:22px">${wi(d.weather_code[k], 1).i}</span><small>${p >= 10 ? "💧" + p + "%" : ""}</small><span>${T(lo)}°</span><div class="tr"><i style="left:${((lo - gn) / (gx - gn || 1)) * 100}%;width:${Math.max(6, ((hi - lo) / (gx - gn || 1)) * 100)}%"></i></div><b>${T(hi)}°</b></div>`;
             })
             .join("");
 

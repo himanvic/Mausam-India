@@ -144,8 +144,7 @@ While an official IMD data integration is fully architected for Mausam India, it
 ### How Data Allocates & Renders in `index.html`
 
 1. **Bootstrapping (`load()` & `go()`)**:
-   - The user selects or searches a location (or defaults to Delhi / GPS coordinates).
-   - Parallel HTTP requests are dispatched to `/api/forecast`, `/api/air-quality`, and `/api/openaq/nearest`.
+   - When a location is searched or selected (defaulting to New Delhi or browser geolocation), parallel asynchronous requests are dispatched to `/api/forecast`, `/api/air-quality`, and `/api/openaq/nearest`.
 2. **Indian CPCB AQI Pipeline (`calcIndiaAQI()`)**:
    - Matches current hour concentrations against Indian Ministry of Environment, Forest and Climate Change (MoEFCC) breakpoint intervals.
    - Calculates sub-indices:
@@ -186,13 +185,11 @@ mausam-india/
 
 ---
 
-## 🚀 Step-by-Step Deployment Guide
+## 🚀 Deployment Guide
 
-Deploying Mausam India takes less than 2 minutes using Cloudflare Pages.
+### Method 1: Git-Connected Cloudflare Pages (Recommended)
 
-### Method 1: Push to GitHub & Connect Cloudflare Pages (Recommended)
-
-1. **Push your code to GitHub**:
+1. **Push to GitHub**:
 
    ```bash
    git add .
@@ -202,34 +199,32 @@ Deploying Mausam India takes less than 2 minutes using Cloudflare Pages.
 
 2. **Open the Cloudflare Dashboard**:
    - Navigate to [dash.cloudflare.com](https://dash.cloudflare.com/).
-   - Click **Workers & Pages** in the sidebar $\rightarrow$ **Create Application** $\rightarrow$ **Pages** $\rightarrow$ **Connect to Git**.
+   - Go to **Workers & Pages** $\rightarrow$ **Create Application** $\rightarrow$ **Pages** $\rightarrow$ **Connect to Git**.
 
-3. **Select Your Repository**:
-   - Choose `himanvic/Mausam-India` (or your repository name).
+3. **Select Repository**:
+   - Select the `Mausam-India` repository.
 
 4. **Configure Build Settings**:
-   - **Project Name**: `mausam-india` (or your preferred name)
+   - **Project Name**: `mausam-india`
    - **Production Branch**: `main`
    - **Framework Preset**: `None`
-   - **Build Command**: _(leave completely blank)_
+   - **Build Command**: _(leave blank)_
    - **Build Output Directory**: `public`
 
 5. **Deploy**:
-   - Click **Save and Deploy**.
-   - Cloudflare will deploy your static files and edge functions globally across 300+ cities in approximately 25 seconds!
+   - Select **Save and Deploy**.
+   - Cloudflare compiles edge functions and distributes static assets globally across its edge network.
 
-### Method 2: Deploy Locally Using Wrangler CLI
-
-If you prefer deploying directly from your terminal:
+### Method 2: Command-Line Deployment via Wrangler CLI
 
 ```bash
-# Install Wrangler globally if not already installed
+# Install Wrangler CLI globally
 npm install -g wrangler
 
-# Log in to your Cloudflare account
+# Authenticate with Cloudflare
 wrangler login
 
-# Deploy the public folder to Cloudflare Pages
+# Deploy the public assets to Cloudflare Pages
 wrangler pages deploy public --project-name=mausam-india
 ```
 
@@ -260,21 +255,25 @@ wrangler pages deploy public --project-name=mausam-india
 Recent enhancements engineered for global edge deployment and data fidelity:
 
 ### 1. Edge Security & Content Security Policy (CSP)
+
 - **Hardened Cloudflare `_headers`**: Deployed a comprehensive HTTP security profile across all static edge responses including HSTS (`max-age=31536000; includeSubDomains; preload`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Cross-Origin-Opener-Policy: same-origin`.
 - **Whitelisted Content Security Policy**: Strictly permits authorized sources for scripts (CDNJS, Unpkg, ESM.sh), styles (Google Fonts, Unpkg), imagery (NASA GIBS, RainViewer, Esri ArcGIS), and API endpoints while restricting unauthorized frame embedding.
 - **Subresource Integrity (SRI)**: Embedded cryptographic hashes (`integrity="sha384-..." crossorigin="anonymous"`) across third-party runtime assets (Three.js and Leaflet) to guard against CDN tampering.
 
 ### 2. Reverse Proxy & API Key Defense
+
 - **Origin & Referer Enforcement**: The serverless edge functions (`functions/api/[[path]].js` and `functions/api/openaq.js`) validate client request origins to prevent automated scrapers and foreign third-party domains from depleting API quotas.
 - **SSRF Prevention & Coordinate Bounds**: Enforces strict mathematical verification on incoming coordinates, constraining latitude between `-90°` and `90°` and longitude between `-180°` and `180°`.
 - **Edge Cache Redundancy**: Applied a 15-minute edge cache (`s-maxage=900`) with Cloudflare Cache API integration (`caches.default`), keeping response latencies under 15ms globally.
 
 ### 3. DOM XSS Neutralization & Defensive Networking
+
 - **Input Sanitization**: Search bar inputs are constrained to 80 characters with control characters (`<>"{}|\\^~[]`) stripped before dispatch.
 - **Safe DOM Generation**: Replaced string interpolation sinks with native `document.createElement()` and `.textContent` DOM nodes for search suggestion rendering.
 - **Defensive Timeouts**: Attached `AbortSignal.timeout(8000)` across all frontend fetch requests, preventing hanging third-party networks from blocking user interactions.
 
 ### 4. Astronomical & Boundary Data Accuracy
+
 - **Midnight IST Date Alignment**: The 7-day weather forecast aligns directly with today's local IST `YYYY-MM-DD` calendar date (`c.time.slice(0, 10)`). Between 12:00 AM and 5:30 AM IST (when UTC is still on the previous day), row 0 strictly anchors to today's Indian date as "Today", eliminating UTC date offsets.
 - **Solar Zenith Boundary Evaluation**: Hourly forecast icons compare precise timestamps against daily sunrise and sunset marks (`daily.sunrise` / `daily.sunset`). A 5:00 PM slot prior to a 5:13 PM sunset accurately displays daytime icons instead of prematurely switching to night.
 - **Nocturnal WMO Mappings & Quick Cities**: Whenever `isDay` is falsy (such as at 1:00 AM, 5:00 AM before sunrise, or in Quick Cities at night), WMO code 2 accurately returns night clouds (`☁️`) instead of sun-behind-cloud (`⛅`).
