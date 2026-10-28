@@ -22,6 +22,8 @@
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,600&family=Figtree:wght@400;500;600&display=swap"
       rel="stylesheet"
@@ -2323,9 +2325,9 @@
       }
 
     </style>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
+      <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
       <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
+      <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous"></script>
       <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#0b1329" />
   </head>
@@ -2619,7 +2621,7 @@
         try {
           const signal =
             typeof AbortSignal !== "undefined" && AbortSignal.timeout
-              ? AbortSignal.timeout(8000)
+              ? AbortSignal.timeout(5000)
               : undefined;
           const response = await fetch(
             `${OPENAQ_API}latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&radius=25000`,
@@ -2649,6 +2651,9 @@
         }
       }
       function renderOpenAQStationPanel(data) {
+        if (!data || data.status === "loading") {
+          return `<details class="openaq-panel"><summary><span>📡 OpenAQ station readings · not an AQI</span><span class="openaq-state" style="opacity:0.75">SCANNING STATIONS…</span></summary><div class="openaq-body"><p class="openaq-station-meta">Checking nearby physical CAAQMS air quality monitoring stations within 25 km in the background…</p><p class="openaq-note">The AQI card above is a model-based estimate using Indian CPCB breakpoints. Independent physical ground station readings load asynchronously here.</p></div></details>`;
+        }
         const status = data?.status || "unavailable";
         if (!data?.available) {
           const labels = {
@@ -4299,12 +4304,15 @@
         });
       }
 
+      let activeLoadToken = 0;
+
       /* ---------- data ---------- */
       async function load() {
+        const loadToken = ++activeLoadToken;
         document.body.classList.add("ld");
         const { la, lo } = S.loc;
         try {
-          const [f, a, c, o] = await Promise.all([
+          const [f, a, c] = await Promise.all([
             j(
               `${API}latitude=${la}&longitude=${lo}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,pressure_msl,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,visibility&hourly=temperature_2m,precipitation_probability,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_sum,precipitation_probability_max&timezone=Asia%2FKolkata&forecast_days=10`,
             ),
@@ -4315,18 +4323,38 @@
               j(
                 `${API}latitude=${CITIES.map((c) => c[1])}&longitude=${CITIES.map((c) => c[2])}&current=temperature_2m,weather_code,is_day&timezone=Asia%2FKolkata`,
               ).catch(() => null),
-            loadOpenAQStation(la, lo),
           ]);
+          if (loadToken !== activeLoadToken) return;
           D = f;
           A = a;
           CT = c;
-          O = o;
+          O = null;
           last = Date.now();
           render();
+
+          // Fetch physical OpenAQ station readings asynchronously in background
+          loadOpenAQStation(la, lo)
+            .then((stationData) => {
+              if (loadToken !== activeLoadToken) return;
+              O = stationData;
+              const aqiEl = $("#aqi");
+              if (aqiEl) {
+                const panel = aqiEl.querySelector(".openaq-panel");
+                const panelHtml = renderOpenAQStationPanel(O);
+                if (panel) panel.outerHTML = panelHtml;
+                else aqiEl.insertAdjacentHTML("beforeend", panelHtml);
+              }
+            })
+            .catch(() => {});
         } catch (e) {
-          toast("Couldn’t load the weather. Check your connection.", 1);
+          if (loadToken === activeLoadToken) {
+            toast("Couldn’t load the weather. Check your connection.", 1);
+          }
+        } finally {
+          if (loadToken === activeLoadToken) {
+            document.body.classList.remove("ld");
+          }
         }
-        document.body.classList.remove("ld");
       }
 
       
@@ -5130,14 +5158,22 @@
       }, 6e5);
       theme();
       $("#un").textContent = U();
-      if (typeof SkyEngine !== "undefined" && SkyEngine.init(cv)) {
-        SkyEngine.setWeather(mode, night, dark);
+      function initEngines() {
+        if (typeof SkyEngine !== "undefined" && SkyEngine.init(cv)) {
+          SkyEngine.setWeather(mode, night, dark);
+        } else {
+          requestAnimationFrame(frame);
+        }
+        if (typeof RadarEngine !== "undefined") {
+          RadarEngine.init();
+        }
+      }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initEngines);
       } else {
-        requestAnimationFrame(frame);
+        initEngines();
       }
-      if (typeof RadarEngine !== "undefined") {
-        RadarEngine.init();
-      }
+
       function initAutoLocation() {
         if (!navigator.geolocation) return;
         if (!ls.g("loc")) {
@@ -5149,9 +5185,7 @@
                 +p.coords.longitude.toFixed(3),
               );
             },
-            () => {
-              // Denied or dismissed: graceful fallback, remains on Delhi default
-            },
+            () => {},
             { timeout: 8000, maximumAge: 600000 },
           );
         } else if (S.loc && S.loc.n === "My location") {
@@ -5168,8 +5202,34 @@
           );
         }
       }
-      load();
-      initAutoLocation();
+
+      async function boot() {
+        // Fast-path: If user previously authorized geolocation, resolve coordinates first
+        // to avoid launching an unnecessary initial Delhi load storm
+        if (!ls.g("loc") && navigator.permissions && navigator.geolocation) {
+          try {
+            const perm = await navigator.permissions.query({ name: "geolocation" });
+            if (perm && perm.state === "granted") {
+              const pos = await new Promise((res, rej) => {
+                navigator.geolocation.getCurrentPosition(res, rej, {
+                  timeout: 1200,
+                  maximumAge: 300000,
+                });
+              });
+              S.loc = {
+                n: "My location",
+                la: +pos.coords.latitude.toFixed(3),
+                lo: +pos.coords.longitude.toFixed(3),
+              };
+              ls.s("loc", JSON.stringify(S.loc));
+            }
+          } catch (_) {}
+        }
+        load();
+        initAutoLocation();
+      }
+
+      boot();
       if ("serviceWorker" in navigator && location.protocol !== "file:") {
         navigator.serviceWorker.register("./sw.js").catch(() => {});
       }

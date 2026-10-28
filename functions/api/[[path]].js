@@ -15,8 +15,8 @@ function isTrustedOrigin(request) {
   const trustedHostPatterns = [
     /^localhost(:\d+)?$/,
     /^127\.0\.0\.1(:\d+)?$/,
-    /^([a-z0-9-]+\.)?pages\.dev$/,
-    /^mausam-india\.pages\.dev$/
+    /(^|\.)pages\.dev$/,
+    /(^|\.)mausam-india\.pages\.dev$/
   ];
 
   const checkHost = (str) => {
@@ -125,7 +125,11 @@ async function proxyJson(context, upstreamBase, allowedParams, ttlSeconds, optio
   }
   target.searchParams.sort();
 
-  const cacheKey = new Request(target.toString(), { method: "GET" });
+  // Construct same-zone cache URL so Cloudflare caches.default API can match and persist responses
+  const cacheUrl = new URL(incoming.pathname, incoming.origin);
+  const sortedParams = new URLSearchParams([...target.searchParams.entries()]);
+  cacheUrl.search = sortedParams.toString();
+  const cacheKey = new Request(cacheUrl.toString(), { method: "GET" });
   let edgeCache;
   try {
     edgeCache = caches.default;
@@ -273,7 +277,7 @@ async function openAQNearest(context, params) {
       .map(location => ({ ...location, _distanceKm: haversineKm(lat, lon, Number(location.coordinates.latitude), Number(location.coordinates.longitude)) }))
       .filter(location => location._distanceKm <= radius / 1000 + 0.5)
       .sort((a, b) => a._distanceKm - b._distanceKm)
-      .slice(0, 8);
+      .slice(0, 3);
 
     if (!supported.length) {
       const result = jsonResponse({ available: false, status: "no_station", radius_km: radius / 1000, reason: "Nearby OpenAQ locations were found, but none had supported pollutant sensors in the station metadata." });
