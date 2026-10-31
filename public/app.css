@@ -2292,3 +2292,69 @@
           width: fit-content;
         }
       }
+
+      /* Privacy & DPDP Notice Styles */
+      .privacy-sheet {
+        max-width: 680px !important;
+      }
+      .privacy-content {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 14px;
+        font-size: 13.5px;
+        line-height: 1.6;
+        color: var(--tx);
+      }
+      .privacy-section {
+        padding: 14px 16px;
+        border-radius: 16px;
+        background: color-mix(in srgb, var(--tx) 4%, transparent);
+        border: 1px solid var(--bd);
+      }
+      .privacy-section h3 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: var(--tx);
+      }
+      .privacy-section p {
+        margin: 0;
+        color: var(--mu);
+      }
+      .privacy-section ul {
+        margin: 8px 0 0 18px;
+        color: var(--mu);
+      }
+      .privacy-section li {
+        margin-bottom: 4px;
+      }
+      .privacy-action-btn {
+        padding: 8px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--bd);
+        background: color-mix(in srgb, var(--ac) 15%, transparent);
+        color: var(--tx);
+        font: 500 12px var(--f);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .privacy-action-btn:hover {
+        background: color-mix(in srgb, var(--ac) 28%, transparent);
+        border-color: var(--ac);
+      }
+      .ft-link-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        text-decoration: underline;
+        opacity: 0.85;
+        transition: opacity 0.2s ease, color 0.2s ease;
+      }
+      .ft-link-btn:hover {
+        opacity: 1;
+        color: var(--ac);
+      }
