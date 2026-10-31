@@ -2460,7 +2460,7 @@ const $ = (s) => document.querySelector(s),
               '<span class="ft-pill"><span class="ft-dot"></span>Live Atmospheric Telemetry</span>' +
               '<div class="footer-attribution">Updated ' +
               hr(c.time, 1) +
-              ' IST · Weather & forecasts: <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Sensors: <a href="https://openaq.org" target="_blank" rel="noopener noreferrer">OpenAQ</a> · Orbit: NASA GIBS</div>' +
+              ' IST · Weather: <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Air Quality: <a href="https://openaq.org" target="_blank" rel="noopener noreferrer">OpenAQ</a> · Satellite: NASA GIBS · Radar: RainViewer · Maps: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></div>' +
             '</div>' +
             '<div class="footer-rights">© ' +
             yrDisplay +

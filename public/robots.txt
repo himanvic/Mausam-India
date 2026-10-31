@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mausam-india.pages.dev/sitemap.xml

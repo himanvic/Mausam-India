@@ -391,6 +391,26 @@ export async function onRequest(context) {
   const route = incoming.pathname.replace(/\/+$/, "");
   const params = incoming.searchParams;
 
+  if (route === "/api/health") {
+    return new Response(
+      JSON.stringify({
+        status: "ok",
+        service: "Mausam India Edge API",
+        uptime: "operational",
+        timestamp: new Date().toISOString(),
+        version: "2.2.0",
+        edge_region: context.request.cf?.colo || "global"
+      }),
+      {
+        status: 200,
+        headers: {
+          ...JSON_HEADERS,
+          "cache-control": "no-store",
+        },
+      }
+    );
+  }
+
   if (route === "/api/openaq" || route === "/api/openaq/nearest") {
     return openAQNearest(context, params);
   }
