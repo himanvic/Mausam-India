@@ -1,8 +1,15 @@
 // Mausam India — Progressive Web App Service Worker
-const CACHE_NAME = "mausam-india-v2";
+const CACHE_NAME = "mausam-india-v3";
 const ASSETS_TO_CACHE = [
+  "./",
+  "./index.html",
+  "./app.css",
+  "./app.js",
   "./manifest.json",
-  "./assets/mausam-logo.svg"
+  "./assets/mausam-logo.svg",
+  "./vendor/leaflet/leaflet.css",
+  "./vendor/leaflet/leaflet.js",
+  "./vendor/three/three.min.js"
 ];
 
 self.addEventListener("install", (e) => {
@@ -24,13 +31,15 @@ self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   const url = e.request.url;
 
-  // Let all API requests bypass service worker cache
+  // Let all dynamic weather & map API requests bypass service worker cache
   if (
     url.includes("/api/") ||
     url.includes("open-meteo.com") ||
     url.includes("openaq.org") ||
     url.includes("rainviewer.com") ||
-    url.includes("nominatim.openstreetmap.org")
+    url.includes("nominatim.openstreetmap.org") ||
+    url.includes("tile.openstreetmap.org") ||
+    url.includes("earthdata.nasa.gov")
   ) {
     return;
   }
@@ -51,7 +60,7 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // Stale-while-revalidate / cache-first for static icons & manifest
+  // Stale-while-revalidate / cache-first for static local assets
   e.respondWith(
     caches.match(e.request).then((cached) => cached || fetch(e.request))
   );

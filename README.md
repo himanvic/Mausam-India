@@ -259,8 +259,8 @@ Recent enhancements engineered for edge deployment, accuracy, and client fidelit
 ### 1. Edge Security & Content Security Policy (CSP)
 
 - **Hardened Cloudflare `_headers`**: Deployed an HTTP security profile across all static edge responses including HSTS (`max-age=31536000; includeSubDomains; preload`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Cross-Origin-Opener-Policy: same-origin`.
-- **Scoped Content Security Policy**: Enforces an explicit Content Security Policy restricting external scripts to authorized CDNs (CDNJS for Three.js, Unpkg for Leaflet), Google Fonts, and authorized tile providers (NASA GIBS, RainViewer, Esri ArcGIS). Inline script and style execution (`'unsafe-inline'`) is currently scoped to the single-page application bundle while isolating untrusted third-party origins.
-- **Subresource Integrity (SRI)**: Embedded cryptographic hashes (`integrity="sha384-..." crossorigin="anonymous"`) across third-party runtime assets (Three.js and Leaflet) to guard against CDN tampering.
+- **Strict Content Security Policy (Zero `'unsafe-inline'`)**: Enforces an uncompromising CSP policy with `script-src 'self'`. All application logic and external libraries (Three.js and Leaflet) are self-hosted locally under `/vendor/` and separated into external files (`app.js`, `app.css`). Inline script execution (`'unsafe-inline'`) and third-party script CDNs (such as Unpkg) are completely eliminated from `script-src`, mitigating XSS risks at the browser engine level.
+- **Plugin Sandbox Defense (`object-src 'none'`)**: Restricts legacy browser plugins (Flash, Java) from executing within the application context.
 
 ### 2. Reverse Proxy & Upstream Defense
 
