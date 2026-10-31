@@ -2464,7 +2464,7 @@ const $ = (s) => document.querySelector(s),
             '</div>' +
             '<div class="footer-rights">© ' +
             yrDisplay +
-            ' Mausam India · Open source under MIT License</div>' +
+            ' Mausam India · Open source under MIT License · <button type="button" class="ft-link-btn" id="openPrivacyBtn">Privacy & Data Governance</button></div>' +
             '<div class="footer-disclaimer-box"><strong>Independent Project Notice:</strong> Mausam India is an independent open-source weather platform and is not affiliated with, authorized, or endorsed by the India Meteorological Department (IMD) or the Government of India. Official government advisories: <a href="https://mausam.imd.gov.in" target="_blank" rel="noopener noreferrer">mausam.imd.gov.in</a></div>' +
             '<a class="github-source-link" href="' +
             GITHUB_REPO_URL +
@@ -2497,6 +2497,7 @@ const $ = (s) => document.querySelector(s),
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
           closeAQIHistory();
+          closePrivacy();
         }
       });
 
@@ -2523,9 +2524,45 @@ const $ = (s) => document.querySelector(s),
         const trigger = $("#openAQIHistory");
         if (trigger) trigger.focus();
       }
-      $("#aqiHistoryClose").addEventListener("click", closeAQIHistory);
-      $("#aqiHistoryModal").addEventListener("click", (e) => {
+      $("#aqiHistoryClose")?.addEventListener("click", closeAQIHistory);
+      $("#aqiHistoryModal")?.addEventListener("click", (e) => {
         if (e.target === $("#aqiHistoryModal")) closeAQIHistory();
+      });
+
+      /* ---------- Privacy & DPDP Notice modal ---------- */
+      function openPrivacy() {
+        const modal = $("#privacyModal");
+        if (!modal) return;
+        modal.hidden = false;
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => $("#privacyClose")?.focus(), 40);
+      }
+      function closePrivacy() {
+        const modal = $("#privacyModal");
+        if (!modal || modal.hidden) return;
+        modal.classList.remove("open");
+        modal.hidden = true;
+        document.body.style.overflow = "";
+        const trigger = $("#openPrivacyBtn");
+        if (trigger) trigger.focus();
+      }
+      $("#privacyClose")?.addEventListener("click", closePrivacy);
+      $("#privacyModal")?.addEventListener("click", (e) => {
+        if (e.target === $("#privacyModal")) closePrivacy();
+      });
+
+      document.addEventListener("click", (e) => {
+        if (e.target.closest("#openPrivacyBtn")) {
+          openPrivacy();
+        } else if (e.target.id === "clearLocalDataBtn") {
+          try {
+            localStorage.clear();
+            const msg = $("#clearDataMsg");
+            if (msg) msg.textContent = "Preferences cleared. Reloading…";
+            setTimeout(() => location.reload(), 600);
+          } catch (_) {}
+        }
       });
 
       /* ---------- desktop pro keyboard shortcuts ---------- */

@@ -158,6 +158,70 @@
         <div id="aqiHistoryContent"></div>
       </section>
     </div>
+    <div id="privacyModal" class="history-modal" hidden>
+      <section
+        class="history-modal-sheet privacy-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="privacyTitle"
+      >
+        <div class="history-modal-head">
+          <div>
+            <h2 id="privacyTitle">Privacy & Data Governance</h2>
+            <p id="privacySubtitle">Digital Personal Data Protection (DPDP) Act 2023 Transparency Notice</p>
+          </div>
+          <button
+            type="button"
+            id="privacyClose"
+            class="history-modal-close"
+            aria-label="Close privacy policy"
+          >
+            ×
+          </button>
+        </div>
+        <div class="privacy-content">
+          <div class="privacy-section">
+            <h3>📍 1. Device Geolocation & Coordinates</h3>
+            <p>
+              When you choose <strong>"Use my location"</strong>, coordinates (latitude & longitude) are accessed strictly inside your browser via <code>navigator.geolocation</code>. Coordinates are used solely to query atmospheric modeling for your vicinity. <strong>Your location is never stored on remote servers, never recorded in server databases, and never transmitted to advertising networks.</strong>
+            </p>
+          </div>
+          <div class="privacy-section">
+            <h3>💾 2. Local Device Storage (No Cookies)</h3>
+            <p>
+              Mausam India uses zero tracking cookies, session identifiers, or marketing pixels. The browser's local storage (<code>localStorage</code>) is used strictly on your device to persist your preferences:
+            </p>
+            <ul>
+              <li><strong>Measurement Units:</strong> Celsius (°C) vs. Fahrenheit (°F)</li>
+              <li><strong>Interface Theme:</strong> Automatic sunrise/sunset, Light, or Dark mode</li>
+              <li><strong>Saved Favorites:</strong> List of cities you manually pin for quick access</li>
+            </ul>
+          </div>
+          <div class="privacy-section">
+            <h3>📡 3. Upstream Atmospheric Telemetry</h3>
+            <p>
+              Weather, air quality, and imagery requests are fetched through serverless Cloudflare edge caching to protect upstream API reliability. The independent data sources are:
+            </p>
+            <ul>
+              <li><strong>Open-Meteo:</strong> Numerical atmospheric modeling and CPCB AQI estimates (CC BY 4.0).</li>
+              <li><strong>OpenAQ:</strong> Physical ground CAAQMS monitor telemetry via server-side edge proxy.</li>
+              <li><strong>NASA GIBS:</strong> True-color MODIS/VIIRS satellite cloud imagery.</li>
+              <li><strong>RainViewer & Esri:</strong> Animated Doppler precipitation radar and basemap tiles.</li>
+            </ul>
+          </div>
+          <div class="privacy-section">
+            <h3>🛡️ 4. Your Rights & Data Erasure</h3>
+            <p>
+              Under India's DPDP Act 2023, you maintain total sovereignty over your data. Because no accounts or remote profiles exist, you can completely erase all locally stored data at any time:
+            </p>
+            <div style="margin-top:14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <button type="button" id="clearLocalDataBtn" class="privacy-action-btn">🗑️ Reset Local Preferences</button>
+              <span id="clearDataMsg" style="font-size:12px;color:var(--mu)"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
     <script src="./vendor/three/three.min.js"></script>
     <script src="./vendor/leaflet/leaflet.js"></script>
     

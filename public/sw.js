@@ -5,6 +5,7 @@ const ASSETS_TO_CACHE = [
   "./index.html",
   "./app.css",
   "./app.js",
+  "./404.html",
   "./manifest.json",
   "./assets/mausam-logo.svg",
   "./vendor/leaflet/leaflet.css",
