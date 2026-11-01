@@ -50,9 +50,28 @@
     <link rel="stylesheet" href="./app.css" />
       <link rel="manifest" href="./manifest.json" />
     <meta name="theme-color" content="#0b1329" />
+      <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Mausam India",
+      "url": "https://mausam-india.pages.dev/",
+      "applicationCategory": "WeatherApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "description": "High-precision live weather forecasts, CPCB Air Quality Index calculations, NASA satellite cloud imagery, and animated Doppler radar for cities and towns across India.",
+      "inLanguage": "en-IN",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "INR"
+      }
+    }
+    </script>
   </head>
   <body class="ld">
     <div id="bar"></div>
+    <div id="offlineBar" class="offline-banner" hidden><span>📡 Offline Mode · Showing cached telemetry</span></div>
     <canvas id="fx"></canvas>
     <header>
       <a class="logo" href="./" aria-label="Mausam India Home">
