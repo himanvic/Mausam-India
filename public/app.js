@@ -2194,6 +2194,239 @@ const $ = (s) => document.querySelector(s),
             )
             .join("");
       }
+      function getDismissedHazards() {
+        try {
+          const raw = sessionStorage.getItem("mausam_dismissed_hazards");
+          return raw ? JSON.parse(raw) : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function dismissHazard(id) {
+        try {
+          const list = getDismissedHazards();
+          if (!list.includes(id)) {
+            list.push(id);
+            sessionStorage.setItem("mausam_dismissed_hazards", JSON.stringify(list));
+          }
+        } catch {}
+      }
+
+      function renderHazardWarnings(c, d, H, hs, aq, pop, indiaAQI) {
+        const dock = $("#alertDock");
+        if (!dock) return;
+
+        const dismissed = getDismissedHazards();
+        const hazards = [];
+
+        // 1. Air Quality (CPCB Bands)
+        if (aq != null) {
+          if (aq > 400) {
+            hazards.push({
+              id: "aqi_severe",
+              severity: "critical",
+              icon: "🚨",
+              badge: "CPCB Severe Smog",
+              source: "CPCB Modelled Estimate",
+              title: "Severe Air Pollution Emergency (AQI " + aq + ")",
+              desc: "Hazardous airborne particulate matter. Severe health impact on vulnerable groups and breathing discomfort for healthy individuals upon exposure.",
+              tip: "😷 Wear an N95 respirator outdoors & keep air purifiers running indoors.",
+              link: { href: "#aqi", text: "View Pollutant Breakdown ↓" }
+            });
+          } else if (aq > 300) {
+            hazards.push({
+              id: "aqi_vpoor",
+              severity: "danger",
+              icon: "⚠️",
+              badge: "CPCB Very Poor AQI",
+              source: "CPCB Modelled Estimate",
+              title: "Very Poor Air Quality (AQI " + aq + ")",
+              desc: "Prolonged exposure can lead to respiratory illness. Children, senior citizens, and asthmatics should avoid outdoor exertion.",
+              tip: "😷 Limit morning walks and keep room windows closed.",
+              link: { href: "#aqi", text: "View Pollutant Breakdown ↓" }
+            });
+          } else if (aq > 200) {
+            hazards.push({
+              id: "aqi_poor",
+              severity: "warning",
+              icon: "⚠️",
+              badge: "CPCB Poor Air",
+              source: "CPCB Modelled Estimate",
+              title: "Poor Air Quality Alert (AQI " + aq + ")",
+              desc: "Likely to cause breathing discomfort on prolonged outdoor activity. Sensitive individuals should take precautions.",
+              tip: "😷 Reduce strenuous outdoor exercise during peak traffic hours.",
+              link: { href: "#aqi", text: "View Pollutant Breakdown ↓" }
+            });
+          }
+        }
+
+        // 2. Heatwave & Extreme Thermal Stress (IMD Criteria)
+        if (c.temperature_2m >= 43 || c.apparent_temperature >= 46) {
+          hazards.push({
+            id: "heat_severe",
+            severity: "critical",
+            icon: "🔥",
+            badge: "Severe Heatwave / Loo",
+            source: "IMD Criteria",
+            title: "Severe Heatwave Warning (" + T(c.temperature_2m) + "°" + U() + ")",
+            desc: "Extreme heat stress with an apparent feels-like index of " + T(c.apparent_temperature) + "°" + U() + ". High risk of heat exhaustion or heatstroke with prolonged exertion.",
+            tip: "🧊 Stay indoors between 12 PM–4 PM, consume electrolytes/ORS, and hydrate continuously.",
+            link: { href: "#hourly", text: "Hourly Temp Trend ↓" }
+          });
+        } else if (c.temperature_2m >= 40 || c.apparent_temperature >= 42) {
+          hazards.push({
+            id: "heat_advisory",
+            severity: "caution",
+            icon: "☀️",
+            badge: "Heatwave Advisory",
+            source: "Thermal Stress",
+            title: "High Temperature Advisory (" + T(c.temperature_2m) + "°" + U() + ")",
+            desc: "Elevated thermal index (Feels like " + T(c.apparent_temperature) + "°" + U() + "). Vulnerable groups should avoid direct midday sun exposure.",
+            tip: "💧 Drink water regularly before feeling thirsty and wear loose light cotton clothing.",
+            link: { href: "#hourly", text: "Hourly Temp Trend ↓" }
+          });
+        }
+
+        // 3. Thunderstorm & Lightning Hazard (WMO 95-99)
+        if ([95, 96, 99].includes(c.weather_code)) {
+          hazards.push({
+            id: "thunderstorm_active",
+            severity: "danger",
+            icon: "⛈️",
+            badge: "Thunderstorm Alert",
+            source: "Live Doppler / Convection",
+            title: "Severe Thunderstorm & Lightning Hazard",
+            desc: "Active convective storms in the vicinity. Sudden lightning strikes and gusty downdraft winds possible.",
+            tip: "⚡ Stay indoors, keep away from tall isolated trees, tin roofs, and open fields.",
+            link: { href: "#radarSection", text: "Track Live Doppler Radar ↓" }
+          });
+        }
+
+        // 4. Heavy Monsoon Downpour / Cloudburst Threat
+        if (c.precipitation >= 10 || (pop >= 80 && (c.precipitation >= 3 || [65, 82, 86].includes(c.weather_code)))) {
+          hazards.push({
+            id: "heavy_rain",
+            severity: "warning",
+            icon: "🌧️",
+            badge: "Monsoon Downpour",
+            source: "High Precip Probability",
+            title: "Heavy Rainfall Advisory",
+            desc: "Intense downpours active or imminent. Expect waterlogging on roads, reduced vehicle speeds, and localized flash runoff.",
+            tip: "🚗 Drive cautiously with headlights on and avoid waterlogged underpasses.",
+            link: { href: "#hourly", text: "Hourly Rainfall Curve ↓" }
+          });
+        }
+
+        // 5. Dense Winter Fog / Zero Visibility
+        const isFoggy = [45, 48].includes(c.weather_code) || (c.visibility != null && c.visibility <= 350);
+        if (isFoggy) {
+          const visKm = c.visibility != null ? (c.visibility < 1000 ? Math.round(c.visibility) + " m" : (c.visibility / 1000).toFixed(1) + " km") : "< 400 m";
+          hazards.push({
+            id: "dense_fog",
+            severity: "caution",
+            icon: "🌫️",
+            badge: "Dense Fog Alert",
+            source: "Surface Visibility",
+            title: "Dense Fog Advisory (" + visKm + " Visibility)",
+            desc: "Surface visibility is significantly restricted. Highway driving and rail/aviation departures may encounter delays.",
+            tip: "🔦 Use low-beam fog lamps, follow road reflectors, and maintain generous braking distance.",
+            link: { href: "#hourly", text: "Hourly Visibility Forecast ↓" }
+          });
+        }
+
+        // 6. Extreme UV Radiation (Daytime)
+        if (c.is_day && c.uv_index >= 8) {
+          hazards.push({
+            id: "extreme_uv",
+            severity: "caution",
+            icon: "🧴",
+            badge: "Extreme UV Index",
+            source: "Solar Radiation",
+            title: "Very High UV Exposure (Index " + Math.round(c.uv_index) + ")",
+            desc: "Unprotected skin and eyes can burn rapidly within 15–20 minutes under current solar irradiance.",
+            tip: "🕶️ Apply broad-spectrum SPF 30+ sunscreen, wear UV sunglasses, and seek midday shade.",
+            link: { href: "#det", text: "UV Index Details ↓" }
+          });
+        }
+
+        // 7. Cold Wave Conditions
+        if ((c.temperature_2m <= 5 && !c.is_day) || (c.temperature_2m <= 7 && c.wind_speed_10m >= 15)) {
+          hazards.push({
+            id: "cold_wave",
+            severity: "caution",
+            icon: "🥶",
+            badge: "Cold Wave Alert",
+            source: "IMD Criteria",
+            title: "Cold Wave Advisory (" + T(c.temperature_2m) + "°" + U() + ")",
+            desc: "Sharp temperature drop exacerbated by wind chill (Feels like " + T(c.apparent_temperature) + "°" + U() + "). Risk of hypothermia for vulnerable groups.",
+            tip: "🧣 Dress in warm insulating layers, cover ears and head, and avoid night chills.",
+            link: { href: "#hourly", text: "Hourly Temperatures ↓" }
+          });
+        }
+
+        // Filter out dismissed hazards
+        const activeHazards = hazards.filter(h => !dismissed.includes(h.id));
+
+        if (activeHazards.length === 0) {
+          dock.hidden = true;
+          dock.innerHTML = "";
+          return;
+        }
+
+        dock.hidden = false;
+        dock.innerHTML = activeHazards.map(h => `
+          <div class="hazard-card hazard-${h.severity}" data-hazard-id="${h.id}">
+            <div class="hazard-head">
+              <div class="hazard-badge-group">
+                <span class="hazard-icon" aria-hidden="true">${h.icon}</span>
+                <span class="hazard-pill">${h.badge}</span>
+                <span class="hazard-source">${h.source}</span>
+              </div>
+              <button type="button" class="hazard-dismiss" title="Dismiss this alert for this session" aria-label="Dismiss alert" data-dismiss="${h.id}">✕</button>
+            </div>
+            <h3 class="hazard-title">${h.title}</h3>
+            <p class="hazard-desc">${h.desc}</p>
+            <div class="hazard-actions">
+              <span class="hazard-tip">${h.tip}</span>
+              ${h.link ? `<a href="${h.link.href}" class="hazard-link" data-jump="${h.link.href}">${h.link.text}</a>` : ""}
+            </div>
+          </div>
+        `).join("");
+
+        // Attach dismiss and jump listeners
+        dock.querySelectorAll(".hazard-dismiss").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const id = btn.getAttribute("data-dismiss");
+            dismissHazard(id);
+            const card = btn.closest(".hazard-card");
+            if (card) {
+              card.style.opacity = "0";
+              card.style.transform = "translateY(-6px)";
+              setTimeout(() => {
+                card.remove();
+                if (dock.querySelectorAll(".hazard-card").length === 0) {
+                  dock.hidden = true;
+                }
+              }, 250);
+            }
+          });
+        });
+
+        dock.querySelectorAll(".hazard-link").forEach(link => {
+          link.addEventListener("click", (e) => {
+            const targetId = link.getAttribute("data-jump");
+            if (targetId && targetId.startsWith("#")) {
+              const targetEl = $(targetId);
+              if (targetEl) {
+                e.preventDefault();
+                targetEl.scrollIntoView({ behavior: "smooth" });
+              }
+            }
+          });
+        });
+      }
+
       function render() {
         const c = D.current,
           d = D.daily,
@@ -2233,18 +2466,8 @@ const $ = (s) => document.querySelector(s),
                         ? "🧥 It’s cold out. Layer up."
                         : "✨ Conditions look comfortable right now.";
         const fav = S.fav.some((f) => f.n == S.loc.n && f.la == S.loc.la);
-        let alertBanner = "";
-        if (aq != null && aq > 400) {
-          alertBanner = `<div class="severe-alert-banner alert-severe"><span class="alert-icon">🚨</span><div><strong>SEVERE AIR POLLUTION ADVISORY (AQI ${aq}):</strong> Modelled air quality is severe. Avoid outdoor exertion and use an N95 respirator outdoors.</div></div>`;
-        } else if (aq != null && aq > 300) {
-          alertBanner = `<div class="severe-alert-banner alert-warning"><span class="alert-icon">⚠️</span><div><strong>VERY POOR AIR QUALITY WARNING (AQI ${aq}):</strong> Sensitive individuals should avoid strenuous outdoor physical activities.</div></div>`;
-        } else if (c.temperature_2m >= 42) {
-          alertBanner = `<div class="severe-alert-banner alert-danger"><span class="alert-icon">🔥</span><div><strong>SEVERE HEATWAVE WARNING (${T(c.temperature_2m)}°):</strong> Extreme temperatures. Stay indoors during afternoon hours and drink plenty of fluids.</div></div>`;
-        } else if (pop >= 80 && (c.precipitation > 5 || c.weather_code >= 80)) {
-          alertBanner = `<div class="severe-alert-banner alert-info"><span class="alert-icon">⛈️</span><div><strong>HEAVY RAINFALL / STORM ADVISORY:</strong> Active downpour conditions detected. Take precautions while commuting.</div></div>`;
-        }
+        renderHazardWarnings(c, d, H, hs, aq, pop, indiaAQI);
         $("#hero").innerHTML =
-          alertBanner +
           `<div class="hero-layout">
             <div class="hero-content">
               <div class="row"><div><h1>${esc(S.loc.n)}</h1><p class="mu">${new Date(c.time).toLocaleString("en-IN", { weekday: "long", day: "numeric", month: "long", hour: "numeric", minute: "2-digit", hour12: true })}</p></div><button id="fav" aria-label="Save place" title="Save place">${fav ? "★" : "☆"}</button></div>
