@@ -2194,6 +2194,118 @@ const $ = (s) => document.querySelector(s),
             )
             .join("");
       }
+      /* ---------- Device & Web Notification Engine ---------- */
+      const NOTIF_STORAGE_KEY = "mausam_notif_prefs";
+      const NOTIF_LOG_KEY = "mausam_notif_log";
+
+      function getNotifPrefs() {
+        const defaults = {
+          enabled: false,
+          aqi: true,
+          heat: true,
+          storm: true,
+          rain: true,
+          fog: false
+        };
+        try {
+          const raw = localStorage.getItem(NOTIF_STORAGE_KEY);
+          return raw ? Object.assign(defaults, JSON.parse(raw)) : defaults;
+        } catch {
+          return defaults;
+        }
+      }
+
+      function saveNotifPrefs(prefs) {
+        try {
+          localStorage.setItem(NOTIF_STORAGE_KEY, JSON.stringify(prefs));
+        } catch {}
+      }
+
+      function getNotifLog() {
+        try {
+          const raw = localStorage.getItem(NOTIF_LOG_KEY);
+          return raw ? JSON.parse(raw) : {};
+        } catch {
+          return {};
+        }
+      }
+
+      function saveNotifLog(log) {
+        try {
+          localStorage.setItem(NOTIF_LOG_KEY, JSON.stringify(log));
+        } catch {}
+      }
+
+      async function dispatchDeviceNotification(title, body, tag = "mausam-alert", url = "./") {
+        if (!("Notification" in window) || Notification.permission !== "granted") {
+          return false;
+        }
+        const options = {
+          body,
+          icon: "./assets/mausam-logo.svg",
+          badge: "./assets/mausam-logo.svg",
+          tag,
+          renotify: true,
+          vibrate: [200, 100, 200],
+          data: { url }
+        };
+
+        try {
+          if ("serviceWorker" in navigator) {
+            const reg = await navigator.serviceWorker.ready;
+            if (reg && reg.showNotification) {
+              await reg.showNotification(title, options);
+              return true;
+            }
+          }
+          new Notification(title, options);
+          return true;
+        } catch (err) {
+          console.warn("Notification dispatch error:", err);
+          return false;
+        }
+      }
+
+      function checkAndDispatchHazardNotifications(activeHazards) {
+        if (!("Notification" in window) || Notification.permission !== "granted") return;
+        const prefs = getNotifPrefs();
+        if (!prefs.enabled) return;
+
+        const hazardCategoryMap = {
+          aqi_severe: "aqi",
+          aqi_vpoor: "aqi",
+          aqi_poor: "aqi",
+          heat_severe: "heat",
+          heat_advisory: "heat",
+          thunderstorm_active: "storm",
+          heavy_rain: "rain",
+          dense_fog: "fog"
+        };
+
+        const log = getNotifLog();
+        const now = Date.now();
+        const COOLDOWN_MS = 3 * 60 * 60 * 1000; // 3 hours cooldown per hazard per city
+
+        for (const h of activeHazards) {
+          const cat = hazardCategoryMap[h.id];
+          if (cat && prefs[cat]) {
+            const locKey = (S.loc ? S.loc.n : "India") + "_" + h.id;
+            const lastSent = log[locKey] || 0;
+            if (now - lastSent > COOLDOWN_MS) {
+              const cityName = S.loc ? S.loc.n : "Your Area";
+              dispatchDeviceNotification(
+                "⚠️ " + h.title + " · " + cityName,
+                h.desc + " " + h.tip,
+                h.id
+              );
+              log[locKey] = now;
+              saveNotifLog(log);
+              break;
+            }
+          }
+        }
+      }
+
       function getDismissedHazards() {
         try {
           const raw = sessionStorage.getItem("mausam_dismissed_hazards");
@@ -2368,11 +2480,20 @@ const $ = (s) => document.querySelector(s),
         // Filter out dismissed hazards
         const activeHazards = hazards.filter(h => !dismissed.includes(h.id));
 
+        // Update header bell alert badge
+        const notifBadge = $("#notifBadge");
+        if (notifBadge) {
+          notifBadge.hidden = activeHazards.length === 0;
+        }
+
         if (activeHazards.length === 0) {
           dock.hidden = true;
           dock.innerHTML = "";
           return;
         }
+
+        // Evaluate background push alerts
+        checkAndDispatchHazardNotifications(activeHazards);
 
         dock.hidden = false;
         dock.innerHTML = activeHazards.map(h => `
@@ -2405,8 +2526,11 @@ const $ = (s) => document.querySelector(s),
               card.style.transform = "translateY(-6px)";
               setTimeout(() => {
                 card.remove();
-                if (dock.querySelectorAll(".hazard-card").length === 0) {
+                const remaining = dock.querySelectorAll(".hazard-card");
+                if (remaining.length === 0) {
                   dock.hidden = true;
+                  const notifBadge = $("#notifBadge");
+                  if (notifBadge) notifBadge.hidden = true;
                 }
               }, 250);
             }
@@ -2752,6 +2876,153 @@ const $ = (s) => document.querySelector(s),
         if (e.target === $("#aqiHistoryModal")) closeAQIHistory();
       });
 
+      /* ---------- Weather Alerts & Notification Modal ---------- */
+      function updateNotifModalUI() {
+        const banner = $("#notifPermBanner");
+        const status = $("#notifPermStatus");
+        const help = $("#notifPermHelp");
+        const icon = $("#notifPermIcon");
+        const btn = $("#notifEnableBtn");
+        if (!banner || !status || !help || !btn) return;
+
+        if (!("Notification" in window)) {
+          banner.className = "notif-perm-card status-denied";
+          icon.textContent = "🚫";
+          status.textContent = "Notifications Not Supported";
+          help.textContent = "Your current browser does not support the Web Notifications API.";
+          btn.hidden = true;
+          return;
+        }
+
+        const perm = Notification.permission;
+        if (perm === "granted") {
+          banner.className = "notif-perm-card status-granted";
+          icon.textContent = "✅";
+          status.textContent = "Device Notifications Active";
+          help.textContent = "You will receive system push alerts on this device whenever severe weather occurs for your active city.";
+          btn.hidden = true;
+        } else if (perm === "denied") {
+          banner.className = "notif-perm-card status-denied";
+          icon.textContent = "🚫";
+          status.textContent = "Notifications Blocked";
+          help.textContent = "Notifications are blocked in your browser site permissions. Click the lock/settings icon beside the URL bar to allow notifications.";
+          btn.hidden = true;
+        } else {
+          banner.className = "notif-perm-card status-default";
+          icon.textContent = "🔔";
+          status.textContent = "Device Notifications Inactive";
+          help.textContent = "Enable browser notifications to receive alerts for severe smog, heatwaves, and storms even when the tab is in the background.";
+          btn.hidden = false;
+          btn.textContent = "Enable Alerts";
+        }
+
+        const prefs = getNotifPrefs();
+        const aqi = $("#prefAqi");
+        const heat = $("#prefHeat");
+        const storm = $("#prefStorm");
+        const rain = $("#prefRain");
+        const fog = $("#prefFog");
+        if (aqi) aqi.checked = prefs.aqi !== false;
+        if (heat) heat.checked = prefs.heat !== false;
+        if (storm) storm.checked = prefs.storm !== false;
+        if (rain) rain.checked = prefs.rain !== false;
+        if (fog) fog.checked = !!prefs.fog;
+      }
+
+      function openNotifModal() {
+        const modal = $("#notifModal");
+        if (!modal) return;
+        updateNotifModalUI();
+        modal.hidden = false;
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => $("#notifClose")?.focus(), 40);
+      }
+
+      function closeNotifModal() {
+        const modal = $("#notifModal");
+        if (!modal || modal.hidden) return;
+        modal.classList.remove("open");
+        modal.hidden = true;
+        document.body.style.overflow = "";
+        const trigger = $("#notifBtn");
+        if (trigger) trigger.focus();
+      }
+
+      async function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+          toast("Notifications are not supported in this browser.", 1);
+          return;
+        }
+        try {
+          const res = await Notification.requestPermission();
+          if (res === "granted") {
+            const prefs = getNotifPrefs();
+            prefs.enabled = true;
+            saveNotifPrefs(prefs);
+            updateNotifModalUI();
+            toast("🔔 Weather alert notifications enabled!", 0);
+            dispatchDeviceNotification(
+              "🔔 Mausam India Alerts Activated",
+              "Real-time warnings enabled for " + (S.loc ? S.loc.n : "India") + ".",
+              "mausam-welcome"
+            );
+          } else if (res === "denied") {
+            updateNotifModalUI();
+            toast("Notifications were blocked in browser settings.", 1);
+          }
+        } catch (err) {
+          console.warn("Permission request error:", err);
+        }
+      }
+
+      async function sendTestNotification() {
+        if (!("Notification" in window)) {
+          toast("Web Notifications are not supported in this browser.", 1);
+          return;
+        }
+        if (Notification.permission === "default") {
+          await requestNotificationPermission();
+          return;
+        }
+        if (Notification.permission === "denied") {
+          toast("Notifications are blocked in browser site settings.", 1);
+          return;
+        }
+        const cityName = S.loc ? S.loc.n : "India";
+        const sent = await dispatchDeviceNotification(
+          "⚡ Mausam India · Alert System Test",
+          "Notification test verified for " + cityName + "! Real-time CPCB AQI and severe weather alerts are active on this device.",
+          "mausam-test"
+        );
+        if (sent) {
+          if ("vibrate" in navigator) {
+            navigator.vibrate([100, 50, 100]);
+          }
+          toast("⚡ Test alert delivered to your device!", 0);
+        } else {
+          toast("Unable to deliver notification. Check browser settings.", 1);
+        }
+      }
+
+      $("#notifBtn")?.addEventListener("click", openNotifModal);
+      $("#notifClose")?.addEventListener("click", closeNotifModal);
+      $("#notifModal")?.addEventListener("click", (e) => {
+        if (e.target === $("#notifModal")) closeNotifModal();
+      });
+      $("#notifEnableBtn")?.addEventListener("click", requestNotificationPermission);
+      $("#notifTestBtn")?.addEventListener("click", sendTestNotification);
+
+      // Handle checkbox toggle changes
+      ["prefAqi", "prefHeat", "prefStorm", "prefRain", "prefFog"].forEach(id => {
+        $("#" + id)?.addEventListener("change", (e) => {
+          const key = id.replace("pref", "").toLowerCase();
+          const prefs = getNotifPrefs();
+          prefs[key] = e.target.checked;
+          saveNotifPrefs(prefs);
+        });
+      });
+
       /* ---------- Privacy & DPDP Notice modal ---------- */
       function openPrivacy() {
         const modal = $("#privacyModal");
@@ -2818,6 +3089,10 @@ const $ = (s) => document.querySelector(s),
           e.preventDefault();
           const un = $("#un");
           if (un) un.click();
+        } else if (key === "n") {
+          e.preventDefault();
+          const notifBtn = $("#notifBtn");
+          if (notifBtn) notifBtn.click();
         }
       });
 

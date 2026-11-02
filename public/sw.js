@@ -1,5 +1,5 @@
 // Mausam India — Progressive Web App Service Worker
-const CACHE_NAME = "mausam-india-v3";
+const CACHE_NAME = "mausam-india-v4";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
@@ -64,5 +64,52 @@ self.addEventListener("fetch", (e) => {
   // Stale-while-revalidate / cache-first for static local assets
   e.respondWith(
     caches.match(e.request).then((cached) => cached || fetch(e.request))
+  );
+});
+
+// Native Notification Interaction Handler
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const targetUrl = (e.notification.data && e.notification.data.url) || "./";
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url && "focus" in client) {
+          return client.focus();
+        }
+      }
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(targetUrl);
+      }
+    })
+  );
+});
+
+// Background Push Notification Receiver
+self.addEventListener("push", (e) => {
+  let payload = {
+    title: "Mausam India Alert",
+    body: "Significant weather or air quality update.",
+    tag: "mausam-hazard",
+    data: { url: "./" }
+  };
+  if (e.data) {
+    try {
+      const json = e.data.json();
+      payload = Object.assign(payload, json);
+    } catch {
+      payload.body = e.data.text();
+    }
+  }
+  e.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      icon: "./assets/mausam-logo.svg",
+      badge: "./assets/mausam-logo.svg",
+      tag: payload.tag || "mausam-hazard",
+      renotify: true,
+      vibrate: [200, 100, 200],
+      data: payload.data
+    })
   );
 });

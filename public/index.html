@@ -130,6 +130,15 @@
         title="Theme: auto / light / dark"
         aria-label="Switch theme"
       ></button>
+      <button
+        class="ib notif-btn"
+        id="notifBtn"
+        title="Weather Alerts & Notification Settings (Press N)"
+        aria-label="Weather Alerts and Notification Settings"
+      >
+        <span class="notif-btn-icon" aria-hidden="true">🔔</span>
+        <span id="notifBadge" class="notif-badge" hidden></span>
+      </button>
     </header>
     <main>
       <div id="alertDock" class="alert-dock" hidden aria-live="polite"></div>
@@ -257,6 +266,116 @@
               <button type="button" id="clearLocalDataBtn" class="privacy-action-btn">🗑️ Reset Local Preferences</button>
               <span id="clearDataMsg" style="font-size:12px;color:var(--mu)"></span>
             </div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <div id="notifModal" class="history-modal" hidden>
+      <section
+        class="history-modal-sheet notif-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="notifTitle"
+      >
+        <div class="history-modal-head">
+          <div>
+            <h2 id="notifTitle">🔔 Weather & Hazard Alerts</h2>
+            <p id="notifSubtitle">Real-time push warnings delivered directly to your device</p>
+          </div>
+          <button
+            type="button"
+            id="notifClose"
+            class="history-modal-close"
+            aria-label="Close notification settings"
+          >
+            ×
+          </button>
+        </div>
+        <div class="notif-content">
+          <!-- Device Permission Status Banner -->
+          <div id="notifPermBanner" class="notif-perm-card status-default">
+            <div class="notif-perm-icon" id="notifPermIcon">🔔</div>
+            <div class="notif-perm-info">
+              <strong id="notifPermStatus">Device Notifications Inactive</strong>
+              <p id="notifPermHelp">Enable browser notifications to receive alerts for severe smog, heatwaves, and storms even when the tab is in the background.</p>
+            </div>
+            <button type="button" id="notifEnableBtn" class="notif-perm-btn">Enable Alerts</button>
+          </div>
+
+          <!-- Alert Category Preferences -->
+          <div class="notif-section">
+            <h3>⚡ Hazard Alert Categories</h3>
+            <p class="notif-section-sub">Choose which weather events trigger device push notifications for your active city:</p>
+            <div class="notif-toggle-list">
+              <label class="notif-toggle-row" for="prefAqi">
+                <div class="notif-toggle-meta">
+                  <span class="notif-toggle-icon" aria-hidden="true">🚨</span>
+                  <div>
+                    <strong>Severe Air Pollution (AQI > 300)</strong>
+                    <p>CPCB Very Poor and Severe smog emergencies</p>
+                  </div>
+                </div>
+                <input type="checkbox" id="prefAqi" checked class="notif-switch" />
+              </label>
+
+              <label class="notif-toggle-row" for="prefHeat">
+                <div class="notif-toggle-meta">
+                  <span class="notif-toggle-icon" aria-hidden="true">🔥</span>
+                  <div>
+                    <strong>Severe Heatwave & Loo</strong>
+                    <p>Dangerous thermal stress (Temp ≥ 40°C or Feels like ≥ 45°C)</p>
+                  </div>
+                </div>
+                <input type="checkbox" id="prefHeat" checked class="notif-switch" />
+              </label>
+
+              <label class="notif-toggle-row" for="prefStorm">
+                <div class="notif-toggle-meta">
+                  <span class="notif-toggle-icon" aria-hidden="true">⛈️</span>
+                  <div>
+                    <strong>Thunderstorms & Lightning</strong>
+                    <p>Active convective storm cells in your vicinity</p>
+                  </div>
+                </div>
+                <input type="checkbox" id="prefStorm" checked class="notif-switch" />
+              </label>
+
+              <label class="notif-toggle-row" for="prefRain">
+                <div class="notif-toggle-meta">
+                  <span class="notif-toggle-icon" aria-hidden="true">🌧️</span>
+                  <div>
+                    <strong>Heavy Monsoon Downpours</strong>
+                    <p>Intense rain rates and flood/waterlogging risks</p>
+                  </div>
+                </div>
+                <input type="checkbox" id="prefRain" checked class="notif-switch" />
+              </label>
+
+              <label class="notif-toggle-row" for="prefFog">
+                <div class="notif-toggle-meta">
+                  <span class="notif-toggle-icon" aria-hidden="true">🌫️</span>
+                  <div>
+                    <strong>Dense Winter Fog (< 350m Visibility)</strong>
+                    <p>Severe highway and airport visibility restrictions</p>
+                  </div>
+                </div>
+                <input type="checkbox" id="prefFog" class="notif-switch" />
+              </label>
+            </div>
+          </div>
+
+          <!-- Test & Verification Section -->
+          <div class="notif-section notif-test-section">
+            <div class="notif-test-meta">
+              <strong>🧪 Delivery Verification Test</strong>
+              <p>Test that device alerts, vibration, and audio work correctly on this device.</p>
+            </div>
+            <button type="button" id="notifTestBtn" class="notif-test-btn">⚡ Send Test Alert</button>
+          </div>
+
+          <!-- Privacy & DPDP Zero-Tracking Notice -->
+          <div class="notif-section notif-privacy-note">
+            <p>🔒 <strong>DPDP Act 2023 Privacy Guarantee:</strong> Weather alerts are evaluated entirely client-side on your device. No personal details, phone numbers, or push tokens are ever uploaded to remote servers.</p>
           </div>
         </div>
       </section>
