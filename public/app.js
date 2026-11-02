@@ -366,7 +366,7 @@ const $ = (s) => document.querySelector(s),
 
           window.addEventListener("resize", onWindowResize);
           window.addEventListener("mousemove", (e) => {
-            if (!camera || window.innerWidth < 900) return;
+            if (!camera || window.innerWidth < 900 || RM) return;
             const targetX = ((e.clientX - window.innerWidth / 2) / window.innerWidth) * 12;
             const targetY = -((e.clientY - window.innerHeight / 2) / window.innerHeight) * 8;
             camera.position.x += (targetX - camera.position.x) * 0.05;
@@ -2786,6 +2786,22 @@ const $ = (s) => document.querySelector(s),
           );
         }
       }
+
+            function updateOnlineStatus() {
+        const bar = $("#offlineBar");
+        if (!bar) return;
+        bar.hidden = navigator.onLine !== false;
+      }
+      window.addEventListener("online", () => {
+        updateOnlineStatus();
+        toast("Connected to network. Updating forecast…", 0);
+        load();
+      });
+      window.addEventListener("offline", () => {
+        updateOnlineStatus();
+        toast("Network offline. Viewing cached telemetry.", 1);
+      });
+      updateOnlineStatus();
 
       async function boot() {
         // Fast-path: If user previously authorized geolocation, resolve coordinates first

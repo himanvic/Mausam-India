@@ -2358,3 +2358,20 @@
         opacity: 1;
         color: var(--ac);
       }
+
+      .offline-banner {
+        position: sticky;
+        top: 0;
+        z-index: 45;
+        width: 100%;
+        padding: 7px 16px;
+        background: #f59e0b;
+        color: #0b1329;
+        font: 600 12px var(--f);
+        text-align: center;
+        letter-spacing: 0.02em;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      }
+      .offline-banner[hidden] {
+        display: none !important;
+      }
