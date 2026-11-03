@@ -1,0 +1,95 @@
+{
+  "type": "AdaptiveCard",
+  "version": "1.5",
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "body": [
+    {
+      "type": "ColumnSet",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "🇮🇳 ${city}",
+              "weight": "Bolder",
+              "size": "Medium",
+              "color": "Light"
+            },
+            {
+              "type": "TextBlock",
+              "text": "${condition}",
+              "size": "Small",
+              "color": "Accent",
+              "spacing": "None"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "auto",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "${glyph}",
+              "size": "ExtraLarge",
+              "horizontalAlignment": "Right"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ColumnSet",
+      "spacing": "Medium",
+      "columns": [
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "${temperature}°C",
+              "size": "ExtraLarge",
+              "weight": "Bolder"
+            },
+            {
+              "type": "TextBlock",
+              "text": "Feels like ${feelsLike}°C",
+              "size": "Small",
+              "isSubtle": true,
+              "spacing": "None"
+            }
+          ]
+        },
+        {
+          "type": "Column",
+          "width": "stretch",
+          "items": [
+            {
+              "type": "TextBlock",
+              "text": "AQI: ${aqi} (${aqiCategory})",
+              "weight": "Bolder",
+              "color": "${aqiColor}"
+            },
+            {
+              "type": "TextBlock",
+              "text": "☔ Rain: ${rainProb}%",
+              "size": "Small",
+              "isSubtle": true,
+              "spacing": "None"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "Open Mausam India",
+      "url": "https://mausam-india.pages.dev/"
+    }
+  ]
+}

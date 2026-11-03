@@ -1,0 +1,11 @@
+{
+  "city": "New Delhi",
+  "temperature": "28",
+  "feelsLike": "30",
+  "condition": "Mainly clear",
+  "glyph": "🌤️",
+  "rainProb": "10",
+  "aqi": "142",
+  "aqiCategory": "Moderate",
+  "aqiColor": "Warning"
+}
