@@ -15,7 +15,9 @@ const ASSETS_TO_CACHE = [
   "./vendor/leaflet/leaflet.css",
   "./vendor/leaflet/leaflet.js",
   "./vendor/three/three.min.js",
-  "./aqi-worker.js"
+  "./aqi-worker.js",
+  "./widget.html",
+  "./widget.js"
 ];
 
 // Helper: Prune tile cache entries older than 24 hours or exceeding size cap

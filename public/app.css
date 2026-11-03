@@ -2845,3 +2845,72 @@
       .osm-base-tile-light {
         filter: none !important;
       }
+
+/* Embed Live Widget Modal Styling */
+      .embed-sheet {
+        max-width: 520px !important;
+      }
+      .embed-modal-body {
+        padding: 16px 20px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .embed-preview-box {
+        background: rgba(0, 0, 0, 0.28);
+        padding: 14px;
+        border-radius: 18px;
+        border: 1px dashed var(--border);
+        display: flex;
+        justify-content: center;
+      }
+      .embed-controls-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .embed-input-grp {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .embed-input-grp label, .embed-code-wrap label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--mu);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .embed-input-grp select {
+        background: var(--card-bg, #0f172a);
+        border: 1px solid var(--border);
+        color: var(--tx);
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        outline: none;
+      }
+      .embed-copy-box {
+        display: flex;
+        gap: 8px;
+        align-items: stretch;
+        margin-top: 5px;
+      }
+      .embed-copy-box textarea {
+        flex: 1;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid var(--border);
+        color: #38bdf8;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 11px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        resize: none;
+        outline: none;
+        line-height: 1.4;
+      }
+      .embed-copy-box .btn {
+        white-space: nowrap;
+        font-size: 12px;
+        padding: 8px 14px;
+      }

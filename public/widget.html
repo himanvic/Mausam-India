@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mausam India — Live Weather & AQI Widget</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: linear-gradient(135deg, #0b1329 0%, #111d40 100%);
+      --card-bg: rgba(15, 23, 42, 0.75);
+      --border: rgba(255, 255, 255, 0.12);
+      --tx: #f8fafc;
+      --mu: #94a3b8;
+      --ac: #38bdf8;
+    }
+    html.light {
+      --bg: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --border: rgba(148, 163, 184, 0.25);
+      --tx: #0f172a;
+      --mu: #64748b;
+      --ac: #0284c7;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--tx);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .widget-card {
+      width: 100%;
+      height: 100%;
+      max-width: 320px;
+      max-height: 190px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: relative;
+    }
+    .widget-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .location-wrap {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--tx);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 190px;
+    }
+    .loc-icon { color: var(--ac); font-size: 14px; }
+    .widget-brand {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--mu);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s;
+    }
+    .widget-brand:hover { color: var(--ac); }
+    .main-metrics {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 4px 0;
+    }
+    .temp-group { display: flex; align-items: baseline; gap: 4px; }
+    .temp-val { font-size: 38px; font-weight: 800; line-height: 1; letter-spacing: -1px; }
+    .temp-unit { font-size: 18px; font-weight: 600; color: var(--mu); }
+    .weather-glyph { font-size: 34px; line-height: 1; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.2)); }
+    .condition-text {
+      font-size: 11.5px;
+      color: var(--mu);
+      font-weight: 500;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .feels-text { color: var(--tx); font-weight: 600; }
+    .widget-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding-top: 6px;
+      border-top: 1px solid var(--border);
+    }
+    .badge-pill {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+    }
+    .aqi-pill {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .rain-pill {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--ac);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .loading-state, .error-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      color: var(--mu);
+      font-size: 12px;
+      gap: 8px;
+    }
+    .spinner {
+      width: 22px;
+      height: 22px;
+      border: 2.5px solid var(--border);
+      border-top-color: var(--ac);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="widget-card" id="widgetCard">
+    <div class="loading-state" id="loadingState">
+      <div class="spinner"></div>
+      <span>Loading Mausam India...</span>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const CITIES = {
+        "new delhi": [28.6139, 77.2090, "New Delhi"],
+        "delhi": [28.6139, 77.2090, "New Delhi"],
+        "mumbai": [19.0760, 72.8777, "Mumbai"],
+        "bengaluru": [12.9716, 77.5946, "Bengaluru"],
+        "bangalore": [12.9716, 77.5946, "Bengaluru"],
+        "kolkata": [22.5726, 88.3639, "Kolkata"],
+        "chennai": [13.0827, 80.2707, "Chennai"],
+        "hyderabad": [17.3850, 78.4867, "Hyderabad"],
+        "ahmedabad": [23.0225, 72.5714, "Ahmedabad"],
+        "pune": [18.5204, 73.8567, "Pune"],
+        "jaipur": [26.9124, 75.7873, "Jaipur"],
+        "lucknow": [26.8467, 80.9462, "Lucknow"],
+        "chandigarh": [30.7333, 76.7794, "Chandigarh"],
+        "patna": [25.5941, 85.1376, "Patna"],
+        "bhopal": [23.2599, 77.4126, "Bhopal"],
+        "kochi": [9.9312, 76.2673, "Kochi"],
+        "dehradun": [30.3165, 78.0322, "Dehradun"],
+        "srinagar": [34.0837, 74.7973, "Srinagar"],
+        "shimla": [31.1048, 77.1734, "Shimla"],
+        "guwahati": [26.1445, 91.7362, "Guwahati"]
+      };
+
+      const WMO_MAP = {
+        0: ["Clear sky", "☀️", "🌙"],
+        1: ["Mainly clear", "🌤️", "🌤️"],
+        2: ["Partly cloudy", "⛅", "⛅"],
+        3: ["Overcast", "☁️", "☁️"],
+        45: ["Fog", "🌫️", "🌫️"],
+        48: ["Depositing rime fog", "🌫️", "🌫️"],
+        51: ["Light drizzle", "🌦️", "🌦️"],
+        53: ["Moderate drizzle", "🌦️", "🌦️"],
+        55: ["Dense drizzle", "🌧️", "🌧️"],
+        61: ["Slight rain", "🌦️", "🌦️"],
+        63: ["Moderate rain", "🌧️", "🌧️"],
+        65: ["Heavy rain", "🌧️", "🌧️"],
+        71: ["Slight snow", "🌨️", "🌨️"],
+        73: ["Moderate snow", "🌨️", "🌨️"],
+        75: ["Heavy snow", "❄️", "❄️"],
+        80: ["Rain showers", "🌦️", "🌦️"],
+        81: ["Moderate showers", "🌧️", "🌧️"],
+        82: ["Violent showers", "⛈️", "⛈️"],
+        95: ["Thunderstorm", "⛈️", "⛈️"],
+        96: ["Thunderstorm with hail", "⛈️", "⛈️"],
+        99: ["Severe thunderstorm", "⛈️", "⛈️"]
+      };
+
+      function getAqiCategory(v) {
+        if (!v || v < 0) return { label: "No Data", color: "#94a3b8", bg: "rgba(148,163,184,0.15)" };
+        if (v <= 50) return { label: "Good", color: "#10b981", bg: "rgba(16,185,129,0.15)" };
+        if (v <= 100) return { label: "Satisfactory", color: "#84cc16", bg: "rgba(132,204,22,0.15)" };
+        if (v <= 200) return { label: "Moderate", color: "#eab308", bg: "rgba(234,179,8,0.15)" };
+        if (v <= 300) return { label: "Poor", color: "#f97316", bg: "rgba(249,115,22,0.15)" };
+        if (v <= 400) return { label: "Very Poor", color: "#ef4444", bg: "rgba(239,68,68,0.15)" };
+        return { label: "Severe", color: "#b91c1c", bg: "rgba(185,28,28,0.2)" };
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const cityQuery = (params.get("city") || "New Delhi").trim().toLowerCase();
+      const theme = params.get("theme") || "dark";
+      const showAqi = params.get("aqi") !== "false";
+
+      if (theme === "light" || (theme === "auto" && window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches)) {
+        document.documentElement.classList.add("light");
+      }
+
+      let lat = parseFloat(params.get("lat"));
+      let lon = parseFloat(params.get("lon"));
+      let cityName = params.get("name") || (params.get("city") || "New Delhi");
+
+      if (isNaN(lat) || isNaN(lon)) {
+        const found = CITIES[cityQuery];
+        if (found) {
+          lat = found[0];
+          lon = found[1];
+          cityName = found[2];
+        } else {
+          lat = 28.6139;
+          lon = 77.2090;
+          cityName = params.get("city") || "New Delhi";
+        }
+      }
+
+      const card = document.getElementById("widgetCard");
+
+      async function fetchWidgetData() {
+        try {
+          const wUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,is_day,precipitation,weather_code&hourly=precipitation_probability&timezone=Asia%2FKolkata&forecast_days=1`;
+          const aUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10&timezone=Asia%2FKolkata`;
+
+          const [wRes, aRes] = await Promise.all([
+            fetch(wUrl).then(r => r.json()).catch(() => null),
+            showAqi ? fetch(aUrl).then(r => r.json()).catch(() => null) : null
+          ]);
+
+          if (!wRes || !wRes.current) {
+            throw new Error("Unable to fetch weather");
+          }
+
+          const cur = wRes.current;
+          const temp = Math.round(cur.temperature_2m);
+          const feels = Math.round(cur.apparent_temperature);
+          const isDay = cur.is_day !== 0;
+          const wmo = WMO_MAP[cur.weather_code] || ["Fair", "⛅", "⛅"];
+          const glyph = isDay ? wmo[1] : wmo[2];
+          const condText = wmo[0];
+
+          // Rain probability
+          let rainProb = 0;
+          if (wRes.hourly && Array.isArray(wRes.hourly.precipitation_probability)) {
+            rainProb = Math.max(0, ...wRes.hourly.precipitation_probability.slice(0, 6));
+          }
+
+          // CPCB AQI Estimate from PM2.5 / PM10
+          let aqiVal = null;
+          if (aRes && aRes.current) {
+            const p25 = aRes.current.pm2_5;
+            const p10 = aRes.current.pm10;
+            if (p25 != null && p25 >= 0) {
+              // Indian CPCB piecewise linear sub-index for PM2.5
+              if (p25 <= 30) aqiVal = Math.round((50 / 30) * p25);
+              else if (p25 <= 60) aqiVal = Math.round(51 + (49 / 30) * (p25 - 31));
+              else if (p25 <= 90) aqiVal = Math.round(101 + (99 / 30) * (p25 - 61));
+              else if (p25 <= 120) aqiVal = Math.round(201 + (99 / 30) * (p25 - 91));
+              else if (p25 <= 250) aqiVal = Math.round(301 + (99 / 130) * (p25 - 121));
+              else aqiVal = 401;
+            } else if (p10 != null && p10 >= 0) {
+              if (p10 <= 50) aqiVal = Math.round(p10);
+              else if (p10 <= 100) aqiVal = Math.round(51 + (49 / 50) * (p10 - 51));
+              else if (p10 <= 250) aqiVal = Math.round(101 + (99 / 150) * (p10 - 101));
+              else if (p10 <= 350) aqiVal = Math.round(201 + (99 / 100) * (p10 - 251));
+              else if (p10 <= 430) aqiVal = Math.round(301 + (99 / 80) * (p10 - 351));
+              else aqiVal = 401;
+            }
+          }
+
+          const aqiMeta = getAqiCategory(aqiVal);
+
+          card.innerHTML = `
+            <div class="widget-header">
+              <div class="location-wrap" title="${cityName}">
+                <span class="loc-icon">📍</span>
+                <span>${cityName}</span>
+              </div>
+              <a href="https://mausam-india.pages.dev/" target="_blank" rel="noopener noreferrer" class="widget-brand" title="Mausam India Live Portal">
+                <span>🇮🇳 Mausam India</span>
+              </a>
+            </div>
+
+            <div class="main-metrics">
+              <div class="temp-group">
+                <span class="temp-val">${temp}</span>
+                <span class="temp-unit">°C</span>
+              </div>
+              <span class="weather-glyph">${glyph}</span>
+            </div>
+
+            <div class="condition-text">
+              <span>${condText}</span>
+              <span>·</span>
+              <span>Feels <span class="feels-text">${feels}°</span></span>
+            </div>
+
+            <div class="widget-footer">
+              <span class="badge-pill rain-pill">
+                <span>☔</span>
+                <span>${rainProb}% rain</span>
+              </span>
+              ${
+                showAqi && aqiVal !== null
+                  ? `<span class="badge-pill aqi-pill" style="background:${aqiMeta.bg};color:${aqiMeta.color};border-color:color-mix(in srgb, ${aqiMeta.color} 40%, transparent)">
+                      <span>🍃</span>
+                      <span>AQI ${aqiVal} · ${aqiMeta.label}</span>
+                    </span>`
+                  : `<span class="badge-pill aqi-pill"><span>🍃</span><span>CPCB Scale</span></span>`
+              }
+            </div>
+          `;
+        } catch (err) {
+          card.innerHTML = `
+            <div class="error-state">
+              <span>⚠️ Unable to load weather</span>
+              <a href="https://mausam-india.pages.dev/" target="_blank" style="color:var(--ac);text-decoration:underline;font-size:11px">Open Mausam India</a>
+            </div>
+          `;
+        }
+      }
+
+      fetchWidgetData();
+    })();
+  </script>
+</body>
+</html>

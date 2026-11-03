@@ -2960,7 +2960,7 @@ const $ = (s) => document.querySelector(s),
             '</div>' +
             '<div class="footer-rights">© ' +
             yrDisplay +
-            ' Mausam India · Non-commercial student project · Open source under MIT License · <button type="button" class="ft-link-btn" id="openPrivacyBtn">Privacy & Data Governance</button></div>' +
+            ' Mausam India · Non-commercial student project · Open source under MIT License · <button type="button" class="ft-link-btn" id="openPrivacyBtn">Privacy & Data Governance</button> · <button type="button" class="ft-link-btn" id="openEmbedBtn">📦 Embed Live Widget</button></div>' +
             '<div class="footer-disclaimer-box"><strong>Independent Project Notice:</strong> Mausam India is an independent open-source weather platform and is not affiliated with, authorized, or endorsed by the India Meteorological Department (IMD) or the Government of India. Official government advisories: <a href="https://mausam.imd.gov.in" target="_blank" rel="noopener noreferrer">mausam.imd.gov.in</a></div>' +
             '<a class="github-source-link" href="' +
             GITHUB_REPO_URL +
@@ -2994,6 +2994,101 @@ const $ = (s) => document.querySelector(s),
         if (e.key === "Escape") {
           closeAQIHistory();
           closePrivacy();
+          closeNotifModal();
+          closeEmbedModal();
+        }
+      });
+
+      /* ---------- Embed Live Widget Modal ---------- */
+      function updateEmbedModalUI() {
+        const citySelect = $("#embedCitySelect");
+        const themeSelect = $("#embedThemeSelect");
+        const iframeEl = $("#embedPreviewIframe");
+        const iframeCode = $("#embedIframeCode");
+        const tagCode = $("#embedComponentCode");
+        if (!citySelect || !themeSelect) return;
+
+        const city = citySelect.value || "New Delhi";
+        const theme = themeSelect.value || "dark";
+        const origin = window.location.origin || "https://mausam-india.pages.dev";
+        const widgetUrl = `${origin}/widget.html?city=${encodeURIComponent(city)}&theme=${theme}`;
+
+        if (iframeEl) {
+          iframeEl.src = `./widget.html?city=${encodeURIComponent(city)}&theme=${theme}`;
+        }
+        if (iframeCode) {
+          iframeCode.value = `<iframe src="${widgetUrl}" width="320" height="190" style="border:none;border-radius:16px;overflow:hidden;box-shadow:0 10px 25px -5px rgba(0,0,0,0.3)" loading="lazy" title="Mausam India Live Weather"></iframe>`;
+        }
+        if (tagCode) {
+          tagCode.value = `<script src="${origin}/widget.js" async></script>\n<mausam-widget city="${city}" theme="${theme}"></mausam-widget>`;
+        }
+      }
+
+      function openEmbedModal() {
+        const modal = $("#embedModal");
+        if (!modal) return;
+        const citySelect = $("#embedCitySelect");
+        if (citySelect && S.loc && S.loc.n) {
+          const exists = Array.from(citySelect.options).some(o => o.value.toLowerCase() === S.loc.n.toLowerCase());
+          if (!exists) {
+            const opt = document.createElement("option");
+            opt.value = S.loc.n;
+            opt.textContent = S.loc.n;
+            opt.selected = true;
+            citySelect.prepend(opt);
+          } else {
+            citySelect.value = S.loc.n;
+          }
+        }
+        updateEmbedModalUI();
+        modal.hidden = false;
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+        setTimeout(() => $("#embedClose")?.focus(), 40);
+      }
+
+      function closeEmbedModal() {
+        const modal = $("#embedModal");
+        if (!modal || modal.hidden) return;
+        modal.classList.remove("open");
+        modal.hidden = true;
+        document.body.style.overflow = "";
+      }
+
+      $("#embedClose")?.addEventListener("click", closeEmbedModal);
+      $("#embedModal")?.addEventListener("click", (e) => {
+        if (e.target === $("#embedModal")) closeEmbedModal();
+      });
+      $("#embedCitySelect")?.addEventListener("change", updateEmbedModalUI);
+      $("#embedThemeSelect")?.addEventListener("change", updateEmbedModalUI);
+
+      $("#copyIframeBtn")?.addEventListener("click", () => {
+        const txt = $("#embedIframeCode")?.value;
+        if (txt) {
+          navigator.clipboard.writeText(txt).then(() => {
+            toast("✅ Iframe embed code copied to clipboard!", 0);
+          }).catch(() => {
+            $("#embedIframeCode")?.select();
+            toast("Press Ctrl+C to copy code", 0);
+          });
+        }
+      });
+
+      $("#copyComponentBtn")?.addEventListener("click", () => {
+        const txt = $("#embedComponentCode")?.value;
+        if (txt) {
+          navigator.clipboard.writeText(txt).then(() => {
+            toast("✅ Custom element tag copied to clipboard!", 0);
+          }).catch(() => {
+            $("#embedComponentCode")?.select();
+            toast("Press Ctrl+C to copy code", 0);
+          });
+        }
+      });
+
+      document.addEventListener("click", (e) => {
+        if (e.target.closest("#openEmbedBtn")) {
+          openEmbedModal();
         }
       });
 
