@@ -1,0 +1,27 @@
+{
+  "packageId": "dev.pages.mausam_india.twa",
+  "host": "mausam-india.pages.dev",
+  "name": "Mausam India",
+  "launcherName": "Mausam",
+  "themeColor": "#0b1329",
+  "navigationColor": "#0b1329",
+  "backgroundColor": "#0b1329",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://mausam-india.pages.dev/assets/mausam-logo.svg",
+  "maskableIconUrl": "https://mausam-india.pages.dev/assets/mausam-logo.svg",
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://mausam-india.pages.dev/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": {
+      "enabled": true
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  }
+}

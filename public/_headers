@@ -46,3 +46,8 @@
 
 /widgets/*
   Cache-Control: public, max-age=86400, must-revalidate
+
+/.well-known/*
+  Content-Type: application/json
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=86400
