@@ -11,6 +11,7 @@
 
 [![Deploy to Cloudflare Pages](https://img.shields.io/badge/Deploy-Cloudflare%20Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Project: Non-commercial Student Project](https://img.shields.io/badge/Project-Non--commercial%20Student%20Project-blueviolet?style=for-the-badge)](#-non-commercial-student-project-notice)
 [![Edge Health](https://img.shields.io/badge/Edge%20Health-Operational%20(BOM)-059669?style=for-the-badge&logo=cloudflare&logoColor=white)](https://mausam-india.pages.dev/api/health)
 [![DPDP Act 2023](https://img.shields.io/badge/Privacy-DPDP%20Act%20Compliant-10b981?style=for-the-badge)](https://mausam-india.pages.dev/)
 [![PWA Ready](https://img.shields.io/badge/PWA-Push%20Notifications%20Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
@@ -35,6 +36,8 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
 
 > [!NOTE]
 > **Independent Project Notice**: Mausam India is an independent open-source weather platform and is not affiliated with, authorized, sponsored, or endorsed by the India Meteorological Department (IMD), the Ministry of Earth Sciences (MoES), or the Government of India. For official governmental advisories and storm warnings, please visit [mausam.imd.gov.in](https://mausam.imd.gov.in).
+>
+> **Non-Commercial Student Project Notice**: Mausam India is developed strictly as a free, non-commercial student project for educational, meteorological research, and civic awareness purposes. It contains zero advertisements, zero monetized services, and zero subscription paywalls. *Commercial Notice: Should commercial features, advertisements, or monetization ever be introduced in the future, the terms of service of upstream providers (notably Open-Meteo and RainViewer) must be reviewed and upgraded to commercial licensing tiers.*
 
 ---
 
@@ -127,12 +130,12 @@ Every external API utilized by Mausam India is official, legal, open, and proxie
 
 | Provider | Purpose | Upstream Endpoint | Edge Route | Cache Strategy | Documentation |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Open-Meteo Weather** | Hyperlocal hourly, daily, UV, wind, and rain forecasts | `https://api.open-meteo.com/v1/forecast` | `/api/forecast` | 10 Min (`s-maxage=600`) | [Open-Meteo Docs](https://open-meteo.com/en/docs) |
+| **Open-Meteo Weather** | Hyperlocal hourly, daily, UV, wind, and rain forecasts (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>) | `https://api.open-meteo.com/v1/forecast` | `/api/forecast` | 10 Min (`s-maxage=600`) | [Open-Meteo Docs](https://open-meteo.com/en/docs) |
 | **Open-Meteo Air Quality** | Hourly modeled atmospheric pollutants ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2$, etc.) | `https://air-quality-api.open-meteo.com/v1/air-quality` | `/api/air-quality` | 15 Min (`s-maxage=900`) | [Open-Meteo Air Quality](https://open-meteo.com/en/docs/air-quality-api) |
 | **Open-Meteo Geocoding** | Indian city, town, village, and PIN code search | `https://geocoding-api.open-meteo.com/v1/search` | `/api/geocoding` | 24 Hours (`s-maxage=86400`) | [Open-Meteo Geocoding](https://open-meteo.com/en/docs/geocoding-api) |
-| **OpenAQ v3 Platform** | Registered physical CPCB/CAAQMS ground sensor telemetry | `https://api.openaq.org/v3/locations` | `/api/openaq/nearest` | 15 Min (`s-maxage=900`) | [OpenAQ Docs](https://docs.openaq.org/) |
-| **NASA GIBS** | Orbital satellite TrueColor cloud imagery (Terra/MODIS) | `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/...` | Client WMTS Layer | Direct Browser Cache | [NASA GIBS](https://earthdata.nasa.gov/eosdis/science-system-description/eosdis-components/gibs) |
-| **RainViewer Radar** | Real-time Doppler precipitation radar tile loop | `https://api.rainviewer.com/public/weather-maps.json` | Client Radar Stream | 5 Min (Dynamic) | [RainViewer API](https://www.rainviewer.com/api.html) |
+| **OpenAQ & Original Providers** | Physical CPCB/CAAQMS ground sensor telemetry via OpenAQ and original data providers | `https://api.openaq.org/v3/locations` | `/api/openaq/nearest` | 15 Min (`s-maxage=900`) | [OpenAQ Docs](https://docs.openaq.org/) |
+| **NASA EOSDIS GIBS / Terra MODIS** | Orbital satellite TrueColor cloud imagery | `https://earthdata.nasa.gov/gibs` | Client WMTS Layer | Direct Browser Cache | [NASA GIBS](https://earthdata.nasa.gov/gibs) |
+| **Weather data by RainViewer** | Real-time animated Doppler precipitation radar | `https://www.rainviewer.com` | Client Radar Stream | 5 Min (Dynamic) | [RainViewer](https://www.rainviewer.com) |
 | **Esri ArcGIS Canvas** | Dark Gray minimalist geographic basemap & boundaries | `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/...` | Direct Tile Layer | Browser Cache | [Esri Basemaps](https://www.esri.com/en-us/arcgis/products/arcgis-platform/services/basemaps) |
 | **Edge Health API** | Real-time edge health, uptime & serverless telemetry | Serverless Cloudflare Worker | `/api/health` | Instant (~5ms) | Edge Health Endpoint |
 
@@ -194,6 +197,14 @@ Every external API utilized by Mausam India is official, legal, open, and proxie
 ## 📄 License & Intellectual Property
 
 Distributed under the **MIT License**.
+
+> **Note on Upstream Data Rights & Licensing Scope**:  
+> The MIT License applies strictly to the Mausam India application source code, procedural vector graphics, and interface implementation. All underlying atmospheric, air quality, satellite, radar, and geographic data remain the intellectual property of their respective original providers and are subject to their respective open licenses and terms of use:
+> - **Open-Meteo**: Licensed under Creative Commons Attribution 4.0 International ([CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)).
+> - **OpenAQ**: Data aggregated from OpenAQ and original data providers (including CPCB / government CAAQMS monitoring networks).
+> - **NASA GIBS**: Satellite imagery courtesy of [NASA EOSDIS GIBS / Terra MODIS](https://earthdata.nasa.gov/gibs).
+> - **RainViewer**: [Weather data by RainViewer](https://www.rainviewer.com).
+> - **OpenStreetMap & Esri**: Maps [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright) and Esri World Canvas basemap tiles.
 
 ```text
 MIT License
