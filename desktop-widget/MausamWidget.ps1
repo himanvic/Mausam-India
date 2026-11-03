@@ -1,4 +1,4 @@
-# Mausam India — Native Windows Desktop Floating Widget
+# Mausam India - Native Windows Desktop Floating Widget
 [CmdletBinding()]
 param(
     [string]$City = "",
@@ -89,11 +89,11 @@ if ($Config.position -eq "bottom-right") {
 # 4. Target Widget URL
 $CityEncoded = [System.Uri]::EscapeDataString($Config.city)
 $AqiParam = if ($Config.showAqi) { "true" } else { "false" }
-$WidgetUrl = "https://mausam-india.pages.dev/widget.html?city=$CityEncoded&theme=$($Config.theme)&aqi=$AqiParam"
+$WidgetUrl = "https://mausam-india.pages.dev/widget?city=$CityEncoded&theme=$($Config.theme)&aqi=$AqiParam"
 
-# Check if local widget.html exists for offline preview
+# Check if local widget.html exists for offline fallback
 $LocalWidget = Join-Path (Split-Path -Parent $ScriptDir) "public\widget.html"
-if (-not (Test-Connection -ComputerName "pages.dev" -Count 1 -Quiet -ErrorAction SilentlyContinue) -and (Test-Path $LocalWidget)) {
+if ((-not (Test-Connection -ComputerName "1.1.1.1" -Count 1 -Quiet -ErrorAction SilentlyContinue)) -and (Test-Path $LocalWidget)) {
     $WidgetUrl = "file:///" + $LocalWidget.Replace("\", "/") + "?city=$CityEncoded&theme=$($Config.theme)&aqi=$AqiParam"
 }
 
@@ -106,7 +106,7 @@ $LaunchArgs = @(
     "--user-data-dir=`"$UserDataDir`"",
     "--no-first-run",
     "--no-default-browser-check",
-    "--disable-background-networking"
+    "--allow-file-access-from-files"
 )
 
 $Process = Start-Process -FilePath $BrowserExe -ArgumentList ($LaunchArgs -join " ") -PassThru
@@ -132,7 +132,7 @@ public class WidgetWin32 {
         Add-Type -TypeDefinition $Win32Code -Language CSharp -ErrorAction SilentlyContinue
         $hWnd = $Process.MainWindowHandle
         if ($hWnd -and $hWnd -ne [IntPtr]::Zero) {
-            [WidgetWin32]::SetWindowPos($hWnd, [WidgetWin32]::HWND_TOPMOST, 0, 0, 0, 0, ([WidgetWin32]::SWP_NOMOVE -bor [WidgetWin32]::SWP_NOSIZE -bor [WidgetWin32]::SWP_SHOWWINDOW))
+            [void][WidgetWin32]::SetWindowPos($hWnd, [WidgetWin32]::HWND_TOPMOST, 0, 0, 0, 0, ([WidgetWin32]::SWP_NOMOVE -bor [WidgetWin32]::SWP_NOSIZE -bor [WidgetWin32]::SWP_SHOWWINDOW))
         }
     } catch {}
 }

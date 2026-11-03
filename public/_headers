@@ -36,10 +36,19 @@
 
 /sw.js
   Cache-Control: no-cache
+
+/widget
+  Cache-Control: public, max-age=3600
+  X-Frame-Options: ALLOWALL
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.open-meteo.com https://air-quality-api.open-meteo.com; frame-ancestors *;
+
 /widget.html
   Cache-Control: public, max-age=3600
   X-Frame-Options: ALLOWALL
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.open-meteo.com https://air-quality-api.open-meteo.com; frame-ancestors *;
+
+/widget-view.js
+  Cache-Control: public, max-age=86400, must-revalidate
 
 /widget.js
   Cache-Control: public, max-age=86400, must-revalidate

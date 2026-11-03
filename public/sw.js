@@ -1,5 +1,5 @@
 // Mausam India — Progressive Web App Service Worker
-const CACHE_NAME = "mausam-india-v5";
+const CACHE_NAME = "mausam-india-v6";
 const TILE_CACHE = "mausam-tiles-v1";
 const MAX_TILE_AGE_MS = 24 * 60 * 60 * 1000; // 24-hour maximum retention for map & radar tiles
 const MAX_TILES_LIMIT = 60; // Max tiles capped to guarantee < 10MB storage footprint
@@ -17,6 +17,7 @@ const ASSETS_TO_CACHE = [
   "./vendor/three/three.min.js",
   "./aqi-worker.js",
   "./widget.html",
+  "./widget-view.js",
   "./widget.js",
   "./widgets/card-template.json",
   "./widgets/widget-data.json",
