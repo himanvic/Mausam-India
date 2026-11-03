@@ -1,0 +1,9 @@
+{
+  "city": "New Delhi",
+  "theme": "dark",
+  "showAqi": true,
+  "alwaysOnTop": true,
+  "width": 340,
+  "height": 205,
+  "position": "top-right"
+}

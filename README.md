@@ -129,6 +129,7 @@ Built to run at the edge on **Cloudflare Pages**, Mausam India expands beyond th
 - **Native Widgets Board Integration**: Registered in `manifest.json` following the Microsoft Edge PWA Widgets specification.
 - **Microsoft Adaptive Cards v1.5 (`public/widgets/card-template.json`)**: Glassmorphic glance tile displaying live city weather, temperature, feels-like, CPCB AQI, and rain probability directly in the Windows 11 Widgets Board (<kbd>Win</kbd> + <kbd>W</kbd>).
 - **Wake-Update-Die Engine (`sw.js`)**: Implements `widgetinstall`, `widgetresume`, and `widgetclick` handlers that wake on demand and terminate immediately, using **0.0 MB idle background RAM**.
+- **Native Floating Desktop Gadget (`desktop-widget/`)**: A dedicated lightweight Windows desktop gadget that floats directly on your desktop wallpaper. Uses an isolated profile with `--disable-background-networking`, consuming only **~25MB–35MB RAM** and **0.0% background CPU**. Launch instantly via `Launch-Widget.vbs` or create a 1-click desktop shortcut with `Create-Desktop-Shortcut.ps1`.
 
 ### 10. 🤖 Android Trusted Web Activity (TWA) & Play Store Readiness
 
