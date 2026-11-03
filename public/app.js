@@ -1755,7 +1755,104 @@ const $ = (s) => document.querySelector(s),
             }
           : null;
       }
-      
+
+      /* ==========================================================================
+         Mausam India — Background WebWorker Math Engine Interface
+         Offloads sliding-window CPCB loops and Haversine geo-math to background
+         ========================================================================== */
+      const AQIWorkerClient = (() => {
+        let worker = null;
+        const isSupported =
+          typeof window !== "undefined" && typeof window.Worker !== "undefined";
+
+        function getWorker() {
+          if (!isSupported) return null;
+          if (!worker) {
+            try {
+              worker = new Worker("./aqi-worker.js");
+              worker.onerror = () => {
+                worker = null;
+              };
+            } catch {
+              worker = null;
+            }
+          }
+          return worker;
+        }
+
+        function calculateAsync(payload, currentTime, days) {
+          const w = getWorker();
+          if (!w || !payload) {
+            const current = calcIndiaAQI(payload, currentTime);
+            const daily = {};
+            if (Array.isArray(days)) {
+              for (const d of days) {
+                daily[d] = calcIndiaAQIForDay(payload, d);
+              }
+            }
+            return Promise.resolve({ current, daily });
+          }
+
+          return new Promise((resolve) => {
+            const reqId = "aqi_" + Math.random().toString(36).slice(2, 9);
+            let timer = null;
+
+            const onMessage = (e) => {
+              if (e.data && e.data.reqId === reqId) {
+                clearTimeout(timer);
+                w.removeEventListener("message", onMessage);
+                if (e.data.ok && e.data.result) {
+                  resolve(e.data.result);
+                } else {
+                  resolve({
+                    current: calcIndiaAQI(payload, currentTime),
+                    daily: {},
+                  });
+                }
+              }
+            };
+
+            w.addEventListener("message", onMessage);
+            w.postMessage({
+              action: "CALCULATE_FULL_AQI",
+              reqId,
+              payload,
+              currentTime,
+              days,
+            });
+
+            timer = setTimeout(() => {
+              w.removeEventListener("message", onMessage);
+              resolve({
+                current: calcIndiaAQI(payload, currentTime),
+                daily: {},
+              });
+            }, 600);
+          });
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+          if (![lat1, lon1, lat2, lon2].every(Number.isFinite)) return null;
+          const R = 6371;
+          const dLat = ((lat2 - lat1) * Math.PI) / 180;
+          const dLon = ((lon2 - lon1) * Math.PI) / 180;
+          const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos((lat1 * Math.PI) / 180) *
+              Math.cos((lat2 * Math.PI) / 180) *
+              Math.sin(dLon / 2) *
+              Math.sin(dLon / 2);
+          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+          return Math.round(R * c * 10) / 10;
+        }
+
+        return {
+          isSupported,
+          calculateAsync,
+          calculateDistance,
+        };
+      })();
+
       function renderInline7DayAQI(payload, currentTime) {
         if (!payload || !payload.hourly || !Array.isArray(payload.hourly.time)) {
           return "";
