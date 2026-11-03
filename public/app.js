@@ -231,7 +231,7 @@ const $ = (s) => document.querySelector(s),
               )
               .join("")
           : '<p class="openaq-station-meta">The station was found, but it returned no supported pollutant measurements.</p>';
-        return `<details class="openaq-panel"><summary><span>📡 OpenAQ station readings · not an AQI</span><span class="openaq-state ${stale ? "openaq-stale" : "openaq-fresh"}">${esc(freshness.toUpperCase())}</span></summary><div class="openaq-body"><p class="openaq-station-meta"><strong>${esc(station.name || "OpenAQ station")}</strong> · ${esc(distance)}<br>Latest reported reading: ${esc(stamp)}${owner ? `<br>${esc(owner)}` : ""}${station.is_monitor ? " · Monitor" : ""}</p><div class="openaq-reading-grid">${tiles}</div><p class="openaq-note">Source: OpenAQ v3 · measured pollutant concentrations from this named station, shown in each sensor’s reported units. These readings are not a composite AQI and are not used to calculate the model estimate above. Pollutant readings can have different timestamps, and a station can differ from the model grid or your exact location—so the numbers are not a like-for-like comparison. <a href="https://explore.openaq.org/" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">Explore OpenAQ</a>.</p></div></details>`;
+        return `<details class="openaq-panel"><summary><span>📡 OpenAQ station readings · not an AQI</span><span class="openaq-state ${stale ? "openaq-stale" : "openaq-fresh"}">${esc(freshness.toUpperCase())}</span></summary><div class="openaq-body"><p class="openaq-station-meta"><strong>${esc(station.name || "OpenAQ station")}</strong> · ${esc(distance)}<br>Latest reported reading: ${esc(stamp)}${owner ? `<br>${esc(owner)}` : ""}${station.is_monitor ? " · Monitor" : ""}</p><div class="openaq-reading-grid">${tiles}</div><p class="openaq-note">Source: OpenAQ and original data providers · measured pollutant concentrations from this named station, shown in each sensor’s reported units. These readings are not a composite AQI and are not used to calculate the model estimate above. Pollutant readings can have different timestamps, and a station can differ from the model grid or your exact location—so the numbers are not a like-for-like comparison. <a href="https://explore.openaq.org/" target="_blank" rel="noopener noreferrer" style="color:inherit;text-decoration:underline">Explore OpenAQ</a>.</p></div></details>`;
       }
 
       
@@ -998,7 +998,7 @@ const $ = (s) => document.querySelector(s),
               minZoom: 4,
               maxZoom: 12,
               zoomControl: true,
-              attributionControl: false,
+              attributionControl: true,
               scrollWheelZoom: false,
             });
 
@@ -1052,6 +1052,7 @@ const $ = (s) => document.querySelector(s),
           baseLayer = L.tileLayer(baseTileUrl, {
             maxZoom: 16,
             zIndex: 1,
+            attribution: 'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a> | &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>',
           }).addTo(map);
 
           labelsLayer = L.tileLayer(labelTileUrl, {
@@ -1080,6 +1081,7 @@ const $ = (s) => document.querySelector(s),
             tileSize: 256,
             opacity: 0,
             zIndex: 5,
+            attribution: '<a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener">NASA EOSDIS GIBS / Terra MODIS</a>',
           });
         }
 
@@ -2807,11 +2809,11 @@ const $ = (s) => document.querySelector(s),
               '<span class="ft-pill"><span class="ft-dot"></span>Live Atmospheric Telemetry</span>' +
               '<div class="footer-attribution">Updated ' +
               hr(c.time, 1) +
-              ' IST · Weather: <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo</a> · Air Quality: <a href="https://openaq.org" target="_blank" rel="noopener noreferrer">OpenAQ</a> · Satellite: NASA GIBS · Radar: RainViewer · Maps: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a></div>' +
+              ' IST · Weather: <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>) · Air Quality: <a href="https://openaq.org" target="_blank" rel="noopener noreferrer">OpenAQ and original data providers</a> · Satellite: <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener noreferrer">NASA EOSDIS GIBS / Terra MODIS</a> · Radar: <a href="https://www.rainviewer.com" target="_blank" rel="noopener noreferrer">Weather data by RainViewer</a> · Maps: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a> & <a href="https://www.esri.com" target="_blank" rel="noopener noreferrer">Esri</a></div>' +
             '</div>' +
             '<div class="footer-rights">© ' +
             yrDisplay +
-            ' Mausam India · Open source under MIT License · <button type="button" class="ft-link-btn" id="openPrivacyBtn">Privacy & Data Governance</button></div>' +
+            ' Mausam India · Non-commercial student project · Open source under MIT License · <button type="button" class="ft-link-btn" id="openPrivacyBtn">Privacy & Data Governance</button></div>' +
             '<div class="footer-disclaimer-box"><strong>Independent Project Notice:</strong> Mausam India is an independent open-source weather platform and is not affiliated with, authorized, or endorsed by the India Meteorological Department (IMD) or the Government of India. Official government advisories: <a href="https://mausam.imd.gov.in" target="_blank" rel="noopener noreferrer">mausam.imd.gov.in</a></div>' +
             '<a class="github-source-link" href="' +
             GITHUB_REPO_URL +
