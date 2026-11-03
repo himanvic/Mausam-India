@@ -1043,20 +1043,22 @@ const $ = (s) => document.querySelector(s),
 
           const isDark = dark || document.documentElement.dataset.theme === "dark";
           const baseTileUrl = isDark
-            ? "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
-            : "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}";
+            ? "https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png"
+            : "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png";
           const labelTileUrl = isDark
-            ? "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
-            : "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}";
+            ? "https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png"
+            : "https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png";
 
           baseLayer = L.tileLayer(baseTileUrl, {
-            maxZoom: 16,
+            subdomains: "abcd",
+            maxZoom: 19,
             zIndex: 1,
-            attribution: 'Tiles &copy; <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a> | &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a>',
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
           }).addTo(map);
 
           labelsLayer = L.tileLayer(labelTileUrl, {
-            maxZoom: 16,
+            subdomains: "abcd",
+            maxZoom: 19,
             zIndex: 25,
             opacity: 0.9,
           }).addTo(map);
@@ -2809,7 +2811,7 @@ const $ = (s) => document.querySelector(s),
               '<span class="ft-pill"><span class="ft-dot"></span>Live Atmospheric Telemetry</span>' +
               '<div class="footer-attribution">Updated ' +
               hr(c.time, 1) +
-              ' IST · Weather: <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>) · Air Quality: <a href="https://openaq.org" target="_blank" rel="noopener noreferrer">OpenAQ and original data providers</a> · Satellite: <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener noreferrer">NASA EOSDIS GIBS / Terra MODIS</a> · Radar: <a href="https://www.rainviewer.com" target="_blank" rel="noopener noreferrer">Weather data by RainViewer</a> · Maps: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a> & <a href="https://www.esri.com" target="_blank" rel="noopener noreferrer">Esri</a></div>' +
+              ' IST · Weather: <a href="https://open-meteo.com" target="_blank" rel="noopener noreferrer">Open-Meteo</a> (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>) · Air Quality: <a href="https://openaq.org" target="_blank" rel="noopener noreferrer">OpenAQ and original data providers</a> · Satellite: <a href="https://earthdata.nasa.gov/gibs" target="_blank" rel="noopener noreferrer">NASA EOSDIS GIBS / Terra MODIS</a> · Radar: <a href="https://www.rainviewer.com" target="_blank" rel="noopener noreferrer">Weather data by RainViewer</a> · Maps: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap contributors</a> & <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a></div>' +
             '</div>' +
             '<div class="footer-rights">© ' +
             yrDisplay +

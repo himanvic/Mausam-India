@@ -99,7 +99,7 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
 - **NASA GIBS Satellite Clouds**: Daily TrueColor composite imagery captured by NASA's Terra satellite orbit (`MODIS_Terra_CorrectedReflectance_TrueColor`), displaying genuine physical cloud formations, cyclonic storm eyes, and Himalayan snow cover.
 - **Animated Wind Streamlines**: Real-time canvas particle streams that visualize wind velocity, gusts, and directional airflow dynamically.
 - **RainViewer Doppler Radar**: 13-frame animated Doppler precipitation radar loop with interactive playback controls (Play, Pause, Step).
-- **Esri Dark Gray Basemap**: Crisp, high-contrast basemap tiles used under Esri terms of use (credited on map).
+- **CARTO Dark Basemap**: Crisp, high-contrast open basemap tiles built on OpenStreetMap data, providing separate base and label layers for clear visibility under satellite and radar overlays.
 
 ### 7. 🇮🇳 CPCB-Style Air Quality Index Estimation
 
@@ -137,7 +137,7 @@ Data comes from the providers listed below, used under their respective open ter
 | **NASA EOSDIS GIBS / Terra MODIS** | Orbital satellite TrueColor cloud imagery | `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg` | Client WMTS Layer | Direct Browser Cache | [NASA GIBS](https://earthdata.nasa.gov/gibs) |
 | **OpenStreetMap** | Global geographic search boundaries and basemap data | `https://www.openstreetmap.org` | Client Tile / Geocoding | Browser Cache | [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright) |
 | **Weather data by RainViewer** | Real-time animated Doppler precipitation radar | `https://www.rainviewer.com` | Client Radar Stream | 5 Min (Dynamic) | [RainViewer](https://www.rainviewer.com) |
-| **Esri ArcGIS Canvas** | Dark Gray minimalist geographic basemap & boundaries | `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/...` | Direct Tile Layer | Browser Cache | [Esri Basemaps](https://www.esri.com/en-us/arcgis/products/arcgis-platform/services/basemaps) |
+| **CARTO Basemaps** | High-contrast dark and light open basemap and label tiles | `https://{s}.basemaps.cartocdn.com` | Direct Tile Layer | Browser Cache | [CARTO Attributions](https://carto.com/attributions) |
 | **Edge Health API** | Real-time edge health, uptime & serverless telemetry | Serverless Cloudflare Worker | `/api/health` | Instant (~5ms) | Edge Health Endpoint |
 
 ---
@@ -205,7 +205,7 @@ Distributed under the **MIT License**.
 > - **OpenAQ**: Data aggregated from OpenAQ and original data providers (including CPCB / government CAAQMS monitoring networks).
 > - **NASA GIBS**: Satellite imagery courtesy of [NASA EOSDIS GIBS / Terra MODIS](https://earthdata.nasa.gov/gibs).
 > - **RainViewer**: [Weather data by RainViewer](https://www.rainviewer.com).
-> - **OpenStreetMap & Esri**: Maps [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright) and Esri World Canvas basemap tiles.
+> - **OpenStreetMap & CARTO**: Maps [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright) and [CARTO](https://carto.com/attributions).
 
 ```text
 MIT License
