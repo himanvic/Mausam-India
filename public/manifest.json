@@ -23,5 +23,30 @@
       "type": "image/svg+xml",
       "purpose": "any maskable"
     }
+  ],
+  "widgets": [
+    {
+      "name": "Mausam India Live",
+      "short_name": "Mausam",
+      "description": "Live weather, Indian CPCB AQI & rain alert glance tile",
+      "tag": "mausam-weather-widget",
+      "template": "widget-template",
+      "ms_ac_template": "./widgets/card-template.json",
+      "data": "./widgets/widget-data.json",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "./assets/mausam-logo.svg",
+          "sizes": "512x512",
+          "label": "Mausam India Live Widget Preview"
+        }
+      ],
+      "icons": [
+        {
+          "src": "./assets/mausam-logo.svg",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }

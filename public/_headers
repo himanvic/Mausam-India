@@ -44,3 +44,5 @@
 /widget.js
   Cache-Control: public, max-age=86400, must-revalidate
 
+/widgets/*
+  Cache-Control: public, max-age=86400, must-revalidate

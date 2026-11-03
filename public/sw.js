@@ -17,7 +17,9 @@ const ASSETS_TO_CACHE = [
   "./vendor/three/three.min.js",
   "./aqi-worker.js",
   "./widget.html",
-  "./widget.js"
+  "./widget.js",
+  "./widgets/card-template.json",
+  "./widgets/widget-data.json"
 ];
 
 // Helper: Prune tile cache entries older than 24 hours or exceeding size cap
@@ -229,4 +231,46 @@ self.addEventListener("push", (e) => {
       data: payload.data
     })
   );
+});
+
+// Windows 11 PWA Widgets Board Lifecycle Event Handlers (Win + W)
+self.addEventListener("widgetinstall", (e) => {
+  e.waitUntil(
+    (async () => {
+      if (self.widgets && e.widget) {
+        try {
+          const template = await (await fetch("./widgets/card-template.json")).text();
+          const data = await (await fetch("./widgets/widget-data.json")).text();
+          await self.widgets.updateByTag(e.widget.tag, { template, data });
+        } catch (_) {}
+      }
+    })()
+  );
+});
+
+self.addEventListener("widgetresume", (e) => {
+  e.waitUntil(
+    (async () => {
+      if (self.widgets && e.widget) {
+        try {
+          const template = await (await fetch("./widgets/card-template.json")).text();
+          const data = await (await fetch("./widgets/widget-data.json")).text();
+          await self.widgets.updateByTag(e.widget.tag, { template, data });
+        } catch (_) {}
+      }
+    })()
+  );
+});
+
+self.addEventListener("widgetclick", (e) => {
+  if (e.action === "open_app" || !e.action) {
+    e.waitUntil(
+      self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+        for (const client of clients) {
+          if (client.url && "focus" in client) return client.focus();
+        }
+        if (self.clients.openWindow) return self.clients.openWindow("./index.html");
+      })
+    );
+  }
 });
