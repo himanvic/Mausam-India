@@ -1,5 +1,9 @@
 // Mausam India — Progressive Web App Service Worker
-const CACHE_NAME = "mausam-india-v4";
+const CACHE_NAME = "mausam-india-v5";
+const TILE_CACHE = "mausam-tiles-v1";
+const MAX_TILE_AGE_MS = 24 * 60 * 60 * 1000; // 24-hour maximum retention for map & radar tiles
+const MAX_TILES_LIMIT = 60; // Max tiles capped to guarantee < 10MB storage footprint
+
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
@@ -13,6 +17,53 @@ const ASSETS_TO_CACHE = [
   "./vendor/three/three.min.js"
 ];
 
+// Helper: Prune tile cache entries older than 24 hours or exceeding size cap
+async function pruneTileCache() {
+  try {
+    const cache = await caches.open(TILE_CACHE);
+    const requests = await cache.keys();
+    const now = Date.now();
+
+    // Distinguish tile requests from companion metadata
+    const tileRequests = requests.filter((r) => !r.url.includes("#sw-meta"));
+
+    // 1. Delete tiles older than 24 hours based on companion metadata
+    for (const req of tileRequests) {
+      const metaReq = new Request(req.url + "#sw-meta");
+      const metaRes = await cache.match(metaReq);
+      let isExpired = false;
+      if (metaRes) {
+        try {
+          const meta = await metaRes.json();
+          if (now - meta.timestamp > MAX_TILE_AGE_MS) isExpired = true;
+        } catch {
+          isExpired = true;
+        }
+      } else {
+        // If no metadata exists, assume expired
+        isExpired = true;
+      }
+      if (isExpired) {
+        await cache.delete(req);
+        await cache.delete(metaReq);
+      }
+    }
+
+    // 2. Enforce FIFO cap so total tiles never exceed MAX_TILES_LIMIT (strictly < 10MB)
+    const remainingRequests = await cache.keys();
+    const remainingTiles = remainingRequests.filter((r) => !r.url.includes("#sw-meta"));
+    if (remainingTiles.length > MAX_TILES_LIMIT) {
+      const excess = remainingTiles.slice(0, remainingTiles.length - MAX_TILES_LIMIT);
+      for (const oldReq of excess) {
+        await cache.delete(oldReq);
+        await cache.delete(new Request(oldReq.url + "#sw-meta"));
+      }
+    }
+  } catch (e) {
+    // Silently continue if cache operations are throttled
+  }
+}
+
 self.addEventListener("install", (e) => {
   self.skipWaiting();
   e.waitUntil(
@@ -23,25 +74,88 @@ self.addEventListener("install", (e) => {
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+      Promise.all(
+        keys
+          .filter((k) => k !== CACHE_NAME && k !== TILE_CACHE)
+          .map((k) => caches.delete(k))
+      )
+    )
+    .then(() => pruneTileCache())
+    .then(() => self.clients.claim())
   );
+});
+
+self.addEventListener("message", (e) => {
+  if (e.data && e.data.type === "PRUNE_CACHE") {
+    e.waitUntil(pruneTileCache());
+  }
 });
 
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   const url = e.request.url;
 
-  // Let all dynamic weather & map API requests bypass service worker cache
+  // Let all dynamic live weather & AQI numeric APIs bypass service worker cache
   if (
     url.includes("/api/") ||
     url.includes("open-meteo.com") ||
     url.includes("openaq.org") ||
-    url.includes("rainviewer.com") ||
-    url.includes("nominatim.openstreetmap.org") ||
-    url.includes("tile.openstreetmap.org") ||
-    url.includes("earthdata.nasa.gov")
+    url.includes("nominatim.openstreetmap.org")
   ) {
+    return;
+  }
+
+  // Map & Radar Tiles (OpenStreetMap, RainViewer Doppler radar, NASA GIBS satellite):
+  // Stale-while-revalidate / cache-first with 24h expiration & cap
+  const isTile =
+    url.includes("tile.openstreetmap.org") ||
+    url.includes("rainviewer.com") ||
+    url.includes("earthdata.nasa.gov");
+
+  if (isTile) {
+    e.respondWith(
+      caches.open(TILE_CACHE).then(async (cache) => {
+        const cached = await cache.match(e.request);
+        const metaRes = await cache.match(new Request(url + "#sw-meta"));
+        let isFresh = false;
+        if (cached && metaRes) {
+          try {
+            const meta = await metaRes.json();
+            if (Date.now() - meta.timestamp < MAX_TILE_AGE_MS) {
+              isFresh = true;
+            }
+          } catch {
+            isFresh = false;
+          }
+        }
+
+        if (isFresh && cached) {
+          return cached;
+        }
+
+        // Fetch fresh tile, cache it with timestamp, prune occasionally
+        return fetch(e.request)
+          .then((networkRes) => {
+            if (networkRes && (networkRes.status === 200 || networkRes.type === "opaque")) {
+              const clone = networkRes.clone();
+              cache.put(e.request, clone).catch(() => {});
+              cache.put(
+                new Request(url + "#sw-meta"),
+                new Response(JSON.stringify({ timestamp: Date.now() }), {
+                  headers: { "content-type": "application/json" }
+                })
+              ).catch(() => {});
+
+              // Periodic background prune (1 in 10 requests)
+              if (Math.random() < 0.1) {
+                pruneTileCache();
+              }
+            }
+            return networkRes;
+          })
+          .catch(() => cached || Response.error());
+      })
+    );
     return;
   }
 
