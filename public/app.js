@@ -853,7 +853,12 @@ const $ = (s) => document.querySelector(s),
         cx.arc(x, y, s, 0, 7);
         cx.fill();
       }
+      let canvas2DAnimId = null;
       function frame() {
+        if (document.hidden) {
+          canvas2DAnimId = null;
+          return;
+        }
         cx.clearRect(0, 0, w, h);
         tk += 0.016;
         const wet = mode == "rain" || mode == "storm";
@@ -953,8 +958,13 @@ const $ = (s) => document.querySelector(s),
           });
           cx.globalAlpha = 1;
         }
-        if (!RM) requestAnimationFrame(frame);
+        if (!RM) canvas2DAnimId = requestAnimationFrame(frame);
       }
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && !canvas2DAnimId && !RM) {
+          canvas2DAnimId = requestAnimationFrame(frame);
+        }
+      });
 
       
       /* ==========================================================================
@@ -983,6 +993,7 @@ const $ = (s) => document.querySelector(s),
         const particleCount = 420;
         let currentWindSpeed = 12; // km/h
         let currentWindDir = 310;  // degrees
+        let isRadarInView = true;
 
         function init() {
           const mapEl = $("#radarMap");
@@ -1031,6 +1042,36 @@ const $ = (s) => document.querySelector(s),
               resizeWindCanvas();
               switchLayerTab("satellite");
             }, 300);
+
+            // Viewport IntersectionObserver to pause rendering when scrolled away
+            if ("IntersectionObserver" in window) {
+              const radarObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                  isRadarInView = entry.isIntersecting;
+                  if (isRadarInView && !document.hidden) {
+                    if (activeTab === "wind" || activeTab === "satellite") startWindAnimation();
+                    if (isPlaying && !playInterval && activeTab === "radar") startPlayback();
+                  } else {
+                    stopWindAnimation();
+                  }
+                });
+              }, { rootMargin: "150px" });
+
+              const targetCard = $("#radarCard") || mapEl;
+              if (targetCard) radarObserver.observe(targetCard);
+            }
+
+            // Tab-visibility power-saving listener
+            document.addEventListener("visibilitychange", () => {
+              if (document.hidden) {
+                stopWindAnimation();
+              } else if (isRadarInView) {
+                startWindAnimation();
+                if (isPlaying && !playInterval && activeTab === "radar") {
+                  startPlayback();
+                }
+              }
+            });
 
             isInitialized = true;
             return true;
@@ -1115,6 +1156,11 @@ const $ = (s) => document.querySelector(s),
           if (windAnimId) return;
 
           function loop() {
+            if (document.hidden || !isRadarInView) {
+              windAnimId = null;
+              return;
+            }
+
             if (!windCtx || !windWidth || !windHeight) {
               windAnimId = requestAnimationFrame(loop);
               return;
@@ -1164,7 +1210,14 @@ const $ = (s) => document.querySelector(s),
 
             windAnimId = requestAnimationFrame(loop);
           }
-          loop();
+          windAnimId = requestAnimationFrame(loop);
+        }
+
+        function stopWindAnimation() {
+          if (windAnimId) {
+            cancelAnimationFrame(windAnimId);
+            windAnimId = null;
+          }
         }
 
         function setWindParams(speed, dir, locationName) {
@@ -1322,6 +1375,7 @@ const $ = (s) => document.querySelector(s),
           if (btn) btn.textContent = "⏸";
 
           playInterval = setInterval(() => {
+            if (document.hidden || !isRadarInView) return;
             if (!frames.length || activeTab !== "radar") return;
             currentIndex = (currentIndex + 1) % frames.length;
             showFrame(currentIndex);
@@ -3242,10 +3296,13 @@ const $ = (s) => document.querySelector(s),
         if (typeof SkyEngine !== "undefined" && SkyEngine.init(cv)) {
           SkyEngine.setWeather(mode, night, dark);
         } else {
-          requestAnimationFrame(frame);
+          canvas2DAnimId = requestAnimationFrame(frame);
         }
         if (typeof RadarEngine !== "undefined") {
           RadarEngine.init();
+        }
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          navigator.serviceWorker.controller.postMessage({ type: "PRUNE_CACHE" });
         }
       }
       if (document.readyState === "loading") {
