@@ -1002,6 +1002,10 @@ const $ = (s) => document.querySelector(s),
               scrollWheelZoom: false,
             });
 
+            if (map.attributionControl) {
+              map.attributionControl.setPrefix('🇮🇳 <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+            }
+
             map.on("focus", () => map.scrollWheelZoom.enable());
             map.on("blur", () => map.scrollWheelZoom.disable());
 
