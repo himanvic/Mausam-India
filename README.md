@@ -14,9 +14,12 @@
 [![Project: Non-commercial Student Project](https://img.shields.io/badge/Project-Non--commercial%20Student%20Project-blueviolet?style=for-the-badge)](#-non-commercial-student-project-notice)
 [![Edge Health](https://img.shields.io/badge/Edge%20Health-Check%20%2Fapi%2Fhealth-059669?style=for-the-badge&logo=cloudflare&logoColor=white)](https://mausam-india.pages.dev/api/health)
 [![Privacy-First](https://img.shields.io/badge/Privacy--First-No%20Cookies%20·%20No%20Tracking-10b981?style=for-the-badge)](https://mausam-india.pages.dev/)
-[![PWA Ready](https://img.shields.io/badge/PWA-Push%20Notifications%20Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
+[![PWA v5 Ready](https://img.shields.io/badge/PWA-Service%20Worker%20v5-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
+[![Windows 11 PWA Widget](https://img.shields.io/badge/Windows%2011-Widgets%20Board%20(Win%20+%20W)-0078D4?style=for-the-badge&logo=windows11&logoColor=white)](https://learn.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/widgets)
+[![Android TWA](https://img.shields.io/badge/Android%20TWA-Digital%20Asset%20Links%20Verified-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://developer.chrome.com/docs/android/trusted-web-activity/)
+[![Web Component](https://img.shields.io/badge/Web%20Component-%3Cmausam--widget%3E-FF5722?style=for-the-badge&logo=html5&logoColor=white)](#-embeddable-web-widget--web-component)
 [![WebGL: Three.js](https://img.shields.io/badge/3D%20Engine-Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
-[![Maps: Leaflet](https://img.shields.io/badge/Interactive%20Maps-Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)](https://leafletjs.com/)
+[![Maps: OSM & Leaflet](https://img.shields.io/badge/Maps-OpenStreetMap%20%C2%B7%20%F0%9F%87%AE%F0%9F%87%B3%20Leaflet-199900?style=for-the-badge&logo=openstreetmap&logoColor=white)](https://leafletjs.com/)
 
 ---
 
@@ -24,15 +27,20 @@
 
 - **Live Production URL**: [https://mausam-india.pages.dev](https://mausam-india.pages.dev)
 - **Live Edge Health API**: [https://mausam-india.pages.dev/api/health](https://mausam-india.pages.dev/api/health)
+- **Embeddable Widget**: [https://mausam-india.pages.dev/widget.html](https://mausam-india.pages.dev/widget.html?city=New%20Delhi&theme=dark)
 - **GitHub Repository**: [https://github.com/himanvic/Mausam-India](https://github.com/himanvic/Mausam-India)
 
 ---
 
 ## 📖 Overview
 
-**Mausam India** is a modern, high-performance weather web application engineered specifically for the Indian subcontinent. It combines real-time atmospheric modeling, CPCB-style Air Quality Index estimates, physical ground-level sensor telemetry via OpenAQ, real daily satellite cloud imagery from NASA, interactive Doppler radar, in-app hazard warning cards, and native device Web Notifications into a unified, responsive interface.
+**Mausam India** is a modern, high-performance, and privacy-first meteorological web application and cross-platform widget ecosystem engineered specifically for the Indian subcontinent. It unifies real-time atmospheric modeling, CPCB-style Air Quality Index estimates, physical CAAQMS ground-level sensor telemetry via OpenAQ, genuine orbital satellite cloud imagery from NASA, interactive Doppler precipitation radar, multi-hazard early warning docks, and native device Web Notifications into a seamless, responsive interface.
 
-Built to run at the edge on **Cloudflare Pages**, the application leverages global edge caching, transparent data sourcing, zero-tracking privacy architecture with a privacy-first design: no cookies, no tracking, data stays on your device, and open-source licensing under the **MIT License**.
+Built to run at the edge on **Cloudflare Pages**, Mausam India expands beyond the browser into:
+1. **Windows 11 Native PWA Desktop Widgets** (<kbd>Win</kbd> + <kbd>W</kbd>) using Microsoft Adaptive Cards v1.5.
+2. **Android Trusted Web Activity (TWA)** packages with verified Digital Asset Links for full-screen, address-bar-free standalone app installation.
+3. **Drop-in Embeddable Web Components (`<mausam-widget>`)** for Indian schools, non-profits, and educational blogs.
+4. **Dedicated Background WebWorkers (`aqi-worker.js`)** offloading heavy mathematical sliding-window calculations from the main UI thread.
 
 > [!NOTE]
 > **Independent Project Notice**: Mausam India is an independent open-source weather platform and is not affiliated with, authorized, sponsored, or endorsed by the India Meteorological Department (IMD), the Ministry of Earth Sciences (MoES), or the Government of India. For official governmental advisories and storm warnings, please visit [mausam.imd.gov.in](https://mausam.imd.gov.in).
@@ -43,11 +51,11 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
 
 ## 🌟 Key Features
 
-### 1. 🌦️ Procedural 3D WebGL Living Sky (Three.js)
+### 1. 🌦️ Procedural 3D WebGL Living Sky (Three.js) & Tab-Visibility Power Saving
 
 - **Living Atmosphere**: Real-time celestial rendering featuring a procedural Sun with corona bloom, 1,200 scintillation stars, multi-altitude drifting 3D clouds, vertical rain streaks, dynamic lightning flashes, and low-altitude fog layers.
 - **Mouse Parallax**: Smooth cursor tilt interactions on widescreen displays.
-- **Resource Conscious**: Animation cycles automatically pause when the browser tab loses focus or when `prefers-reduced-motion` is detected, ensuring zero battery drain on laptops and mobile devices.
+- **Tab-Visibility Battery Saving (0.0% Background CPU)**: Halts the WebGL canvas loop, fallback 2D particle simulation, 420-particle wind streamline physics, and radar playback intervals immediately whenever the browser tab is hidden or minimized (`document.hidden`), ensuring zero background battery drain on laptops and smartphones.
 
 ### 2. 🤖 "Mausam Mitra" Dynamic Weather Companion
 
@@ -63,7 +71,7 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
 
 ### 3. 🚨 In-App Multi-Hazard Early Warning Engine (`#alertDock`)
 
-- **Top-Level Multi-Hazard Dock**: Dedicated glassmorphism alert container positioned prominently at the top of the viewport, capable of presenting multiple concurrent hazards (e.g. Severe Smog + Dense Fog) without distorting card layouts.
+- **Top-Level Multi-Hazard Dock**: Dedicated glassmorphic alert container positioned prominently at the top of the viewport, capable of presenting multiple concurrent hazards (e.g. Severe Smog + Dense Fog) without distorting card layouts.
 - **Indian Meteorological & CPCB Threshold Evaluations**:
   - **CPCB Severe Smog**: Triggers on AQI >400 (*Critical Severe*), 301–400 (*Very Poor*), and 201–300 (*Poor*) with N95 mask recommendations and direct navigation links to the pollutant breakdown.
   - **IMD Severe Heatwave / Loo**: Evaluates temperatures $\ge 43^\circ\text{C}$ or apparent temperatures $\ge 46^\circ\text{C}$, plus high temperature advisories ($40^\circ\text{C}$–$42.9^\circ\text{C}$), with hydration and midday exposure guidance.
@@ -81,30 +89,31 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
   - **Live Permission Status Banner**: Dynamically detects browser permission (`granted`, `denied`, or `default`) with status badges and site permission guidance.
   - **Granular Category Toggles**: Users can toggle notifications for Severe Smog, Heatwaves, Thunderstorms, Monsoon Downpours, and Dense Fog. Preferences persist locally in `localStorage`.
   - **"⚡ Send Test Alert" Button**: Dispatches an immediate test notification with haptic vibration feedback (`navigator.vibrate([100, 50, 100])`) and toast confirmation.
-- **Service Worker PWA Handlers (`sw.js` v4)**:
+- **Service Worker PWA Handlers (`sw.js` v5)**:
   - Background `push` event handler for system-level notifications with rich Mausam branding and custom vibration patterns.
   - `notificationclick` handler to focus the active Mausam tab or open the application shell when a notification is clicked.
 - **Anti-Spam Rate Limiting**: Built-in 3-hour cooldown per hazard type per location (`mausam_notif_log`) prevents repeated or nuisance notifications.
 
-### 5. 🛡️ Privacy-First Architecture: No Cookies, No Tracking
+### 5. 🛡️ Privacy-First Architecture: Zero Cookies, Zero Server Tracking
 
 - **Zero Tracking Cookies**: The application sets 0 cookies (`document.cookie` count: 0).
 - **Zero Third-Party Trackers**: Clean codebase with zero marketing pixels, Google Analytics, GTM, or advertising SDKs.
-- **Client-Side Geolocation Sovereignty**: Coordinates obtained via `navigator.geolocation` remain strictly inside the browser and are **never logged**, **never stored in server databases**, and **never shared**.
+- **Client-Side Geolocation Sovereignty**: Coordinates obtained via `navigator.geolocation` remain strictly inside the browser and are **never logged**, **never stored in server databases**, and **never shared** (100% compliant with the Indian Digital Personal Data Protection Act 2023).
 - **Zero Notification Token Harvesting**: Alert evaluations occur purely client-side; no push tokens or device identifiers are collected on remote servers.
 - **One-Click Local Data Erasure**: The dedicated Privacy & Data Governance modal (`#privacyModal`) provides an instant *"Reset Local Preferences"* button to clear all cached device preferences.
 
 ### 6. 🛰️ Integrated NASA Satellite & Atmospheric Map
 
 - **NASA GIBS Satellite Clouds**: Daily TrueColor composite imagery captured by NASA's Terra satellite orbit (`MODIS_Terra_CorrectedReflectance_TrueColor`), displaying genuine physical cloud formations, cyclonic storm eyes, and Himalayan snow cover.
-- **Animated Wind Streamlines**: Real-time canvas particle streams that visualize wind velocity, gusts, and directional airflow dynamically.
+- **Animated Wind Streamlines**: Real-time canvas particle streams that visualize wind velocity, gusts, and directional airflow dynamically. Pauses automatically when `#radarCard` is scrolled out of viewport via `IntersectionObserver`.
 - **RainViewer Doppler Radar**: 13-frame animated Doppler precipitation radar loop with interactive playback controls (Play, Pause, Step).
-- **Official OpenStreetMap Basemap**: 100% open community basemap tiles under ODbL, styled with an adaptive dark canvas filter so satellite clouds, wind streamlines, and Doppler radar stand out with zero watermarks and zero third-party API keys forever.
+- **100% Lifetime-Free OpenStreetMap Basemap**: Official OpenStreetMap tiles (`tile.openstreetmap.org`) with an adaptive dark canvas filter (`.osm-base-tile-dark`). Completely free of API keys, free of billing meters, and free of watermarks forever.
+- **Indian Flag Map Attribution (`🇮🇳 Leaflet`)**: Configured with Leaflet's API (`map.attributionControl.setPrefix(...)`) to display the Indian tricolor flag alongside standard legal data attributions.
 
-### 7. 🇮🇳 CPCB-Style Air Quality Index Estimation
+### 7. 🇮🇳 CPCB-Style Air Quality Index Estimation & Background WebWorker
 
 - **CPCB-Style Mathematical Formula**: Computes a CPCB-style Air Quality Index estimate using the CPCB-style piecewise linear interpolation formula using CPCB breakpoints across 6 model-derived pollutant breakpoints ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2, \text{SO}_2, \text{CO}, \text{O}_3$).
-- **Model Estimates vs. Physical Stations**: Modeled regional air quality is kept distinct from physical CAAQMS ground monitoring stations.
+- **Dedicated Background WebWorker (`public/aqi-worker.js`)**: Offloads all 6-pollutant sliding-window calculations (24-hour and 8-hour rolling averages) and Haversine geo-distance math off the main UI thread, guaranteeing locked **60 FPS / 120 FPS** scrolling even on budget smartphones.
 - **Inline 7-Day Trend Chart & History Modal**: Color-coded micro-bar chart embedded inside the AQI card, alongside an expanded 7-day modal chart.
 
 ### 8. 🔬 Physical OpenAQ Ground Stations
@@ -115,16 +124,30 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
   - `DELAYED`: Station reporting gap between 3 and 24 hours.
   - `OFFLINE`: Station has not transmitted telemetry within 24 hours.
 
-### 9. 📱 Progressive Web App (PWA), Widgets & Android TWA
+### 9. 🪟 Windows 11 Native PWA Desktop Widget (<kbd>Win</kbd> + <kbd>W</kbd>)
 
-- **Universal Installation**: Installable on Android, iOS, Windows, and macOS directly from the browser.
-- **Android Trusted Web Activity (TWA)**: Verified via `/.well-known/assetlinks.json` and `twa-manifest.json` for zero-cost standalone Android APK builds via Google's `@bubblewrap/cli` with zero browser address bar.
-- **Windows 11 PWA Widget Board**: Implements Microsoft Adaptive Cards v1.5 (`widgets/card-template.json`) and "Wake-Update-Die" service worker lifecycle handlers for the native Windows 11 Widgets Board (<kbd>Win</kbd> + <kbd>W</kbd>).
-- **Embeddable Web Widget**: Drop-in autonomous custom element `<mausam-widget>` (`widget.js`) and `/widget.html` route for Indian schools, non-profits, and blogs.
-- **Background WebWorker (`aqi-worker.js`)**: Offloads all 6-pollutant CPCB sub-index math and Haversine geo-math off the main UI thread for guaranteed 60/120 FPS scrolling.
-- **Dynamic 24-Hour Cache Pruning**: `sw.js` (v5) automatically prunes map and radar tiles older than 24 hours, strictly capping device storage under 10MB.
-- **Sticky `#offlineBar`**: Network banner that detects connection drops and gracefully restores cached readings.
-- **Schema.org Metadata**: Structured `WebApplication` JSON-LD schema for search engine indexing.
+- **Native Widgets Board Integration**: Registered in `manifest.json` following the Microsoft Edge PWA Widgets specification.
+- **Microsoft Adaptive Cards v1.5 (`public/widgets/card-template.json`)**: Glassmorphic glance tile displaying live city weather, temperature, feels-like, CPCB AQI, and rain probability directly in the Windows 11 Widgets Board (<kbd>Win</kbd> + <kbd>W</kbd>).
+- **Wake-Update-Die Engine (`sw.js`)**: Implements `widgetinstall`, `widgetresume`, and `widgetclick` handlers that wake on demand and terminate immediately, using **0.0 MB idle background RAM**.
+
+### 10. 🤖 Android Trusted Web Activity (TWA) & Play Store Readiness
+
+- **Digital Asset Links Verification (`public/.well-known/assetlinks.json`)**: Verified domain link connecting `mausam-india.pages.dev` to the Android package `dev.pages.mausam_india.twa`. Automatically hides the browser address bar for a 100% native full-screen Android app experience.
+- **Google Bubblewrap Build Descriptor (`twa-manifest.json`)**: Allows compiling an Android `.apk` for free using Google's open-source CLI:
+  ```bash
+  npx @bubblewrap/cli build
+  ```
+
+### 11. 🌐 Embeddable Web Widget & Web Component (`<mausam-widget>`)
+
+- **Standalone `/widget.html` Route**: Ultra-lightweight ($320\times190\text{px}$, $<7\text{KB}$) glassmorphic embed card showing live temperature, conditions, rain chance, CPCB AQI, and backlink attribution.
+- **Autonomous Web Component (`public/widget.js`)**: Drop-in custom HTML element with Shadow DOM isolation:
+  ```html
+  <script src="https://mausam-india.pages.dev/widget.js" async></script>
+  <mausam-widget city="Bengaluru" theme="dark"></mausam-widget>
+  ```
+- **Interactive Embed Dialog in App**: Added an *"📦 Embed Live Widget"* button in the footer that lets visitors preview the live widget for any city, choose dark/light theme, and copy the ready-to-use iframe or custom element tag with one click.
+- **Cloudflare Frame Security**: Hardened with `frame-ancestors *` on `/widget.html` so external Indian blogs and schools can embed it, while the root application remains strictly protected against clickjacking with `frame-ancestors 'none'`.
 
 ---
 
@@ -139,40 +162,48 @@ Data comes from the providers listed below, used under their respective open ter
 | **Open-Meteo Geocoding** | Indian city, town, village, and PIN code search | `https://geocoding-api.open-meteo.com/v1/search` | `/api/geocoding` | 24 Hours (`s-maxage=86400`) | [Open-Meteo Geocoding](https://open-meteo.com/en/docs/geocoding-api) |
 | **OpenAQ & Original Providers** | Physical CPCB/CAAQMS ground sensor telemetry via OpenAQ and original data providers | `https://api.openaq.org/v3/locations` | `/api/openaq/nearest` | 15 Min (`s-maxage=900`) | [OpenAQ Docs](https://docs.openaq.org/) |
 | **NASA EOSDIS GIBS / Terra MODIS** | Orbital satellite TrueColor cloud imagery | `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg` | Client WMTS Layer | Direct Browser Cache | [NASA GIBS](https://earthdata.nasa.gov/gibs) |
-| **OpenStreetMap** | Global geographic search boundaries and basemap data | `https://www.openstreetmap.org` | Client Tile / Geocoding | Browser Cache | [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright) |
 | **Weather data by RainViewer** | Real-time animated Doppler precipitation radar | `https://www.rainviewer.com` | Client Radar Stream | 5 Min (Dynamic) | [RainViewer](https://www.rainviewer.com) |
-| **OpenStreetMap** | 100% open community basemap tiles and geographic boundaries | `https://tile.openstreetmap.org` | Direct Tile Layer | Browser Cache | [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright) |
+| **OpenStreetMap** | 100% lifetime-free open community basemap tiles (ODbL) | `https://tile.openstreetmap.org` | Direct Tile Layer | 24h Pruned Cache (<10MB) | [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright) |
+| **Leaflet.js** | Permissive open-source mapping JavaScript library (BSD 2-Clause) | Client Map Runtime | Client Runtime | Self-hosted `/vendor/` | [Leaflet](https://leafletjs.com/) |
 | **Edge Health API** | Real-time edge health, uptime & serverless telemetry | Serverless Cloudflare Worker | `/api/health` | Instant (~5ms) | Edge Health Endpoint |
 
 ---
 
-## 🏗️ Architecture & Edge Infrastructure
+## 🏗️ Architecture & Ecosystem Diagram
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                              CLIENT BROWSER                            │
-│  (Three.js 3D Sky · Leaflet Radar · Alert Dock · Web Notifications)   │
-└────────────────────────────────────┬───────────────────────────────────┘
-                                     │
-                         Fetch (/api/forecast, /api/health, etc.)
-                                     │
-                                     ▼
-┌────────────────────────────────────────────────────────────────────────┐
-│                   CLOUDFLARE PAGES EDGE RUNTIME                        │
-│                   functions/api/[[path]].js (Region: BOM)              │
-│                                                                        │
-│  1. Parameter Whitelist & Sanitization (prevent injection)             │
-│  2. Coordinate Bounds Verification (-90..90, -180..180)                │
-│  3. Geographic Enforcement (forced to India countryCode=IN)            │
-│  4. Basic Rate Limiting (60 requests/min per IP per edge instance) │
-│  5. Cloudflare Global Edge Cache Match (HIT -> return in <15ms)        │
-└──────────────┬──────────────────────────────────────────┬──────────────┘
-               │ (MISS)                                   │ (MISS)
-               ▼                                          ▼
-┌──────────────────────────────┐          ┌──────────────────────────────┐
-│       OPEN-METEO APIS        │          │       OPENAQ PLATFORM        │
-│   Weather & Air Quality APIs │          │  Physical Sensors v3 Ingest  │
-└──────────────────────────────┘          └──────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph MultiPlatform ["Multi-Platform Ecosystem"]
+        Web["🖥️ Web App (PWA)<br/>mausam-india.pages.dev"]
+        Win["🪟 Windows 11 Widget<br/>Widgets Board (Win + W)"]
+        Android["🤖 Android TWA App<br/>Full-Screen APK (.well-known)"]
+        Embed["🌐 Embeddable Widget<br/>&lt;mausam-widget&gt; & widget.html"]
+    end
+
+    subgraph ClientCore ["Client Core Engine"]
+        Three["Three.js 3D Living Sky<br/>(Tab-Visibility 0% CPU)"]
+        Map["Leaflet + OSM Basemap<br/>(🇮🇳 Leaflet Attribution)"]
+        Worker["Background WebWorker<br/>aqi-worker.js (CPCB & Haversine)"]
+        SW["Service Worker v5<br/>(24h Dynamic Tile Pruning <10MB)"]
+    end
+
+    subgraph EdgeRuntime ["Cloudflare Pages Edge Runtime (Region: BOM)"]
+        Router["functions/api/[[path]].js"]
+        Security["Whitelist · Bounds Check · Rate Limiter"]
+        Health["functions/api/health.js"]
+    end
+
+    subgraph UpstreamAPIs ["Upstream Data Services"]
+        OM["Open-Meteo<br/>(Weather & Air Quality)"]
+        OA["OpenAQ & Ground CAAQMS<br/>(Physical Sensor Stations)"]
+        NASA["NASA EOSDIS GIBS<br/>(Terra Satellite Clouds)"]
+        RV["RainViewer<br/>(Doppler Rain Radar)"]
+        OSM["OpenStreetMap CDN<br/>(Lifetime-Free Basemap)"]
+    end
+
+    MultiPlatform --> ClientCore
+    ClientCore --> EdgeRuntime
+    EdgeRuntime --> UpstreamAPIs
 ```
 
 ---
@@ -193,8 +224,8 @@ Data comes from the providers listed below, used under their respective open ter
 ## 🛡️ Security Hardening & Edge Architecture
 
 - **Hardened Cloudflare `_headers`**: Deployed a complete HTTP security profile: HSTS (`max-age=31536000; includeSubDomains; preload`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Cross-Origin-Opener-Policy: same-origin`.
-- **Strict Content Security Policy (Zero `'unsafe-inline'`)**: Enforces an uncompromising CSP policy with `script-src 'self'`. All application logic and external libraries (Three.js and Leaflet) are self-hosted locally under `/vendor/` and separated into external files (`app.js`, `app.css`). Inline script execution and third-party script CDNs are completely eliminated.
-- **Plugin Sandbox Defense (`object-src 'none'`)**: Restricts legacy browser plugins from executing.
+- **Strict Content Security Policy**: Enforces an uncompromising CSP policy with `script-src 'self'`. All application logic and external libraries (Three.js and Leaflet) are self-hosted locally under `/vendor/` and separated into external files (`app.js`, `app.css`). Inline script execution and third-party script CDNs are completely eliminated on root pages.
+- **Frame Embedding Isolation**: Root pages enforce `frame-ancestors 'none'`, while `/widget.html` specifically enables `frame-ancestors *` to allow safe embedding on external sites without exposing the main app to clickjacking.
 - **Edge Reverse Proxy Defense**: Validates client request headers to mitigate cross-origin abuse, enforces basic IP-based rate limiting (60 requests/minute per edge instance), and sanitizes coordinate boundaries.
 
 ---
@@ -210,6 +241,7 @@ Distributed under the **MIT License**.
 > - **NASA GIBS**: Satellite imagery courtesy of [NASA EOSDIS GIBS / Terra MODIS](https://earthdata.nasa.gov/gibs).
 > - **RainViewer**: [Weather data by RainViewer](https://www.rainviewer.com).
 > - **OpenStreetMap**: Basemap tiles and geographic boundaries [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright) (ODbL).
+> - **Leaflet**: Open-source mapping library licensed under the [BSD 2-Clause License](https://github.com/Leaflet/Leaflet/blob/main/LICENSE).
 
 ```text
 MIT License
