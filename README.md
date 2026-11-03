@@ -12,8 +12,8 @@
 [![Deploy to Cloudflare Pages](https://img.shields.io/badge/Deploy-Cloudflare%20Pages-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Project: Non-commercial Student Project](https://img.shields.io/badge/Project-Non--commercial%20Student%20Project-blueviolet?style=for-the-badge)](#-non-commercial-student-project-notice)
-[![Edge Health](https://img.shields.io/badge/Edge%20Health-Operational%20(BOM)-059669?style=for-the-badge&logo=cloudflare&logoColor=white)](https://mausam-india.pages.dev/api/health)
-[![DPDP Act 2023](https://img.shields.io/badge/Privacy-DPDP%20Act%20Compliant-10b981?style=for-the-badge)](https://mausam-india.pages.dev/)
+[![Edge Health](https://img.shields.io/badge/Edge%20Health-Check%20%2Fapi%2Fhealth-059669?style=for-the-badge&logo=cloudflare&logoColor=white)](https://mausam-india.pages.dev/api/health)
+[![Privacy-First](https://img.shields.io/badge/Privacy--First-No%20Cookies%20·%20No%20Tracking-10b981?style=for-the-badge)](https://mausam-india.pages.dev/)
 [![PWA Ready](https://img.shields.io/badge/PWA-Push%20Notifications%20Ready-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)](https://web.dev/progressive-web-apps/)
 [![WebGL: Three.js](https://img.shields.io/badge/3D%20Engine-Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white)](https://threejs.org/)
 [![Maps: Leaflet](https://img.shields.io/badge/Interactive%20Maps-Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)](https://leafletjs.com/)
@@ -30,9 +30,9 @@
 
 ## 📖 Overview
 
-**Mausam India** is a modern, high-performance weather web application engineered specifically for the Indian subcontinent. It combines real-time atmospheric modeling, CPCB-aligned Air Quality Index calculations, physical ground-level sensor telemetry via OpenAQ, real daily satellite cloud imagery from NASA, interactive Doppler radar, in-app hazard warning cards, and native device Web Notifications into a unified, responsive interface.
+**Mausam India** is a modern, high-performance weather web application engineered specifically for the Indian subcontinent. It combines real-time atmospheric modeling, CPCB-style Air Quality Index estimates, physical ground-level sensor telemetry via OpenAQ, real daily satellite cloud imagery from NASA, interactive Doppler radar, in-app hazard warning cards, and native device Web Notifications into a unified, responsive interface.
 
-Built to run at the edge on **Cloudflare Pages**, the application leverages global edge caching, transparent data sourcing, zero-tracking privacy architecture under India's **DPDP Act 2023**, and open-source licensing under the **MIT License**.
+Built to run at the edge on **Cloudflare Pages**, the application leverages global edge caching, transparent data sourcing, zero-tracking privacy architecture with a privacy-first design: no cookies, no tracking, data stays on your device, and open-source licensing under the **MIT License**.
 
 > [!NOTE]
 > **Independent Project Notice**: Mausam India is an independent open-source weather platform and is not affiliated with, authorized, sponsored, or endorsed by the India Meteorological Department (IMD), the Ministry of Earth Sciences (MoES), or the Government of India. For official governmental advisories and storm warnings, please visit [mausam.imd.gov.in](https://mausam.imd.gov.in).
@@ -51,7 +51,7 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
 
 ### 2. 🤖 "Mausam Mitra" Dynamic Weather Companion
 
-- **Adaptive Vector Mascot**: Built entirely from clean procedural SVG vectors (zero third-party 3D assets or copyright risks).
+- **Adaptive Vector Mascot**: Built entirely from clean procedural SVG vectors (original SVG artwork made for this project).
 - **Context-Aware States**:
   - **Pollution Alert (AQI $\ge 200$)**: Automatically equips a fitted N95 respirator mask with particulate valves and displays air health cautions.
   - **Precipitation**: Holds an umbrella with water-repellent bounce animations when rain or storms are imminent.
@@ -86,7 +86,7 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
   - `notificationclick` handler to focus the active Mausam tab or open the application shell when a notification is clicked.
 - **Anti-Spam Rate Limiting**: Built-in 3-hour cooldown per hazard type per location (`mausam_notif_log`) prevents repeated or nuisance notifications.
 
-### 5. 🛡️ Privacy & DPDP Act 2023 Compliance
+### 5. 🛡️ Privacy-First Architecture: No Cookies, No Tracking
 
 - **Zero Tracking Cookies**: The application sets 0 cookies (`document.cookie` count: 0).
 - **Zero Third-Party Trackers**: Clean codebase with zero marketing pixels, Google Analytics, GTM, or advertising SDKs.
@@ -97,13 +97,13 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
 ### 6. 🛰️ Integrated NASA Satellite & Atmospheric Map
 
 - **NASA GIBS Satellite Clouds**: Daily TrueColor composite imagery captured by NASA's Terra satellite orbit (`MODIS_Terra_CorrectedReflectance_TrueColor`), displaying genuine physical cloud formations, cyclonic storm eyes, and Himalayan snow cover.
-- **Windy-Style Wind Streamlines**: Real-time canvas particle streams that visualize wind velocity, gusts, and directional airflow dynamically.
+- **Animated Wind Streamlines**: Real-time canvas particle streams that visualize wind velocity, gusts, and directional airflow dynamically.
 - **RainViewer Doppler Radar**: 13-frame animated Doppler precipitation radar loop with interactive playback controls (Play, Pause, Step).
-- **Esri Dark Gray Basemap**: Crisp, high-contrast, royalty-free basemap tiles requiring zero third-party API keys.
+- **Esri Dark Gray Basemap**: Crisp, high-contrast basemap tiles used under Esri terms of use (credited on map).
 
-### 7. 🇮🇳 CPCB-Aligned Air Quality Index Calculation
+### 7. 🇮🇳 CPCB-Style Air Quality Index Estimation
 
-- **CPCB-Standard Mathematical Formula**: Computes a CPCB-style Air Quality Index estimate using the official Indian CPCB piecewise linear interpolation formula across 6 model-derived pollutant breakpoints ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2, \text{SO}_2, \text{CO}, \text{O}_3$).
+- **CPCB-Style Mathematical Formula**: Computes a CPCB-style Air Quality Index estimate using the CPCB-style piecewise linear interpolation formula using CPCB breakpoints across 6 model-derived pollutant breakpoints ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2, \text{SO}_2, \text{CO}, \text{O}_3$).
 - **Model Estimates vs. Physical Stations**: Modeled regional air quality is kept distinct from physical CAAQMS ground monitoring stations.
 - **Inline 7-Day Trend Chart & History Modal**: Color-coded micro-bar chart embedded inside the AQI card, alongside an expanded 7-day modal chart.
 
@@ -126,7 +126,7 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
 
 ## 📡 Official APIs & Data Providers
 
-Every external API utilized by Mausam India is official, legal, open, and proxied at the edge via Cloudflare Pages Functions to guarantee client privacy and avoid CORS roadblocks:
+Data comes from the providers listed below, used under their respective open terms, and proxied at the edge via Cloudflare Pages Functions to guarantee client privacy and avoid CORS roadblocks:
 
 | Provider | Purpose | Upstream Endpoint | Edge Route | Cache Strategy | Documentation |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -134,7 +134,8 @@ Every external API utilized by Mausam India is official, legal, open, and proxie
 | **Open-Meteo Air Quality** | Hourly modeled atmospheric pollutants ($\text{PM}_{2.5}, \text{PM}_{10}, \text{NO}_2$, etc.) | `https://air-quality-api.open-meteo.com/v1/air-quality` | `/api/air-quality` | 15 Min (`s-maxage=900`) | [Open-Meteo Air Quality](https://open-meteo.com/en/docs/air-quality-api) |
 | **Open-Meteo Geocoding** | Indian city, town, village, and PIN code search | `https://geocoding-api.open-meteo.com/v1/search` | `/api/geocoding` | 24 Hours (`s-maxage=86400`) | [Open-Meteo Geocoding](https://open-meteo.com/en/docs/geocoding-api) |
 | **OpenAQ & Original Providers** | Physical CPCB/CAAQMS ground sensor telemetry via OpenAQ and original data providers | `https://api.openaq.org/v3/locations` | `/api/openaq/nearest` | 15 Min (`s-maxage=900`) | [OpenAQ Docs](https://docs.openaq.org/) |
-| **NASA EOSDIS GIBS / Terra MODIS** | Orbital satellite TrueColor cloud imagery | `https://earthdata.nasa.gov/gibs` | Client WMTS Layer | Direct Browser Cache | [NASA GIBS](https://earthdata.nasa.gov/gibs) |
+| **NASA EOSDIS GIBS / Terra MODIS** | Orbital satellite TrueColor cloud imagery | `https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/{date}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg` | Client WMTS Layer | Direct Browser Cache | [NASA GIBS](https://earthdata.nasa.gov/gibs) |
+| **OpenStreetMap** | Global geographic search boundaries and basemap data | `https://www.openstreetmap.org` | Client Tile / Geocoding | Browser Cache | [© OpenStreetMap contributors](https://www.openstreetmap.org/copyright) |
 | **Weather data by RainViewer** | Real-time animated Doppler precipitation radar | `https://www.rainviewer.com` | Client Radar Stream | 5 Min (Dynamic) | [RainViewer](https://www.rainviewer.com) |
 | **Esri ArcGIS Canvas** | Dark Gray minimalist geographic basemap & boundaries | `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/...` | Direct Tile Layer | Browser Cache | [Esri Basemaps](https://www.esri.com/en-us/arcgis/products/arcgis-platform/services/basemaps) |
 | **Edge Health API** | Real-time edge health, uptime & serverless telemetry | Serverless Cloudflare Worker | `/api/health` | Instant (~5ms) | Edge Health Endpoint |
@@ -159,7 +160,7 @@ Every external API utilized by Mausam India is official, legal, open, and proxie
 │  1. Parameter Whitelist & Sanitization (prevent injection)             │
 │  2. Coordinate Bounds Verification (-90..90, -180..180)                │
 │  3. Geographic Enforcement (forced to India countryCode=IN)            │
-│  4. In-Memory Rate Limiting (60 requests/min per IP via cf-connecting) │
+│  4. Basic Rate Limiting (60 requests/min per IP per edge instance) │
 │  5. Cloudflare Global Edge Cache Match (HIT -> return in <15ms)        │
 └──────────────┬──────────────────────────────────────────┬──────────────┘
                │ (MISS)                                   │ (MISS)
@@ -185,12 +186,12 @@ Every external API utilized by Mausam India is official, legal, open, and proxie
 
 ---
 
-## 🛡️ Production Security Hardening
+## 🛡️ Security Hardening & Edge Architecture
 
 - **Hardened Cloudflare `_headers`**: Deployed a complete HTTP security profile: HSTS (`max-age=31536000; includeSubDomains; preload`), `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, and `Cross-Origin-Opener-Policy: same-origin`.
 - **Strict Content Security Policy (Zero `'unsafe-inline'`)**: Enforces an uncompromising CSP policy with `script-src 'self'`. All application logic and external libraries (Three.js and Leaflet) are self-hosted locally under `/vendor/` and separated into external files (`app.js`, `app.css`). Inline script execution and third-party script CDNs are completely eliminated.
 - **Plugin Sandbox Defense (`object-src 'none'`)**: Restricts legacy browser plugins from executing.
-- **Edge Reverse Proxy Defense**: Validates client request headers to mitigate cross-origin abuse, enforces IP-based rate limiting (60 requests/minute), and sanitizes coordinate boundaries.
+- **Edge Reverse Proxy Defense**: Validates client request headers to mitigate cross-origin abuse, enforces basic IP-based rate limiting (60 requests/minute per edge instance), and sanitizes coordinate boundaries.
 
 ---
 
