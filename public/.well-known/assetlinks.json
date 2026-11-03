@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "dev.pages.mausam_india.twa",
+      "sha256_cert_fingerprints": [
+        "14:6D:E9:7F:0E:52:D7:19:85:42:F6:12:16:30:11:85:1C:20:60:4F:A5:39:BB:69:8E:56:B0:90:34:68:52:AC"
+      ]
+    }
+  }
+]

@@ -115,12 +115,16 @@ Built to run at the edge on **Cloudflare Pages**, the application leverages glob
   - `DELAYED`: Station reporting gap between 3 and 24 hours.
   - `OFFLINE`: Station has not transmitted telemetry within 24 hours.
 
-### 9. 📱 Progressive Web App (PWA) & Offline Resilience
+### 9. 📱 Progressive Web App (PWA), Widgets & Android TWA
 
-- Installable on Android, iOS, Windows, and macOS directly from the browser.
-- Offline app shell caching via `sw.js` (v4 cache) for instant subsequent loads.
-- Sticky `#offlineBar` network banner that warns users when network connectivity drops and confirms restoration.
-- Schema.org `WebApplication` JSON-LD schema metadata for search engine indexing.
+- **Universal Installation**: Installable on Android, iOS, Windows, and macOS directly from the browser.
+- **Android Trusted Web Activity (TWA)**: Verified via `/.well-known/assetlinks.json` and `twa-manifest.json` for zero-cost standalone Android APK builds via Google's `@bubblewrap/cli` with zero browser address bar.
+- **Windows 11 PWA Widget Board**: Implements Microsoft Adaptive Cards v1.5 (`widgets/card-template.json`) and "Wake-Update-Die" service worker lifecycle handlers for the native Windows 11 Widgets Board (<kbd>Win</kbd> + <kbd>W</kbd>).
+- **Embeddable Web Widget**: Drop-in autonomous custom element `<mausam-widget>` (`widget.js`) and `/widget.html` route for Indian schools, non-profits, and blogs.
+- **Background WebWorker (`aqi-worker.js`)**: Offloads all 6-pollutant CPCB sub-index math and Haversine geo-math off the main UI thread for guaranteed 60/120 FPS scrolling.
+- **Dynamic 24-Hour Cache Pruning**: `sw.js` (v5) automatically prunes map and radar tiles older than 24 hours, strictly capping device storage under 10MB.
+- **Sticky `#offlineBar`**: Network banner that detects connection drops and gracefully restores cached readings.
+- **Schema.org Metadata**: Structured `WebApplication` JSON-LD schema for search engine indexing.
 
 ---
 

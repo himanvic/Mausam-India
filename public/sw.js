@@ -19,7 +19,8 @@ const ASSETS_TO_CACHE = [
   "./widget.html",
   "./widget.js",
   "./widgets/card-template.json",
-  "./widgets/widget-data.json"
+  "./widgets/widget-data.json",
+  "./.well-known/assetlinks.json"
 ];
 
 // Helper: Prune tile cache entries older than 24 hours or exceeding size cap
