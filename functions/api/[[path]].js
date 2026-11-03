@@ -33,7 +33,7 @@ function isTrustedOrigin(request) {
   return true;
 }
 
-// Lightweight in-memory edge rate limiter: 60 requests per 60s window per client IP
+// Basic in-memory edge rate limiting: 60 requests per 60s window per client IP (per edge instance)
 const RATE_LIMIT_CACHE = new Map();
 const RATE_LIMIT_WINDOW_MS = 60000;
 const RATE_LIMIT_MAX_REQUESTS = 60;

@@ -1085,7 +1085,7 @@ const $ = (s) => document.querySelector(s),
           });
         }
 
-        // ---------- Windy-Style Wind Particle Streamline Simulation ----------
+        // ---------- Animated Wind Particle Streamline Simulation ----------
         function initWindCanvas() {
           windCanvas = document.getElementById("windStreamCanvas");
           if (!windCanvas) return;
@@ -2342,7 +2342,7 @@ const $ = (s) => document.querySelector(s),
               severity: "critical",
               icon: "🚨",
               badge: "CPCB Severe Smog",
-              source: "CPCB Modelled Estimate",
+              source: "CPCB-style estimate",
               title: "Severe Air Pollution Emergency (AQI " + aq + ")",
               desc: "Hazardous airborne particulate matter. Severe health impact on vulnerable groups and breathing discomfort for healthy individuals upon exposure.",
               tip: "😷 Wear an N95 respirator outdoors & keep air purifiers running indoors.",
@@ -2354,7 +2354,7 @@ const $ = (s) => document.querySelector(s),
               severity: "danger",
               icon: "⚠️",
               badge: "CPCB Very Poor AQI",
-              source: "CPCB Modelled Estimate",
+              source: "CPCB-style estimate",
               title: "Very Poor Air Quality (AQI " + aq + ")",
               desc: "Prolonged exposure can lead to respiratory illness. Children, senior citizens, and asthmatics should avoid outdoor exertion.",
               tip: "😷 Limit morning walks and keep room windows closed.",
@@ -2366,7 +2366,7 @@ const $ = (s) => document.querySelector(s),
               severity: "warning",
               icon: "⚠️",
               badge: "CPCB Poor Air",
-              source: "CPCB Modelled Estimate",
+              source: "CPCB-style estimate",
               title: "Poor Air Quality Alert (AQI " + aq + ")",
               desc: "Likely to cause breathing discomfort on prolonged outdoor activity. Sensitive individuals should take precautions.",
               tip: "😷 Reduce strenuous outdoor exercise during peak traffic hours.",

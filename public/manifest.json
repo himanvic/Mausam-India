@@ -2,7 +2,7 @@
   "id": "mausam-india-pwa",
   "name": "Mausam India",
   "short_name": "Mausam India",
-  "description": "Live weather, Indian CPCB AQI, NASA satellite clouds & forecasts across India",
+  "description": "Live weather, CPCB-style AQI estimates, NASA satellite clouds & forecasts across India",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -11,7 +11,11 @@
   "theme_color": "#0b1329",
   "lang": "en-IN",
   "dir": "ltr",
-  "categories": ["weather", "utilities", "news"],
+  "categories": [
+    "weather",
+    "utilities",
+    "news"
+  ],
   "icons": [
     {
       "src": "./assets/mausam-logo.svg",
