@@ -2837,3 +2837,11 @@
           line-height: 1.5 !important;
         }
       }
+
+      /* Lifetime-Free OpenStreetMap Dark Canvas Filter */
+      .osm-base-tile-dark {
+        filter: brightness(0.65) invert(1) contrast(2.4) hue-rotate(190deg) saturate(0.28) brightness(0.72) !important;
+      }
+      .osm-base-tile-light {
+        filter: none !important;
+      }
